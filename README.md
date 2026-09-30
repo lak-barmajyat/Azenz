@@ -1,2 +1,2 @@
 # Azenz
-Desktop ERP system for small and medium businesses.
+Desktop ERP system for small ,medium and large businesses.
