@@ -1,14 +1,25 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
-.env
+*.py[cod]
 
+# uv environment
+.venv/
+
+# Environment / secrets
+.env
+.env.*
+
+# IDE
 .idea/
 .vscode/
 
+# Build
 build/
 dist/
 
+# Logs
 *.log
+
+# OS
 .DS_Store
 Thumbs.db
