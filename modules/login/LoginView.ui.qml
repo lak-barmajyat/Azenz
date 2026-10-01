@@ -1,4 +1,4 @@
 import QtQuick
 
-QtObject {
+Item {
 }

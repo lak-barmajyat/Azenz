@@ -22,3 +22,15 @@ select = ["E", "F", "I"]
 [tool.mypy]
 ignore_missing_imports = true
 check_untyped_defs = true
+
+[tool.pyside6-project]
+files = [
+    "main.py",
+    "modules/login/Login.qml",
+    "modules/login/LoginView.ui.qml",
+    "modules/login/Login.js",
+    "qml/theme/Theme.qml",
+    "qml/theme/Colors.qml",
+    "qml/theme/Typography.qml",
+    "resources/resources.qrc",
+]

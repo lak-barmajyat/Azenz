@@ -45,3 +45,6 @@ jobs:
 
       - name: Tests
         run: uv run pytest
+
+      - name: QML lint
+        run: uv run pyside6-project qmllint
