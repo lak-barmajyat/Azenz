@@ -4,8 +4,19 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
-from services.logger import get_logger, setup_logging
+from services.bootstrap import StartupCancelled, bootstrap_application
+from services.logger import get_logger
 from services.paths import PROJECT_ROOT, QML_DIR
+
+
+def confirm_database_creation(database_name: str) -> bool:
+    """Temporary confirmation until the QML setup dialog is implemented."""
+    answer = input(
+        f"Database '{database_name}' does not exist. "
+        "Do you want to create it? [y/N]: "
+    )
+
+    return answer.strip().lower() in {"y", "yes"}
 
 
 def main() -> int:
@@ -14,10 +25,20 @@ def main() -> int:
     app.setApplicationName("Azenz")
     app.setOrganizationName("LakSoftware")
 
-    setup_logging()
-    logger = get_logger(__name__)
+    try:
+        config = bootstrap_application(
+            confirm_database_creation=confirm_database_creation
+        )
+    except StartupCancelled:
+        logger = get_logger(__name__)
+        logger.info("Azenz startup cancelled")
+        return 0
 
-    logger.info("Starting Azenz")
+    logger = get_logger(__name__)
+    logger.info(
+        "Starting Azenz UI | environment=%s",
+        config.environment,
+    )
 
     engine = QQmlApplicationEngine()
 
