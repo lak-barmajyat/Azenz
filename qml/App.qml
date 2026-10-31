@@ -40,7 +40,7 @@ ApplicationWindow {
             if (app.authenticationAvailable)
                 app.authenticationRequested(username, password, language);
             else
-                completeAuthentication(false, "Le service d'authentification n'est pas encore connecté.");
+                app.completeAuthentication(false, "Le service d'authentification n'est pas encore connecté.");
         }
         onAuthenticated: function (username) {
             sales.userName = username;

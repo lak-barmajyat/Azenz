@@ -14,7 +14,7 @@ AzenzTextField {
     trailingToolTip: readOnly ? qsTr("Lecture seule") : qsTr("Ouvrir le calendrier")
     placeholderText: "JJ/MM/AAAA"
     validator: RegularExpressionValidator {
-        regularExpression: /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
+        regularExpression: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/
     }
     text: hasValue ? Qt.formatDate(value, "dd/MM/yyyy") : ""
     onValueChanged: text = hasValue ? Qt.formatDate(value, "dd/MM/yyyy") : ""
@@ -29,8 +29,15 @@ AzenzTextField {
             return;
         }
         var p = text.split("/");
-        var date = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
-        if (p.length !== 3 || date.getDate() !== Number(p[0]) || date.getMonth() !== Number(p[1]) - 1 || date.getFullYear() !== Number(p[2]) || !picker.allowed(date)) {
+        if (p.length !== 3) {
+            validationState = "error";
+            return;
+        }
+        var day = Number(p[0]);
+        var month = Number(p[1]);
+        var year = Number(p[2]);
+        var date = new Date(year, month - 1, day);
+        if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year || !picker.allowed(date)) {
             validationState = "error";
             return;
         }
