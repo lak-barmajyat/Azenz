@@ -1,34 +1,38 @@
 from collections.abc import Callable
+from functools import wraps
 from typing import Any
+
+from sqlalchemy.orm import Session, sessionmaker
+
+from database.engine import database
+
+session_factory: sessionmaker[Session] | None = None
 
 
 def setup_session() -> None:
-    """
-    Configure the global SQLAlchemy session factory.
-
-    Use `database.engine` internally.
-
-    Must be called once during application startup.
-    """
-    pass
+    global session_factory
+    session_factory = sessionmaker(bind=database.engine)
 
 
 def with_session() -> Callable[..., Any]:
-    """
-    Decorate a repository function with a SQLAlchemy Session.
+    def decorator(function: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(function)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if session_factory is None:
+                raise RuntimeError("Session factory is not initialized")
 
-    The implementation should:
+            session = session_factory()
+            kwargs["session"] = session
+            try:
+                result = function(*args, **kwargs)
+                session.commit()
+                return result
+            except Exception:
+                session.rollback()
+                raise
+            finally:
+                session.close()
 
-    1. Create a Session.
-    2. Pass it to the function as `session`.
-    3. Commit on success.
-    4. Roll back on failure.
-    5. Always close the Session.
+        return wrapper
 
-    Example:
-
-        @with_session()
-        def create_user(name: str, session=None):
-            ...
-    """
-    pass
+    return decorator

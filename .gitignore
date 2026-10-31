@@ -26,3 +26,6 @@ Thumbs.db
 
 # Resources
 resources/rc_resources.py
+
+# Extracted UI archive
+UI_azenz/

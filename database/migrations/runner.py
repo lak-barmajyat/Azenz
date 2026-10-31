@@ -1,11 +1,8 @@
+from alembic import command
+from alembic.config import Config
+
+
 def run_migrations() -> None:
-    """
-    Upgrade the configured database to the latest Alembic migration.
-
-    Use `database.engine` internally.
-
-    The implementation should run the equivalent of:
-
-        alembic upgrade head
-    """
-    pass
+    config = Config()
+    config.set_main_option("script_location", "database/migrations")
+    command.upgrade(config, "head")

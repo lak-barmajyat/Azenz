@@ -1,4 +1,7 @@
-from sqlalchemy import Engine
+import re
+
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.engine import URL
 
 from services.config import DatabaseConfig
 
@@ -25,12 +28,8 @@ class Database:
         return self._config
 
     def setup(self, config: DatabaseConfig) -> None:
-        """
-        Create and store the SQLAlchemy engine.
-
-        Fatima will implement this after learning SQLAlchemy Engine.
-        """
-        pass
+        self._config = config
+        self._engine = create_engine(_database_url(config))
 
 
 database = Database()
@@ -38,17 +37,54 @@ database = Database()
 
 def check_server_connection(config: DatabaseConfig) -> None:
     """Check whether the MySQL server can be reached."""
-    pass
+    engine = create_engine(_database_url(config, include_database=False))
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    finally:
+        engine.dispose()
 
 
 def database_exists(config: DatabaseConfig) -> bool:
     """Return True if the configured database exists."""
-    pass
+    engine = create_engine(_database_url(config, include_database=False))
+    try:
+        with engine.connect() as connection:
+            result = connection.execute(
+                text("SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = :name"),
+                {"name": config.name},
+            )
+            return result.scalar() is not None
+    finally:
+        engine.dispose()
 
 
 def create_database(config: DatabaseConfig) -> None:
     """Create the configured database."""
-    pass
+    _validate_identifier(config.name)
+    _validate_identifier(config.charset)
+    engine = create_engine(_database_url(config, include_database=False))
+    try:
+        with engine.begin() as connection:
+            connection.execute(
+                text(
+                    f"CREATE DATABASE IF NOT EXISTS `{config.name}` "
+                    f"CHARACTER SET `{config.charset}`"
+                )
+            )
+    finally:
+        engine.dispose()
+
+
+def drop_database(config: DatabaseConfig) -> None:
+    """Drop the configured database."""
+    _validate_identifier(config.name)
+    engine = create_engine(_database_url(config, include_database=False))
+    try:
+        with engine.begin() as connection:
+            connection.execute(text(f"DROP DATABASE IF EXISTS `{config.name}`"))
+    finally:
+        engine.dispose()
 
 
 def check_database_connection() -> None:
@@ -57,4 +93,26 @@ def check_database_connection() -> None:
 
     Use `database.engine` internally.
     """
-    pass
+    with database.engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+
+
+def _database_url(
+    config: DatabaseConfig,
+    *,
+    include_database: bool = True,
+) -> URL:
+    return URL.create(
+        "mysql+pymysql",
+        username=config.user,
+        password=config.password,
+        host=config.host,
+        port=config.port,
+        database=config.name if include_database else None,
+        query={"charset": config.charset},
+    )
+
+
+def _validate_identifier(value: str) -> None:
+    if not re.fullmatch(r"[A-Za-z0-9_]+", value):
+        raise ValueError(f"Invalid database identifier: {value}")
