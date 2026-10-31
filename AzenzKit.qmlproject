@@ -1,0 +1,13 @@
+import QmlProject 1.3
+Project {
+    mainFile: "qml/gallery/App.qml"
+    mainUiFile: "qml/gallery/KitPreview.ui.qml"
+    qt6Project: true
+    importPaths: ["qml", "."]
+    QmlFiles { directory: "qml" }
+    JavaScriptFiles { directory: "qml" }
+    ImageFiles { directory: "resources/images" }
+    Files { directory: "qml"; filter: "qmldir;*.metainfo" }
+    Files { directory: "resources/fonts"; filter: "*.ttf;*.txt" }
+    Environment { QT_QUICK_CONTROLS_STYLE: "Basic" }
+}

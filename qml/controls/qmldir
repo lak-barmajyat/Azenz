@@ -1,0 +1,16 @@
+AzenzButton 1.0 AzenzButton.qml
+AzenzCheckBox 1.0 AzenzCheckBox.qml
+AzenzComboBox 1.0 AzenzComboBox.qml
+AzenzRadioButton 1.0 AzenzRadioButton.qml
+AzenzScrollBar 1.0 AzenzScrollBar.qml
+AzenzSwitch 1.0 AzenzSwitch.qml
+AzenzTextField 1.0 AzenzTextField.qml
+AzenzToolTip 1.0 AzenzToolTip.qml
+DateInput 1.0 DateInput.qml
+DatePicker 1.0 DatePicker.qml
+Icon 1.0 Icon.qml
+IconButton 1.0 IconButton.qml
+singleton Icons 1.0 Icons.qml
+InputField 1.0 InputField.qml
+Label 1.0 Label.qml
+NumberInput 1.0 NumberInput.qml

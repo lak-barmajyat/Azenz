@@ -1,0 +1,137 @@
+MetaInfo {
+    Type {
+        name: "controls.AzenzButton"
+        ItemLibraryEntry {
+            name: "AzenzButton"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzCheckBox"
+        ItemLibraryEntry {
+            name: "AzenzCheckBox"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzComboBox"
+        ItemLibraryEntry {
+            name: "AzenzComboBox"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzRadioButton"
+        ItemLibraryEntry {
+            name: "AzenzRadioButton"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzScrollBar"
+        ItemLibraryEntry {
+            name: "AzenzScrollBar"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzSwitch"
+        ItemLibraryEntry {
+            name: "AzenzSwitch"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzTextField"
+        ItemLibraryEntry {
+            name: "AzenzTextField"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.AzenzToolTip"
+        ItemLibraryEntry {
+            name: "AzenzToolTip"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.DateInput"
+        ItemLibraryEntry {
+            name: "DateInput"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.DatePicker"
+        ItemLibraryEntry {
+            name: "DatePicker"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.Icon"
+        ItemLibraryEntry {
+            name: "Icon"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.IconButton"
+        ItemLibraryEntry {
+            name: "IconButton"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.InputField"
+        ItemLibraryEntry {
+            name: "InputField"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.Label"
+        ItemLibraryEntry {
+            name: "Label"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+    Type {
+        name: "controls.NumberInput"
+        ItemLibraryEntry {
+            name: "NumberInput"
+            category: "AZENZ / Controls"
+            version: "1.0"
+            requiredImport: "controls"
+        }
+    }
+}
