@@ -1,5 +1,5 @@
 import QtQuick
-import "LoginCopy.js" as LoginCopy
+import "Login.js" as Login
 import "../../qml/components"
 
 LoginView {
@@ -10,8 +10,8 @@ LoginView {
     signal maximizeRequested
     signal passwordResetRequested
     signal authenticated(string username)
-    copy: LoginCopy.translations[language] || LoginCopy.translations.fr
-    onLanguageChanged: languageControl.currentIndex = Math.max(0, ["fr", "ar", "en"].indexOf(language))
+    copy: Login.copyFor(language)
+    onLanguageChanged: languageControl.currentIndex = Login.languageIndex(language)
 
     function submit() {
         if (busy)

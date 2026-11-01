@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import "../../qml/controls"
 import "../../qml/components"
 import "../../qml/theme"
-import "LoginCopy.js" as LoginCopy
+import "Login.js" as Login
 
 Rectangle {
     id: root
@@ -11,7 +11,7 @@ Rectangle {
     height: 800
     color: Colors.canvas
     property string language: "fr"
-    property var copy: LoginCopy.translations.fr
+    property var copy: Login.copyFor(language)
     property bool busy: false
     property bool previewMode: false
     property string errorMessage: ""
