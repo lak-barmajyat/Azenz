@@ -3,7 +3,6 @@ from logging.handlers import RotatingFileHandler
 
 from services.paths import logs_dir
 
-
 LOG_FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 
 
@@ -15,8 +14,7 @@ def setup_logging() -> None:
 
     root_logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter(LOG_FORMAT,
-                                  datefmt="%Y-%m-&d %H:%M:%S")
+    formatter = logging.Formatter(LOG_FORMAT, datefmt="%Y-%m-&d %H:%M:%S")
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
