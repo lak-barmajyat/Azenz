@@ -132,9 +132,7 @@ def run_sql_file(connection, path: Path) -> None:
                 cursor.execute(statement)
             except Exception as exc:
                 preview = " ".join(statement.split())[:180]
-                raise RuntimeError(
-                    f"Failed in {path.name}, statement {number}: {preview}"
-                ) from exc
+                raise RuntimeError(f"Failed in {path.name}, statement {number}: {preview}") from exc
     connection.commit()
 
 
@@ -156,23 +154,17 @@ def select_database(connection, database_name: str) -> None:
 def ensure_application_user(connection) -> None:
     with connection.cursor() as cursor:
         cursor.execute(
-            f"CREATE USER IF NOT EXISTS '{APP_USER}'@'localhost' "
-            f"IDENTIFIED BY '{APP_PASSWORD}'"
+            f"CREATE USER IF NOT EXISTS '{APP_USER}'@'localhost' IDENTIFIED BY '{APP_PASSWORD}'"
         )
         # Always restore the hardcoded test password, even when the account existed.
-        cursor.execute(
-            f"ALTER USER '{APP_USER}'@'localhost' IDENTIFIED BY '{APP_PASSWORD}'"
-        )
+        cursor.execute(f"ALTER USER '{APP_USER}'@'localhost' IDENTIFIED BY '{APP_PASSWORD}'")
     connection.commit()
 
 
 def grant_application_user(connection, databases: list[str]) -> None:
     with connection.cursor() as cursor:
         for database in databases:
-            cursor.execute(
-                f"GRANT ALL PRIVILEGES ON `{database}`.* "
-                f"TO '{APP_USER}'@'localhost'"
-            )
+            cursor.execute(f"GRANT ALL PRIVILEGES ON `{database}`.* TO '{APP_USER}'@'localhost'")
         cursor.execute("FLUSH PRIVILEGES")
     connection.commit()
 
@@ -204,9 +196,7 @@ def main() -> int:
     print("=" * 62)
 
     admin_password = getpass.getpass("MySQL root password (press Enter if empty): ")
-    create_commercial = ask_yes_no(
-        "Create the four commercial databases?", default=True
-    )
+    create_commercial = ask_yes_no("Create the four commercial databases?", default=True)
     try:
         connection = pymysql.connect(
             host=HOST,
