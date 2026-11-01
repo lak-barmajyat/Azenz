@@ -1,7 +1,7 @@
 """Preview the two HTML-derived QML screens, without authentication or a database.
 
-python preview_screens.py          # Login, then demo navigation to sales
-python preview_screens.py --sales  # Sales directly
+python preview_screens.py          # Login, then demo navigation to ventes
+python preview_screens.py --ventes  # Ventes directly
 """
 import os
 import sys

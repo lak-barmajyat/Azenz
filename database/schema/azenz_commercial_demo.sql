@@ -28,7 +28,7 @@ INSERT INTO `p_numerotation_documents` (`id`, `type_document_id`, `prefixe`, `an
 
 -- p_utilisateurs: 5 rows
 INSERT INTO `p_utilisateurs` (`id`, `nom_utilisateur`, `email`, `telephone`, `mot_de_passe_hash`, `role`, `date_derniere_connexion`, `actif`) VALUES
-(1, 'yassine.elamrani', 'yassine.elamrani@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MANAGER', NULL, 1),
+(1, 'admin', 'yassine.elamrani@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MANAGER', NULL, 1),
 (2, 'salma.bennani', 'salma.bennani@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MANAGER', NULL, 1),
 (3, 'hamza.alaoui', 'hamza.alaoui@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MERCHANT', NULL, 1),
 (4, 'imane.tazi', 'imane.tazi@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MERCHANT', NULL, 1),

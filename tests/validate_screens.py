@@ -39,7 +39,7 @@ def js(code):
 def wait_sidebar_width(expected):
     # Animation frame scheduling can take longer on a busy/offscreen renderer.
     for _ in range(30):
-        if abs(js("sales.sidebar.width") - expected) < 0.01:
+        if abs(js("ventes.sidebar.width") - expected) < 0.01:
             return
         QTest.qWait(50)
     raise AssertionError(f"Sidebar did not settle at {expected}")
@@ -51,73 +51,70 @@ js("login.submit()")
 assert js("root.screen") == "login"
 assert js("login.errorMessage.length") > 0
 js("login.username = 'preview'; login.password = 'not-a-real-password'; login.submit()")
-assert js("root.screen") == "sales"
+assert js("root.screen") == "ventes"
 assert js("login.password") == ""
-assert js("sales.records.length") == 15
-assert js("sales.totalHT") == 216100
-assert js("sales.totalTTC") == 259320
+assert js("ventes.records.length") == 15
+assert js("ventes.totalHT") == 216100
+assert js("ventes.totalTTC") == 259320
 QTest.qWait(150)
-view.grabWindow().save(str(output / "sales.png"))
+view.grabWindow().save(str(output / "ventes.png"))
 for field in ("fromDate", "toDate"):
-    point = js(f"sales.{field}.mapToItem(null, sales.{field}.width - 15, sales.{field}.height / 2)")
+    point = js(f"ventes.{field}.mapToItem(null, ventes.{field}.width - 15, ventes.{field}.height / 2)")
     QTest.mouseClick(view, Qt.LeftButton, Qt.NoModifier, QPoint(round(point.x()), round(point.y())))
     QTest.qWait(100)
-    assert js(f"sales.{field}.calendarPopup.visible"), f"{field} calendar did not open from its icon"
-    assert js(f"sales.{field}.calendarPopup.activeFocus"), "Calendar must retain keyboard focus"
+    assert js(f"ventes.{field}.calendarPopup.visible"), f"{field} calendar did not open from its icon"
+    assert js(f"ventes.{field}.calendarPopup.activeFocus"), "Calendar must retain keyboard focus"
     QTest.keyClick(view, Qt.Key_Escape)
-    assert not js(f"sales.{field}.calendarPopup.visible")
-    js(f"sales.{field}.forceActiveFocus()")
+    assert not js(f"ventes.{field}.calendarPopup.visible")
+    js(f"ventes.{field}.forceActiveFocus()")
     QTest.keyClick(view, Qt.Key_Down)
     QTest.qWait(50)
-    assert js(f"sales.{field}.calendarPopup.visible")
+    assert js(f"ventes.{field}.calendarPopup.visible")
     QTest.keyClick(view, Qt.Key_Return)
-    assert js(f"sales.{field}.hasValue")
-    assert not js(f"sales.{field}.calendarPopup.visible")
-    js("sales.resetFilters()")
-js("sales.codeFilter.text = 'DV-001'")
-assert js("sales.records.length") == 1
-assert js("sales.totalHT") == 14250
-js("sales.resetFilters(); sales.typeFilter.currentIndex = 2; sales.applyFilters()")
-assert js("sales.records.length") == 3
-js("sales.resetFilters(); sales.fromDate.text = '11/01/2020'; sales.applyFilters()")
-assert js("sales.records.length") == 2
-js("sales.toDate.text = '10/01/2020'; sales.applyFilters()")
-assert js("sales.filterError.length") > 0
-assert js("sales.records.length") == 2  # Invalid range does not silently change the result.
-js("sales.resetFilters(); sales.codeFilter.text = 'does-not-exist'")
-assert js("sales.records.length") == 0
+    assert js(f"ventes.{field}.hasValue")
+    assert not js(f"ventes.{field}.calendarPopup.visible")
+    js("ventes.resetFilters()")
+js("ventes.codeFilter.text = 'DV-001'")
+assert js("ventes.records.length") == 1
+assert js("ventes.totalHT") == 14250
+js("ventes.resetFilters(); ventes.typeFilter.currentIndex = 2; ventes.applyFilters()")
+assert js("ventes.records.length") == 3
+js("ventes.resetFilters(); ventes.fromDate.text = '11/01/2020'; ventes.applyFilters()")
+assert js("ventes.records.length") == 2
+js("ventes.toDate.text = '10/01/2020'; ventes.applyFilters()")
+assert js("ventes.filterError.length") > 0
+assert js("ventes.records.length") == 2  # Invalid range does not silently change the result.
+js("ventes.resetFilters(); ventes.codeFilter.text = 'does-not-exist'")
+assert js("ventes.records.length") == 0
 QTest.qWait(50)
-view.grabWindow().save(str(output / "sales-empty.png"))
-js("sales.resetFilters(); sales.grid.focusRow(0)")
+view.grabWindow().save(str(output / "ventes-empty.png"))
+js("ventes.resetFilters(); ventes.grid.focusRow(0)")
 QTest.keyClick(view, Qt.Key_Space)
-assert js("sales.grid.selectionCount") == 1
-assert js("sales.editButton.enabled")
-js("sales.requestAction('delete')")
+assert js("ventes.grid.selectionCount") == 1
+assert js("ventes.editButton.enabled")
+js("ventes.requestAction('delete')")
 QTest.qWait(30)
 QTest.keyClick(view, Qt.Key_Escape)
-assert js("sales.sourceRows.length") == 15
-js("sales.sidebar.collapsed = true")
+assert js("ventes.sourceRows.length") == 15
+js("ventes.sidebar.collapsed = true")
 QTest.qWait(80)
-assert 64 < js("sales.sidebar.width") < 256, "Sidebar should animate through intermediate widths"
+assert 64 < js("ventes.sidebar.width") < 256, "Sidebar should animate through intermediate widths"
 view.resize(1280, 720)
 QTest.qWait(300)
 wait_sidebar_width(64)
-view.grabWindow().save(str(output / "sales-compact.png"))
-js("sales.sidebar.collapsed = false")
+view.grabWindow().save(str(output / "ventes-compact.png"))
+js("ventes.sidebar.collapsed = false")
 QTest.qWait(300)
 wait_sidebar_width(256)
 # Reversing a transition must finish at the latest requested state.
-js("sales.sidebar.collapsed = true")
+js("ventes.sidebar.collapsed = true")
 QTest.qWait(60)
-js("sales.sidebar.collapsed = false")
+js("ventes.sidebar.collapsed = false")
 QTest.qWait(300)
 wait_sidebar_width(256)
-view.grabWindow().save(str(output / "sales-small-expanded.png"))
-js("root.screen = 'login'; login.language = 'ar'; login.errorMessage = ''")
-QTest.qWait(100)
-view.grabWindow().save(str(output / "login-arabic.png"))
-js("login.language = 'en'")
-assert js("login.language") == "en"
+view.grabWindow().save(str(output / "ventes-small-expanded.png"))
+js("root.screen = 'login'; login.errorMessage = ''")
+assert js("login.language") == "fr"
 
 # Compile both actual window entry points too.
 for path in ["qml/screens/App.qml", "qml/App.qml"]:

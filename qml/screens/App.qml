@@ -19,7 +19,7 @@ ApplicationWindow {
     }
     ScreensPreview {
         anchors.fill: parent
-        screen: Qt.application.arguments.indexOf("--sales") >= 0 ? "sales" : "login"
+        screen: Qt.application.arguments.indexOf("--ventes") >= 0 ? "ventes" : "login"
         onCloseRequested: window.close()
         onMinimizeRequested: window.showMinimized()
         onMaximizeRequested: window.toggleMaximize()

@@ -1,7 +1,7 @@
 import QtQuick
 import "../../../qml/components"
 
-SalesView {
+VentesView {
     id: root
     property var sourceRows: []
     property var appliedFilters: ({
@@ -249,35 +249,6 @@ SalesView {
         }
     }
     Connections {
-        target: root.sidebar
-        function onNavigate(page) {
-            root.navigationRequested(page);
-        }
-    }
-    Connections {
-        target: root.titleBar
-        function onCloseRequested() {
-            root.quitRequested();
-        }
-        function onMinimizeRequested() {
-            root.minimizeRequested();
-        }
-        function onMaximizeRequested() {
-            root.maximizeRequested();
-        }
-    }
-    Connections {
-        target: root.menuBar
-        function onCommandTriggered(command) {
-            if (command === "quit")
-                root.quitRequested();
-            else if (command === "sidebar")
-                root.sidebar.collapsed = !root.sidebar.collapsed;
-            else
-                root.requestAction(command);
-        }
-    }
-    Connections {
         target: root.grid
         function onContextMenuRequested(record, x, y) {
             context.targetRecord = record;
@@ -344,7 +315,7 @@ SalesView {
     }
     AzenzDialog {
         id: confirmDelete
-        objectName: "salesDeleteDialog"
+        objectName: "ventesDeleteDialog"
         dialogType: "destructive"
         title: "Confirmer la suppression"
         message: "Supprimer " + root.pendingDelete.length + " document(s) sélectionné(s) ?"

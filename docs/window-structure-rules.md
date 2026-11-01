@@ -14,6 +14,20 @@ For every window:
 The application creates the model, attaches it to the window, and connects
 model signals to controller completion handlers.
 
+Every feature window must be implemented as a standalone frame. The shell
+owns the application chrome and displays each feature frame in its central
+content area; feature windows must not duplicate the shell toolbar, sidebar,
+or footer.
+
+The shared shell is a special window container:
+
+- `Shell.qml` controls navigation and keeps the toolbar, sidebar, footer, and
+  central frame alive.
+- `ShellView.ui.qml` contains that fixed chrome and exposes `contentFrame`.
+- Feature windows are loaded into `contentFrame`; dashboard is the empty
+  default page.
+- A shell without database access does not need `model.py` or `repository.py`.
+
 ## Example: login window
 
 - `Login.qml` is the controller.

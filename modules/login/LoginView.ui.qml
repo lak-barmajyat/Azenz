@@ -8,8 +8,8 @@ Rectangle {
     id: root
     width: 1280
     height: 800
-    color: Colors.canvas
-    property string language: "fr"
+    color: "transparent"
+    readonly property string language: "fr"
     property bool busy: false
     property bool previewMode: false
     property string errorMessage: ""
@@ -20,7 +20,6 @@ Rectangle {
     property alias submitButton: submit
     property alias quitButton: quit
     property alias forgotButton: forgot
-    property alias languageControl: languages
     property alias titleBar: titleBar
 
     WindowTitleBar {
@@ -28,6 +27,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
+        visible: false
+        height: 0
     }
     Rectangle {
         id: shadow
@@ -154,8 +155,7 @@ Rectangle {
                     color: "white"
                 }
                 Label {
-                    text: qsTr("Powerful, modular and intuitive integrated business management solutions.")
-                    arabic: root.language === "ar"
+                    text: qsTr("Une solution de gestion intégrée, puissante, modulaire et intuitive.")
                     color: "#CBD5E1"
                     font.pixelSize: 14
                     wrapMode: Text.WordWrap
@@ -177,8 +177,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Label {
-                        text: qsTr("Certified & secure system")
-                        arabic: root.language === "ar"
+                        text: qsTr("Système certifié et sécurisé")
                         color: "#94A3B8"
                         font.pixelSize: 10
                         Layout.fillWidth: true
@@ -196,30 +195,6 @@ Rectangle {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            AzenzComboBox {
-                id: languages
-                objectName: "loginLanguage"
-                x: parent.width - width - 40
-                y: 32
-                width: 124
-                height: 28
-                model: [
-                    {
-                        text: "Français",
-                        value: "fr"
-                    },
-                    {
-                        text: "العربية",
-                        value: "ar"
-                    },
-                    {
-                        text: "English",
-                        value: "en"
-                    }
-                ]
-                currentIndex: 0
-                enabled: !root.busy
-            }
             ColumnLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -227,22 +202,18 @@ Rectangle {
                 anchors.rightMargin: 40
                 y: 90
                 spacing: 14
-                LayoutMirroring.enabled: root.language === "ar"
-                LayoutMirroring.childrenInherit: true
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 8
                     Label {
-                        text: qsTr("Sign in")
-                        arabic: root.language === "ar"
+                        text: qsTr("Connexion")
                         color: Colors.navy
                         font.pixelSize: 24
                         font.weight: Font.Bold
                         Layout.fillWidth: true
                     }
                     Label {
-                        text: qsTr("Enter your credentials to access your workspace.")
-                        arabic: root.language === "ar"
+                        text: qsTr("Saisissez vos identifiants pour accéder à votre espace.")
                         color: Colors.textSecondary
                         font.pixelSize: 12
                         wrapMode: Text.WordWrap
@@ -255,8 +226,7 @@ Rectangle {
                     Layout.topMargin: 8
                     spacing: 6
                     Label {
-                        text: qsTr("Username")
-                        arabic: root.language === "ar"
+                        text: qsTr("Nom d'utilisateur")
                         font.pixelSize: 12
                         font.weight: Font.DemiBold
                         Layout.fillWidth: true
@@ -270,9 +240,9 @@ Rectangle {
                         LayoutMirroring.enabled: false
                         LayoutMirroring.childrenInherit: true
                         leadingIcon: "users"
-                        placeholderText: qsTr("Enter your username")
+                        placeholderText: qsTr("Saisissez votre nom d'utilisateur")
                         enabled: !root.busy
-                        Accessible.name: qsTr("Username")
+                        Accessible.name: qsTr("Nom d'utilisateur")
                     }
                 }
                 ColumnLayout {
@@ -281,15 +251,14 @@ Rectangle {
                     RowLayout {
                         Layout.fillWidth: true
                         Label {
-                            text: qsTr("Password")
-                            arabic: root.language === "ar"
+                            text: qsTr("Mot de passe")
                             font.pixelSize: 12
                             font.weight: Font.DemiBold
                             Layout.fillWidth: true
                         }
                         AzenzButton {
                             id: forgot
-                            text: qsTr("Forgot password?")
+                            text: qsTr("Mot de passe oublié ?")
                             variant: "ghost"
                             size: "compact"
                             leftPadding: 0
@@ -309,12 +278,11 @@ Rectangle {
                         LayoutMirroring.enabled: false
                         LayoutMirroring.childrenInherit: true
                         enabled: !root.busy
-                        Accessible.name: qsTr("Password")
+                        Accessible.name: qsTr("Mot de passe")
                     }
                 }
                 Label {
                     text: root.errorMessage
-                    arabic: root.language === "ar"
                     visible: text !== ""
                     color: Colors.danger
                     font.pixelSize: 11
@@ -324,7 +292,7 @@ Rectangle {
                 AzenzButton {
                     id: submit
                     objectName: "loginSubmit"
-                    text: root.busy ? qsTr("Signing in…") : qsTr("Sign in")
+                    text: root.busy ? qsTr("Connexion…") : qsTr("Se connecter")
                     cornerRadius: 8
                     loading: root.busy
                     Layout.fillWidth: true
@@ -333,7 +301,7 @@ Rectangle {
                 }
                 AzenzButton {
                     id: quit
-                    text: qsTr("Quit application")
+                    text: qsTr("Quitter l'application")
                     iconName: "logout"
                     cornerRadius: 8
                     variant: "secondary"
@@ -354,8 +322,7 @@ Rectangle {
                 anchors.leftMargin: 28
                 anchors.rightMargin: 28
                 horizontalAlignment: Text.AlignHCenter
-                text: root.previewMode ? qsTr("Local preview • Credentials are not verified") : qsTr("Secure workstation • Local session")
-                arabic: root.language === "ar"
+                text: root.previewMode ? qsTr("Aperçu local • Identifiants non vérifiés") : qsTr("Poste sécurisé • Session locale")
                 font.pixelSize: 10
                 color: "#94A3B8"
             }

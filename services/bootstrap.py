@@ -59,10 +59,14 @@ def bootstrap_application(
     check_database_connection()
 
     # Apply all pending Alembic revisions before the application uses the models.
-    run_migrations()
+    schema_created = run_migrations()
 
-    # Demo data is offered only for a newly created database and never loaded twice.
-    if database_created and DEMO_DATA_FILE.exists() and confirm_demo_data():
+    # Offer demo data for a new database or an existing database missing its schema.
+    if (
+        (database_created or schema_created)
+        and DEMO_DATA_FILE.exists()
+        and confirm_demo_data()
+    ):
         load_demo_data()
 
     # Sessions must be configured after the database engine is ready.

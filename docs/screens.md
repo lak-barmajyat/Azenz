@@ -1,14 +1,14 @@
-# Login and sales screens
+# Login and ventes screens
 
 The two supplied HTML screens are implemented with the existing QML component kit:
 
 | Reference | Visual form | Interactive screen |
 | --- | --- | --- |
 | `code2.html`: Connexion | `modules/login/LoginView.ui.qml` | `modules/login/Login.qml` |
-| `code.html`: Ventes | `modules/ventes/liste_ventes/SalesView.ui.qml` | `modules/ventes/liste_ventes/Sales.qml` |
+| `code.html`: Ventes | `modules/ventes/liste_ventes/VentesView.ui.qml` | `modules/ventes/liste_ventes/Ventes.qml` |
 
 Open **AzenzScreens.qmlproject** in Qt Design Studio. The main visual form previews
-sales; running the project starts with login. The `.ui.qml` files contain the
+ventes; running the project starts with login. The `.ui.qml` files contain the
 visual compositions, while their `.qml` wrappers handle interactions. The original
 component gallery remains available through `AzenzKit.qmlproject`.
 
@@ -16,11 +16,11 @@ To run independently of the database:
 
 ```powershell
 .\.venv-qml\Scripts\python.exe preview_screens.py
-.\.venv-qml\Scripts\python.exe preview_screens.py --sales
-.\.venv-qml\Scripts\python.exe run_sales.py
+.\.venv-qml\Scripts\python.exe preview_screens.py --ventes
+.\.venv-qml\Scripts\python.exe run_ventes.py
 ```
 
-`run_sales.py` opens the interactive sales window directly. The calendar buttons
+`run_ventes.py` opens the interactive ventes window directly. The calendar buttons
 work in this runtime. Qt Design Studio's form-editing canvas is for editing the
 design; use **Run App** (Ctrl+R) to test interactions in the application, or
 **Live Preview** (Alt+P) to run the active QML file. A separate Live Preview window
@@ -28,7 +28,7 @@ should support interactions too; a nonworking button there is not expected merel
 because it is a preview.
 
 The standalone preview explicitly labels itself as a preview. Any **nonempty**
-username/password opens its sales screen without verification. Password text is
+username/password opens its ventes screen without verification. Password text is
 cleared on completion and is never written to storage or logs. In this preview,
 confirmed deletion changes only the sample array in memory; F5 restores it.
 Other business commands display the requested action without pretending to save,
@@ -46,7 +46,7 @@ until a backend is connected. `main.py` retains its existing database bootstrap.
   consistent icon placement.
 - Window chrome: dragging, double-click maximize/restore, minimize, close, and a
   bottom-right resize grip in the window entry points.
-- Sales: collapsible sidebar/groups, system menus, document code and type filters,
+- Ventes: collapsible sidebar/groups, system menus, document code and type filters,
   date range validation, reset, sorting, column resizing, continuous scrolling,
   checkbox and keyboard selection, selection-aware toolbar, context menu, and
   destructive confirmation with Cancel initially focused.
@@ -74,12 +74,12 @@ No credential repository or password-reset service was present in the project.
 
 The production entry creates `LoginModel`, which calls the SQLAlchemy repository
 and uses `@with_session()` for session lifecycle. It sets
-`authenticationAvailable = true` after bootstrap. Supply `salesRecords` (the
+`authenticationAvailable = true` after bootstrap. Supply `ventesRecords` (the
 grid's array contract), set `connected` from the real connection state, and handle
-`salesActionRequested(action, records)` and `navigationRequested(page)`. Records require unique stable IDs and numeric
-`ht`, `vat`, and `ttc` fields; see `SalesSample.js` for the shape.
+`ventesActionRequested(action, records)` and `navigationRequested(page)`. Records require unique stable IDs and numeric
+`ht`, `vat`, and `ttc` fields; see `VentesSample.js` for the shape.
 
-The sales screen exposes `actionRequested(action, records)` for new/open/edit/
+The ventes screen exposes `actionRequested(action, records)` for new/open/edit/
 duplicate/delete/print/export/refresh and menu commands. Only a confirmed delete
 emits the delete command. Context menus target the pointed record independently of
 checkbox selection. `filtersChanged(filters)` can be used to request backend data;

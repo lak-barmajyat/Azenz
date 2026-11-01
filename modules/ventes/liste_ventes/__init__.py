@@ -1,0 +1,1 @@
+"""Ventes feature frame."""

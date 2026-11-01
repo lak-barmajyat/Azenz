@@ -2,18 +2,21 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls.Basic
 import "../modules/login" as LoginModule
-import "../modules/ventes/liste_ventes" as SalesModule
+import "../modules/shell" as ShellModule
 
 ApplicationWindow {
     id: app
 
-    width: 1600
-    height: 1000
-    minimumWidth: 1200
-    minimumHeight: 700
+    width: 980
+    height: 680
+    minimumWidth: 980
+    minimumHeight: 680
+    x: (Screen.width - width) / 2
+    y: (Screen.height - height) / 2
 
     visible: true
     title: "Azenz"
+    color: "transparent"
 
     flags: Qt.Window | Qt.FramelessWindowHint
     property bool authenticationAvailable: false
@@ -21,6 +24,7 @@ ApplicationWindow {
     property var salesRecords: []
     property bool connected: false
     property var authModel: null
+    property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
     signal navigationRequested(string page)
     function completeAuthentication(success, message) {
@@ -43,27 +47,22 @@ ApplicationWindow {
                 app.completeAuthentication(false, "Le service d'authentification n'est pas encore connecté.");
         }
         onAuthenticated: function (username) {
-            sales.userName = username;
+            shell.userName = username;
             app.signedIn = true;
         }
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()
     }
-    SalesModule.Sales {
-        id: sales
+    ShellModule.Shell {
+        id: shell
         anchors.fill: parent
         visible: app.signedIn
-        sourceRows: app.salesRecords
+        companyName: "Atlas Distribution"
+        userName: "Mohammed"
         connected: app.connected
-        connectionText: connected ? "Connecté" : "Hors connexion"
-        onActionRequested: function (action, records) {
-            app.salesActionRequested(action, records);
-        }
-        onNavigationRequested: function (page) {
-            app.navigationRequested(page);
-        }
-        onBackRequested: app.signedIn = false
+        pageData: app.salesRecords
+        onPageRequested: app.currentPage = page
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()
@@ -72,7 +71,7 @@ ApplicationWindow {
         target: app.authModel
         function onAuthenticationCompleted(success, message, username) {
             if (success) {
-                sales.userName = username;
+                shell.userName = username;
                 app.signedIn = true;
                 login.completeAuthentication(true, "");
             } else {
