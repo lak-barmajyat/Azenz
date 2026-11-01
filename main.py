@@ -4,6 +4,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
+from modules.login.model import LoginModel
 from services.bootstrap import StartupCancelled, bootstrap_application
 from services.logger import get_logger
 from services.paths import PROJECT_ROOT, QML_DIR
@@ -44,6 +45,7 @@ def main() -> int:
     )
 
     engine = QQmlApplicationEngine()
+    auth_model = LoginModel(engine)
 
     engine.addImportPath(str(PROJECT_ROOT))
     engine.addImportPath(str(QML_DIR))
@@ -55,6 +57,9 @@ def main() -> int:
         logger.critical("Failed to load App.qml")
         return 1
 
+    root = engine.rootObjects()[0]
+    root.setProperty("authModel", auth_model)
+    root.setProperty("authenticationAvailable", True)
     logger.info("Azenz started successfully")
 
     return app.exec()

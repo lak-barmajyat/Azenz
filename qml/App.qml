@@ -20,6 +20,7 @@ ApplicationWindow {
     property bool signedIn: false
     property var salesRecords: []
     property bool connected: false
+    property var authModel: null
     signal authenticationRequested(string username, string password, string language)
     signal salesActionRequested(string action, var records)
     signal navigationRequested(string page)
@@ -38,7 +39,7 @@ ApplicationWindow {
         visible: !app.signedIn
         onLoginRequested: function (username, password, language) {
             if (app.authenticationAvailable)
-                app.authenticationRequested(username, password, language);
+                app.authModel.authenticate(username, password, language);
             else
                 app.completeAuthentication(false, "Le service d'authentification n'est pas encore connecté.");
         }
@@ -67,6 +68,18 @@ ApplicationWindow {
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()
+    }
+    Connections {
+        target: app.authModel
+        function onAuthenticationCompleted(success, message, username) {
+            if (success) {
+                sales.userName = username;
+                app.signedIn = true;
+                login.completeAuthentication(true, "");
+            } else {
+                login.completeAuthentication(false, message);
+            }
+        }
     }
     MouseArea {
         anchors.right: parent.right
