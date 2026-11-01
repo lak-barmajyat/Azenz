@@ -1,5 +1,4 @@
 import QtQuick
-import "Login.js" as Login
 import "../../qml/components"
 
 LoginView {
@@ -10,8 +9,14 @@ LoginView {
     signal maximizeRequested
     signal passwordResetRequested
     signal authenticated(string username)
-    copy: Login.copyFor(language)
-    onLanguageChanged: languageControl.currentIndex = Login.languageIndex(language)
+
+    function authenticationErrorMessage(code) {
+        if (code === "invalid_credentials")
+            return qsTr("Incorrect username or password.");
+        if (code === "service_unavailable")
+            return qsTr("The authentication service is unavailable.");
+        return qsTr("Sign-in failed.");
+    }
 
     function submit() {
         if (busy)
@@ -20,7 +25,7 @@ LoginView {
         usernameField.validationState = username.trim() ? "default" : "error";
         passwordField.validationState = password ? "default" : "error";
         if (!username.trim() || !password) {
-            errorMessage = copy.required;
+            errorMessage = qsTr("Enter your username and password.");
             if (!username.trim())
                 usernameField.forceActiveFocus();
             else
@@ -39,7 +44,7 @@ LoginView {
             errorMessage = "";
             authenticated(username.trim());
         } else {
-            errorMessage = message || "Connexion refusée.";
+            errorMessage = authenticationErrorMessage(message);
             passwordField.forceActiveFocus();
         }
     }
@@ -96,7 +101,7 @@ LoginView {
     AzenzDialog {
         id: help
         dialogType: "information"
-        title: root.copy.forgot
-        message: root.copy.help
+        title: qsTr("Forgot password?")
+        message: qsTr("Contact your administrator to reset your password.")
     }
 }

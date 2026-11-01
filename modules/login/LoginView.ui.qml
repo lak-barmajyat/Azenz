@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import "../../qml/controls"
 import "../../qml/components"
 import "../../qml/theme"
-import "Login.js" as Login
 
 Rectangle {
     id: root
@@ -11,7 +10,6 @@ Rectangle {
     height: 800
     color: Colors.canvas
     property string language: "fr"
-    property var copy: Login.copyFor(language)
     property bool busy: false
     property bool previewMode: false
     property string errorMessage: ""
@@ -156,7 +154,7 @@ Rectangle {
                     color: "white"
                 }
                 Label {
-                    text: root.copy.description
+                    text: qsTr("Powerful, modular and intuitive integrated business management solutions.")
                     arabic: root.language === "ar"
                     color: "#CBD5E1"
                     font.pixelSize: 14
@@ -179,7 +177,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Label {
-                        text: root.copy.secure
+                        text: qsTr("Certified & secure system")
                         arabic: root.language === "ar"
                         color: "#94A3B8"
                         font.pixelSize: 10
@@ -235,7 +233,7 @@ Rectangle {
                     Layout.fillWidth: true
                     spacing: 8
                     Label {
-                        text: root.copy.heading
+                        text: qsTr("Sign in")
                         arabic: root.language === "ar"
                         color: Colors.navy
                         font.pixelSize: 24
@@ -243,7 +241,7 @@ Rectangle {
                         Layout.fillWidth: true
                     }
                     Label {
-                        text: root.copy.intro
+                        text: qsTr("Enter your credentials to access your workspace.")
                         arabic: root.language === "ar"
                         color: Colors.textSecondary
                         font.pixelSize: 12
@@ -257,7 +255,7 @@ Rectangle {
                     Layout.topMargin: 8
                     spacing: 6
                     Label {
-                        text: root.copy.username
+                        text: qsTr("Username")
                         arabic: root.language === "ar"
                         font.pixelSize: 12
                         font.weight: Font.DemiBold
@@ -272,9 +270,9 @@ Rectangle {
                         LayoutMirroring.enabled: false
                         LayoutMirroring.childrenInherit: true
                         leadingIcon: "users"
-                        placeholderText: root.copy.placeholder
+                        placeholderText: qsTr("Enter your username")
                         enabled: !root.busy
-                        Accessible.name: root.copy.username
+                        Accessible.name: qsTr("Username")
                     }
                 }
                 ColumnLayout {
@@ -283,7 +281,7 @@ Rectangle {
                     RowLayout {
                         Layout.fillWidth: true
                         Label {
-                            text: root.copy.password
+                            text: qsTr("Password")
                             arabic: root.language === "ar"
                             font.pixelSize: 12
                             font.weight: Font.DemiBold
@@ -291,7 +289,7 @@ Rectangle {
                         }
                         AzenzButton {
                             id: forgot
-                            text: root.copy.forgot
+                            text: qsTr("Forgot password?")
                             variant: "ghost"
                             size: "compact"
                             leftPadding: 0
@@ -311,7 +309,7 @@ Rectangle {
                         LayoutMirroring.enabled: false
                         LayoutMirroring.childrenInherit: true
                         enabled: !root.busy
-                        Accessible.name: root.copy.password
+                        Accessible.name: qsTr("Password")
                     }
                 }
                 Label {
@@ -326,7 +324,7 @@ Rectangle {
                 AzenzButton {
                     id: submit
                     objectName: "loginSubmit"
-                    text: root.busy ? root.copy.busy : root.copy.submit
+                    text: root.busy ? qsTr("Signing in…") : qsTr("Sign in")
                     cornerRadius: 8
                     loading: root.busy
                     Layout.fillWidth: true
@@ -335,7 +333,7 @@ Rectangle {
                 }
                 AzenzButton {
                     id: quit
-                    text: root.copy.quit
+                    text: qsTr("Quit application")
                     iconName: "logout"
                     cornerRadius: 8
                     variant: "secondary"
@@ -356,7 +354,7 @@ Rectangle {
                 anchors.leftMargin: 28
                 anchors.rightMargin: 28
                 horizontalAlignment: Text.AlignHCenter
-                text: root.previewMode ? root.copy.preview : root.copy.footer
+                text: root.previewMode ? qsTr("Local preview • Credentials are not verified") : qsTr("Secure workstation • Local session")
                 arabic: root.language === "ar"
                 font.pixelSize: 10
                 color: "#94A3B8"

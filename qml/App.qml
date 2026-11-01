@@ -21,7 +21,6 @@ ApplicationWindow {
     property var salesRecords: []
     property bool connected: false
     property var authModel: null
-    signal authenticationRequested(string username, string password, string language)
     signal salesActionRequested(string action, var records)
     signal navigationRequested(string page)
     function completeAuthentication(success, message) {

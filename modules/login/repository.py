@@ -8,16 +8,19 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from database.models.p_utilisateurs import PUtilisateurs
+from database.session import with_session
 
 
 class AuthenticationError(RuntimeError):
     """Raised when the authentication query cannot be completed."""
 
 
+@with_session()
 def authenticate_user(
-    session: Session,
     username: str,
     password: str,
+    *,
+    session: Session,
 ) -> PUtilisateurs | None:
     """Return the active user matching the credentials, if one exists."""
     try:
@@ -40,8 +43,6 @@ def authenticate_user(
             return None
 
         user.date_derniere_connexion = datetime.now(timezone.utc).replace(tzinfo=None)
-        session.commit()
         return user
     except (SQLAlchemyError, ValueError) as error:
-        session.rollback()
         raise AuthenticationError("Authentication service unavailable") from error

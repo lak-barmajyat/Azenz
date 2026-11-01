@@ -72,12 +72,11 @@ validation. Complete the request with
 `authenticated(username)`; failure displays the backend's error message.
 No credential repository or password-reset service was present in the project.
 
-At the application root, connect `authenticationRequested` to your authentication
-service, then set `authenticationAvailable = true`. Call the root's
-`completeAuthentication(success, message)` after verification. Supply
-`salesRecords` (the grid's array contract), set `connected` from the real connection
-state, and handle `salesActionRequested(action, records)` and
-`navigationRequested(page)`. Records require unique stable IDs and numeric
+The production entry creates `LoginModel`, which calls the SQLAlchemy repository
+and uses `@with_session()` for session lifecycle. It sets
+`authenticationAvailable = true` after bootstrap. Supply `salesRecords` (the
+grid's array contract), set `connected` from the real connection state, and handle
+`salesActionRequested(action, records)` and `navigationRequested(page)`. Records require unique stable IDs and numeric
 `ht`, `vat`, and `ttc` fields; see `SalesSample.js` for the shape.
 
 The sales screen exposes `actionRequested(action, records)` for new/open/edit/

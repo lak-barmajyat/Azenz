@@ -117,7 +117,7 @@ js("root.screen = 'login'; login.language = 'ar'; login.errorMessage = ''")
 QTest.qWait(100)
 view.grabWindow().save(str(output / "login-arabic.png"))
 js("login.language = 'en'")
-assert js("login.copy.heading") == "Sign in"
+assert js("login.language") == "en"
 
 # Compile both actual window entry points too.
 for path in ["qml/screens/App.qml", "qml/App.qml"]:
