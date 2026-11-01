@@ -22,6 +22,8 @@ def load_demo_data() -> None:
     with database.engine.begin() as connection:
         for statement in statements:
             statement = re.sub(r"^(?:\s*--[^\n]*(?:\n|$))+", "", statement).strip()
+            if not statement:
+                continue
             if statement.upper().startswith(("SET ", "START TRANSACTION", "COMMIT", "USE ")):
                 continue
             connection.execute(text(statement))
