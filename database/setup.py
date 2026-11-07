@@ -18,18 +18,10 @@ def load_demo_data() -> None:
     if not DEMO_DATA_FILE.exists():
         raise FileNotFoundError(f"Demo data file not found: {DEMO_DATA_FILE}")
 
-<<<<<<< HEAD
-    sql = DEMO_DATA_FILE.read_text(encoding="utf-8-sig")
-    sql = "\n".join(line for line in sql.splitlines() if not line.lstrip().startswith("--"))
-    statements = _split_sql(sql)
-    with database.engine.begin() as connection:
-        for statement in statements:
-=======
     statements = _split_sql(DEMO_DATA_FILE.read_text(encoding="utf-8-sig"))
     with database.engine.begin() as connection:
         for statement in statements:
             statement = re.sub(r"^(?:\s*--[^\n]*(?:\n|$))+", "", statement).strip()
->>>>>>> main
             if statement.upper().startswith(("SET ", "START TRANSACTION", "COMMIT", "USE ")):
                 continue
             connection.execute(text(statement))
