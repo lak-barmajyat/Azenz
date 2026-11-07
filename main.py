@@ -11,11 +11,13 @@ from services.paths import PROJECT_ROOT, QML_DIR
 
 def confirm_database_creation(database_name: str) -> bool:
     """Temporary confirmation until the QML setup dialog is implemented."""
-    answer = input(
-        f"Database '{database_name}' does not exist. "
-        "Do you want to create it? [y/N]: "
-    )
+    answer = input(f"Database '{database_name}' does not exist. Do you want to create it? [y/N]: ")
 
+    return answer.strip().lower() in {"y", "yes"}
+
+
+def confirm_demo_data() -> bool:
+    answer = input("Do you want to load fake demo data? [y/N]: ")
     return answer.strip().lower() in {"y", "yes"}
 
 
@@ -27,7 +29,8 @@ def main() -> int:
 
     try:
         config = bootstrap_application(
-            confirm_database_creation=confirm_database_creation
+            confirm_database_creation=confirm_database_creation,
+            confirm_demo_data=confirm_demo_data,
         )
     except StartupCancelled:
         logger = get_logger(__name__)

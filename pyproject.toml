@@ -13,8 +13,10 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy>=2.3.1",
+    "pymysql>=1.2.3",
     "pytest>=9.1.1",
     "ruff>=0.16.9",
+    "sqlacodegen>=4.0.4",
 ]
 
 [tool.ruff]
@@ -26,6 +28,9 @@ select = ["E", "F", "I"]
 [tool.mypy]
 ignore_missing_imports = true
 check_untyped_defs = true
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
 
 [tool.pyside6-project]
 files = [

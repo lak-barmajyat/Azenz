@@ -21,5 +21,33 @@ test:
 
 check: lint test
 
-database:
-	@python database/setup.py
+create-database:
+	@uv run python -m database.setup create
+
+destroy-database:
+	@uv run python -m database.setup destroy
+
+load-demo-data:
+	@uv run python -m database.setup demo
+
+create-migration:
+	@uv run alembic revision --autogenerate -m "initial schema"
+
+apply-migrations:
+	@uv run alembic upgrade head
+
+show-current-revision:
+	@uv run alembic current
+
+show-migration-history:
+	@uv run alembic history
+
+check-migrations:
+	@uv run alembic check
+
+win-check:
+	@uv run pyside6-project qmllint
+	@uv run ruff check .
+	@uv run ruff format --check .
+	@uv run mypy main.py modules database services
+	@uv run pytest

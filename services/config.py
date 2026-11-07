@@ -32,9 +32,7 @@ def _required(name: str) -> str:
     value = os.getenv(name)
 
     if value is None or not value.strip():
-        raise ConfigurationError(
-            f"Missing required environment variable: {name}"
-        )
+        raise ConfigurationError(f"Missing required environment variable: {name}")
 
     return value.strip()
 
