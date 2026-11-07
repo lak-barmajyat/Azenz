@@ -1,77 +1,30 @@
 import sys
 
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine
-from sqlalchemy.exc import OperationalError
-
-from modules.login.model import LoginModel
-from services.bootstrap import StartupCancelled, bootstrap_application
-from services.logger import get_logger
-from services.paths import PROJECT_ROOT, QML_DIR
-
-
-def confirm_database_creation(database_name: str) -> bool:
-    """Temporary confirmation until the QML setup dialog is implemented."""
-    answer = input(f"Database '{database_name}' does not exist. Do you want to create it? [y/N]: ")
-
-    return answer.strip().lower() in {"y", "yes"}
-
-
-def confirm_demo_data() -> bool:
-    answer = input("Do you want to load fake demo data? [y/N]: ")
-    return answer.strip().lower() in {"y", "yes"}
+from database.engine import database
+from services.application import run_application
+from services.bootstrap import bootstrap_application
+from services.logger import get_logger, setup_logging
 
 
 def main() -> int:
-    app = QGuiApplication(sys.argv)
-
-    app.setApplicationName("Azenz")
-    app.setOrganizationName("LakSoftware")
-
-    try:
-        config = bootstrap_application(
-            confirm_database_creation=confirm_database_creation,
-            confirm_demo_data=confirm_demo_data,
-        )
-    except StartupCancelled:
-        logger = get_logger(__name__)
-        logger.info("Azenz startup cancelled")
-        return 0
-    except OperationalError as error:
-        logger = get_logger(__name__)
-        logger.error(
-            "Database startup failed. Check that MySQL/MariaDB is running and "
-            "the database connection settings are correct. Details: %s",
-            error.orig,
-        )
-        return 1
-
+    setup_logging()
     logger = get_logger(__name__)
-    logger.info(
-        "Starting Azenz UI | environment=%s",
-        config.environment,
-    )
-
-    engine = QQmlApplicationEngine()
-    auth_model = LoginModel(engine)
-
-    engine.addImportPath(str(PROJECT_ROOT))
-    engine.addImportPath(str(QML_DIR))
-
-    qml_file = QML_DIR / "App.qml"
-    engine.load(QUrl.fromLocalFile(str(qml_file)))
-
-    if not engine.rootObjects():
-        logger.critical("Failed to load App.qml")
+    logger.info("Starting Azenz")
+    try:
+        bootstrap_application()
+        return run_application(sys.argv)
+    except (EOFError, KeyboardInterrupt):
+        logger.info("Startup cancelled; run Azenz again to resume setup")
         return 1
-
-    root = engine.rootObjects()[0]
-    root.setProperty("authModel", auth_model)
-    root.setProperty("authenticationAvailable", True)
-    logger.info("Azenz started successfully")
-
-    return app.exec()
+    except Exception as error:
+        logger.error(
+            "Startup failed: %s. See the log for details.",
+            (str(error).splitlines() or [type(error).__name__])[0],
+            exc_info=True,
+        )
+        return 1
+    finally:
+        database.close()
 
 
 if __name__ == "__main__":
