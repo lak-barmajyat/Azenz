@@ -22,9 +22,11 @@ def main() -> int:
         return 1
 
     login = engine.rootObjects()[0]
-    login.loginRequested.connect(login_model.authenticate)
+    login.loginRequested.connect(login_model.authenticate)  # type: ignore[attr-defined]
     login_model.authenticationCompleted.connect(
-        lambda success, message, username: login.completeAuthentication(success, message)
+        lambda success, message, username: login.completeAuthentication(  # type: ignore[attr-defined]
+            success, message
+        )
     )
     return app.exec()
 

@@ -1,9 +1,9 @@
-import os
 import sys
+
 from PySide6.QtCore import QUrl
-from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
-from PySide6.QtQuickWidgets import QQuickWidget
 from PySide6.QtQml import QQmlComponent  # Added import
+from PySide6.QtQuickWidgets import QQuickWidget
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 # Define a simple QML string to avoid external file dependencies
 QML_DATA = b"""
@@ -26,6 +26,7 @@ Rectangle {
 }
 """
 
+
 def main():
     app = QApplication(sys.argv)
 
@@ -43,34 +44,34 @@ def main():
     widget_panel = QWidget()
     widget_layout = QVBoxLayout(widget_panel)
     widget_layout.setContentsMargins(0, 0, 0, 0)
-    
+
     label = QLabel("I am a native Qt Widget Label")
     label.setStyleSheet("font-size: 14px; font-weight: bold;")
-    
+
     button = QPushButton("Native Click Me Button")
     button.setMinimumHeight(40)
-    
+
     widget_layout.addWidget(label)
     widget_layout.addWidget(button)
     widget_layout.addStretch()
 
     # 4. Right Side: Embedded QML Surface
     qml_container = QQuickWidget()
-    
+
     # --- FIXED SECTION ---
     # Retrieve the inner engine from the container to compile our bytes
     engine = qml_container.engine()
-    
+
     component = QQmlComponent(engine)
     component.setData(QML_DATA, QUrl())
-    
+
     # Create the top-level QML visual object instance
     root_object = component.create()
-    
+
     # Supply all three required arguments to setContent
     qml_container.setContent(QUrl(), component, root_object)
     # ---------------------
-    
+
     qml_container.setResizeMode(QQuickWidget.ResizeMode.SizeRootObjectToView)
 
     # 5. Add both sides into the unified window layout
@@ -78,8 +79,9 @@ def main():
     main_layout.addWidget(qml_container, stretch=1)
 
     main_window.show()
-    sys.argv = [sys.argv[0]] # Clean arguments for safety
+    sys.argv = [sys.argv[0]]  # Clean arguments for safety
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()

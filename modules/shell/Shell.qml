@@ -4,6 +4,7 @@ ShellView {
     id: root
     property string currentPage: "dashboard"
     property var pageData: []
+    property var sales: pageLoader.item
     signal pageRequested(string page)
 
     Loader {

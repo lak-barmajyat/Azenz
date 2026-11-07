@@ -2,6 +2,7 @@
 
 Run directly with Python (PySide6 required); no database or pytest required.
 """
+
 import os
 from pathlib import Path
 
@@ -11,11 +12,11 @@ os.environ.setdefault("QT_QPA_FONTDIR", str(ROOT / "resources/fonts"))
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
 os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
 
-from PySide6.QtCore import QPoint, Qt, QUrl, qInstallMessageHandler
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlEngine, QQmlExpression
-from PySide6.QtQuick import QQuickView
-from PySide6.QtTest import QTest
+from PySide6.QtCore import QPoint, Qt, QUrl, qInstallMessageHandler  # noqa: E402
+from PySide6.QtGui import QGuiApplication  # noqa: E402
+from PySide6.QtQml import QQmlEngine, QQmlExpression  # noqa: E402
+from PySide6.QtQuick import QQuickView  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
 
 
 def main():
@@ -149,7 +150,10 @@ def main():
     QTest.qWait(650)
     assert js("toasts.notifications.length") == 0
     assert not messages, "\n".join(messages)
-    print("PASS: density, dates, numeric input, searchable selection, grid keyboard/pointer/resize, sorting, dialog focus, calendar and toast queue")
+    print(
+        "PASS: density, dates, numeric input, searchable selection, grid keyboard/pointer/resize, "
+        "sorting, dialog focus, calendar and toast queue"
+    )
 
 
 if __name__ == "__main__":

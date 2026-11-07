@@ -30,6 +30,9 @@ select = ["E", "F", "I"]
 ignore_missing_imports = true
 check_untyped_defs = true
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [tool.pyside6-project]
 files = [
     "main.py",

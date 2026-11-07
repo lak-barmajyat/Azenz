@@ -16,9 +16,7 @@ def main() -> int:
     model = VentesModel(engine)
     engine.rootContext().setContextProperty("ventesModel", model)
     engine.load(
-        QUrl.fromLocalFile(
-            str(PROJECT_ROOT / "modules" / "ventes" / "liste_ventes" / "Ventes.qml")
-        )
+        QUrl.fromLocalFile(str(PROJECT_ROOT / "modules" / "ventes" / "liste_ventes" / "Ventes.qml"))
     )
     if not engine.rootObjects():
         return 1

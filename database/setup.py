@@ -18,9 +18,7 @@ def load_demo_data() -> None:
         raise FileNotFoundError(f"Demo data file not found: {DEMO_DATA_FILE}")
 
     sql = DEMO_DATA_FILE.read_text(encoding="utf-8-sig")
-    sql = "\n".join(
-        line for line in sql.splitlines() if not line.lstrip().startswith("--")
-    )
+    sql = "\n".join(line for line in sql.splitlines() if not line.lstrip().startswith("--"))
     statements = _split_sql(sql)
     with database.engine.begin() as connection:
         for statement in statements:

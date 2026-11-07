@@ -22,11 +22,13 @@ ApplicationWindow {
     property bool authenticationAvailable: false
     property bool signedIn: false
     property var salesRecords: []
+    property alias sales: shell.sales
     property bool connected: false
     property var authModel: null
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
     signal navigationRequested(string page)
+    onCurrentPageChanged: shell.currentPage = currentPage
     function completeAuthentication(success, message) {
         login.completeAuthentication(success, message);
     }

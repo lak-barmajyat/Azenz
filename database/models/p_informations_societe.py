@@ -1,18 +1,32 @@
-from typing import Optional
-import datetime
-import decimal
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import CHAR, Computed, DECIMAL, DateTime, Enum, ForeignKeyConstraint, Index, String, TIMESTAMP, Text, text
-from sqlalchemy.dialects.mysql import BIGINT, INTEGER, TINYINT
+from sqlalchemy import (
+    CHAR,
+    ForeignKeyConstraint,
+    Index,
+    String,
+    text,
+)
+from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
 
+if TYPE_CHECKING:
+    from database.models import PTvas
+
+
 class PInformationsSociete(Base):
-    __tablename__ = 'p_informations_societe'
+    __tablename__ = "p_informations_societe"
     __table_args__ = (
-        ForeignKeyConstraint(['tva_id'], ['p_tvas.id'], ondelete='SET NULL', onupdate='CASCADE', name='fk_infos_societe_tva'),
-        Index('idx_tva', 'tva_id')
+        ForeignKeyConstraint(
+            ["tva_id"],
+            ["p_tvas.id"],
+            ondelete="SET NULL",
+            onupdate="CASCADE",
+            name="fk_infos_societe_tva",
+        ),
+        Index("idx_tva", "tva_id"),
     )
 
     id: Mapped[int] = mapped_column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
@@ -36,4 +50,4 @@ class PInformationsSociete(Base):
     logo_url: Mapped[Optional[str]] = mapped_column(String(500))
     tva_id: Mapped[Optional[int]] = mapped_column(BIGINT(unsigned=True))
 
-    tva: Mapped[Optional['PTvas']] = relationship('PTvas', back_populates='p_informations_societe')
+    tva: Mapped[Optional["PTvas"]] = relationship("PTvas", back_populates="p_informations_societe")

@@ -1,4 +1,5 @@
 """Compile, render, and exercise both HTML-derived screens without a database."""
+
 import os
 from pathlib import Path
 
@@ -8,11 +9,11 @@ os.environ.setdefault("QT_QPA_FONTDIR", str(ROOT / "resources/fonts"))
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
 os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
 
-from PySide6.QtCore import QPoint, Qt, QUrl, qInstallMessageHandler
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlEngine, QQmlExpression, QQmlComponent
-from PySide6.QtQuick import QQuickView
-from PySide6.QtTest import QTest
+from PySide6.QtCore import QPoint, Qt, QUrl, qInstallMessageHandler  # noqa: E402
+from PySide6.QtGui import QGuiApplication  # noqa: E402
+from PySide6.QtQml import QQmlComponent, QQmlEngine, QQmlExpression  # noqa: E402
+from PySide6.QtQuick import QQuickView  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
 
 app = QGuiApplication([])
 messages = []
@@ -21,12 +22,13 @@ view = QQuickView()
 view.engine().addImportPath(str(ROOT / "qml"))
 view.setResizeMode(QQuickView.SizeRootObjectToView)
 view.setSource(QUrl.fromLocalFile(str(ROOT / "qml/screens/ScreensPreview.qml")))
-assert view.status() != QQuickView.Error, '\n'.join(e.toString() for e in view.errors())
+assert view.status() != QQuickView.Error, "\n".join(e.toString() for e in view.errors())
 view.resize(1600, 1000)
 view.show()
 QTest.qWait(250)
 root = view.rootObject()
 context = QQmlEngine.contextForObject(root)
+
 
 def js(code):
     expression = QQmlExpression(context, root, code)
@@ -36,6 +38,7 @@ def js(code):
     app.processEvents()
     return value.toVariant() if hasattr(value, "toVariant") else value
 
+
 def wait_sidebar_width(expected):
     # Animation frame scheduling can take longer on a busy/offscreen renderer.
     for _ in range(30):
@@ -43,6 +46,7 @@ def wait_sidebar_width(expected):
             return
         QTest.qWait(50)
     raise AssertionError(f"Sidebar did not settle at {expected}")
+
 
 output = ROOT / "build/screens-preview"
 output.mkdir(parents=True, exist_ok=True)
@@ -59,10 +63,14 @@ assert js("ventes.totalTTC") == 259320
 QTest.qWait(150)
 view.grabWindow().save(str(output / "ventes.png"))
 for field in ("fromDate", "toDate"):
-    point = js(f"ventes.{field}.mapToItem(null, ventes.{field}.width - 15, ventes.{field}.height / 2)")
+    point = js(
+        f"ventes.{field}.mapToItem(null, ventes.{field}.width - 15, ventes.{field}.height / 2)"
+    )
     QTest.mouseClick(view, Qt.LeftButton, Qt.NoModifier, QPoint(round(point.x()), round(point.y())))
     QTest.qWait(100)
-    assert js(f"ventes.{field}.calendarPopup.visible"), f"{field} calendar did not open from its icon"
+    assert js(f"ventes.{field}.calendarPopup.visible"), (
+        f"{field} calendar did not open from its icon"
+    )
     assert js(f"ventes.{field}.calendarPopup.activeFocus"), "Calendar must retain keyboard focus"
     QTest.keyClick(view, Qt.Key_Escape)
     assert not js(f"ventes.{field}.calendarPopup.visible")
@@ -119,19 +127,30 @@ assert js("login.language") == "fr"
 # Compile both actual window entry points too.
 for path in ["qml/screens/App.qml", "qml/App.qml"]:
     component = QQmlComponent(view.engine(), QUrl.fromLocalFile(str(ROOT / path)))
-    assert not component.isError(), '\n'.join(e.toString() for e in component.errors())
+    assert not component.isError(), "\n".join(e.toString() for e in component.errors())
     window = component.createWithInitialProperties({"visible": False})
-    assert window is not None, '\n'.join(e.toString() for e in component.errors())
+    assert window is not None, "\n".join(e.toString() for e in component.errors())
     if path == "qml/App.qml":
         scope = QQmlEngine.contextForObject(window)
-        attempt = QQmlExpression(scope, window, "login.username = 'unverified'; login.password = 'anything'; login.submit()")
+        attempt = QQmlExpression(
+            scope,
+            window,
+            "login.username = 'unverified'; login.password = 'anything'; login.submit()",
+        )
         attempt.evaluate()
         assert not attempt.hasError(), attempt.error().toString()
-        assert not window.property("signedIn"), "Production must not use the preview authentication bypass"
-        denied = QQmlExpression(scope, window, "login.errorMessage.length > 0 && login.password === '' && !login.busy")
+        assert not window.property("signedIn"), (
+            "Production must not use the preview authentication bypass"
+        )
+        denied = QQmlExpression(
+            scope, window, "login.errorMessage.length > 0 && login.password === '' && !login.busy"
+        )
         assert denied.evaluate()[0]
     window.deleteLater()
 
-assert not messages, '\n'.join(messages)
-print("PASS: both screens compile/render; login validation, preview navigation, language, filters, totals, selection and cancel tested.")
+assert not messages, "\n".join(messages)
+print(
+    "PASS: both screens compile/render; login validation, preview navigation, language, filters, "
+    "totals, selection and cancel tested."
+)
 print(f"Screenshots: {output}")

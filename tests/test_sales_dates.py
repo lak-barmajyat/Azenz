@@ -1,13 +1,16 @@
 """Exercise sales date fields through actual ApplicationWindow mouse/keyboard input."""
+
 import os
 from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
-os.environ.setdefault("QT_QPA_FONTDIR", str(Path(__file__).resolve().parents[1] / "resources/fonts"))
+os.environ.setdefault(
+    "QT_QPA_FONTDIR", str(Path(__file__).resolve().parents[1] / "resources/fonts")
+)
 from PySide6.QtCore import QPoint, Qt, QUrl, qInstallMessageHandler
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine, QQmlExpression, QQmlEngine
+from PySide6.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlExpression
 from PySide6.QtTest import QTest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +23,7 @@ engine.load(QUrl.fromLocalFile(str(ROOT / "qml/App.qml")))
 window = engine.rootObjects()[0]
 scope = QQmlEngine.contextForObject(window)
 
+
 def js(code):
     expression = QQmlExpression(scope, window, code)
     value = expression.evaluate()
@@ -28,12 +32,17 @@ def js(code):
     app.processEvents()
     return value.toVariant() if hasattr(value, "toVariant") else value
 
+
 def click(point):
-    QTest.mouseClick(window, Qt.LeftButton, Qt.NoModifier,
-                     QPoint(round(point.x()), round(point.y())))
+    QTest.mouseClick(
+        window, Qt.LeftButton, Qt.NoModifier, QPoint(round(point.x()), round(point.y()))
+    )
     QTest.qWait(80)
 
+
 js("app.signedIn = true")
+js("app.currentPage = 'sales'")
+QTest.qWait(100)
 for width, height in [(1600, 1000), (1200, 700)]:
     window.resize(width, height)
     QTest.qWait(150)
@@ -71,8 +80,13 @@ for width, height in [(1600, 1000), (1200, 700)]:
         QTest.qWait(50)
         assert js(f"!{f}.hasValue && {f}.text === ''")
         key = "from" if field == "fromDate" else "to"
-        assert js(f"sales.appliedFilters.{key} === null"), "Clearing must remove the active date filter"
+        assert js(f"sales.appliedFilters.{key} === null"), (
+            "Clearing must remove the active date filter"
+        )
 
 assert not messages, "\n".join(messages)
-print("PASS: both sales dates open/select by mouse, resync after typing, and clear filters at both window sizes")
+print(
+    "PASS: both sales dates open/select by mouse, resync after typing, and clear filters at "
+    "both window sizes"
+)
 window.close()

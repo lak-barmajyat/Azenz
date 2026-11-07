@@ -3,6 +3,7 @@
 python preview_screens.py          # Login, then demo navigation to ventes
 python preview_screens.py --ventes  # Ventes directly
 """
+
 import os
 import sys
 from pathlib import Path

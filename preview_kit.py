@@ -1,4 +1,5 @@
 """Launch the QML component gallery without starting the ERP/database."""
+
 import os
 import sys
 from pathlib import Path

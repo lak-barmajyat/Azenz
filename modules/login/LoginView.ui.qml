@@ -122,8 +122,8 @@ Rectangle {
                 y: 40
                 spacing: 8
                 Rectangle {
-                    width: 10
-                    height: 10
+                    Layout.preferredWidth: 10
+                    Layout.preferredHeight: 10
                     radius: 5
                     color: Colors.accent
                 }
@@ -172,7 +172,7 @@ Rectangle {
                 Rectangle {
                     color: "#1AFFFFFF"
                     Layout.fillWidth: true
-                    height: 1
+                    Layout.preferredHeight: 1
                 }
                 RowLayout {
                     Layout.fillWidth: true

@@ -62,11 +62,7 @@ def bootstrap_application(
     schema_created = run_migrations()
 
     # Offer demo data for a new database or an existing database missing its schema.
-    if (
-        (database_created or schema_created)
-        and DEMO_DATA_FILE.exists()
-        and confirm_demo_data()
-    ):
+    if (database_created or schema_created) and DEMO_DATA_FILE.exists() and confirm_demo_data():
         load_demo_data()
 
     # Sessions must be configured after the database engine is ready.
