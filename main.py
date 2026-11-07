@@ -3,6 +3,7 @@ import sys
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
+from sqlalchemy.exc import OperationalError
 
 from modules.login.model import LoginModel
 from services.bootstrap import StartupCancelled, bootstrap_application
@@ -37,6 +38,14 @@ def main() -> int:
         logger = get_logger(__name__)
         logger.info("Azenz startup cancelled")
         return 0
+    except OperationalError as error:
+        logger = get_logger(__name__)
+        logger.error(
+            "Database startup failed. Check that MySQL/MariaDB is running and "
+            "the database connection settings are correct. Details: %s",
+            error.orig,
+        )
+        return 1
 
     logger = get_logger(__name__)
     logger.info(

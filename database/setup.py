@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 
 from database.engine import (
     create_database,
@@ -69,7 +70,16 @@ def main() -> None:
     action = sys.argv[1]
 
     if action == "create":
-        create_database(config)
+        try:
+            create_database(config)
+        except OperationalError as error:
+            print(
+                "Database creation failed. Check that MySQL/MariaDB is running and "
+                "the database connection settings are correct. "
+                f"Details: {error.orig}",
+                file=sys.stderr,
+            )
+            raise SystemExit(1) from None
         return
 
     if action == "demo":
