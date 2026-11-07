@@ -1,0 +1,362 @@
+MetaInfo {
+    Type {
+        name: "components.ApplicationMenuBar"
+        ItemLibraryEntry {
+            name: "ApplicationMenuBar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.AzenzDialog"
+        ItemLibraryEntry {
+            name: "AzenzDialog"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Badge"
+        ItemLibraryEntry {
+            name: "Badge"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.BottomBrandingArea"
+        ItemLibraryEntry {
+            name: "BottomBrandingArea"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Breadcrumb"
+        ItemLibraryEntry {
+            name: "Breadcrumb"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ColumnResizeHandle"
+        ItemLibraryEntry {
+            name: "ColumnResizeHandle"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.CompactToolbar"
+        ItemLibraryEntry {
+            name: "CompactToolbar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.CompanyIdentityArea"
+        ItemLibraryEntry {
+            name: "CompanyIdentityArea"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ConnectionIndicator"
+        ItemLibraryEntry {
+            name: "ConnectionIndicator"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ContextMenu"
+        ItemLibraryEntry {
+            name: "ContextMenu"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ContextMenuItem"
+        ItemLibraryEntry {
+            name: "ContextMenuItem"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGrid"
+        ItemLibraryEntry {
+            name: "DataGrid"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridCell"
+        ItemLibraryEntry {
+            name: "DataGridCell"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridFooter"
+        ItemLibraryEntry {
+            name: "DataGridFooter"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridHeader"
+        ItemLibraryEntry {
+            name: "DataGridHeader"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridHeaderCell"
+        ItemLibraryEntry {
+            name: "DataGridHeaderCell"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridRow"
+        ItemLibraryEntry {
+            name: "DataGridRow"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DataGridSelectionCell"
+        ItemLibraryEntry {
+            name: "DataGridSelectionCell"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DocumentTypeBadge"
+        ItemLibraryEntry {
+            name: "DocumentTypeBadge"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DropdownMenu"
+        ItemLibraryEntry {
+            name: "DropdownMenu"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.DropdownMenuItem"
+        ItemLibraryEntry {
+            name: "DropdownMenuItem"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.EmptyState"
+        ItemLibraryEntry {
+            name: "EmptyState"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.InlineBanner"
+        ItemLibraryEntry {
+            name: "InlineBanner"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Logo"
+        ItemLibraryEntry {
+            name: "Logo"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.MenuSeparator"
+        ItemLibraryEntry {
+            name: "MenuSeparator"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.MetricCard"
+        ItemLibraryEntry {
+            name: "MetricCard"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.OverflowMenuButton"
+        ItemLibraryEntry {
+            name: "OverflowMenuButton"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.PageActionToolbar"
+        ItemLibraryEntry {
+            name: "PageActionToolbar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Popover"
+        ItemLibraryEntry {
+            name: "Popover"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Sidebar"
+        ItemLibraryEntry {
+            name: "Sidebar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.SidebarGroup"
+        ItemLibraryEntry {
+            name: "SidebarGroup"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.SidebarItem"
+        ItemLibraryEntry {
+            name: "SidebarItem"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Skeleton"
+        ItemLibraryEntry {
+            name: "Skeleton"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.StatusBar"
+        ItemLibraryEntry {
+            name: "StatusBar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.Toast"
+        ItemLibraryEntry {
+            name: "Toast"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ToastHost"
+        ItemLibraryEntry {
+            name: "ToastHost"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ToolbarGroup"
+        ItemLibraryEntry {
+            name: "ToolbarGroup"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ToolbarSeparator"
+        ItemLibraryEntry {
+            name: "ToolbarSeparator"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.ToolbarUtilityButton"
+        ItemLibraryEntry {
+            name: "ToolbarUtilityButton"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+    Type {
+        name: "components.WindowTitleBar"
+        ItemLibraryEntry {
+            name: "WindowTitleBar"
+            category: "AZENZ / Components"
+            version: "1.0"
+            requiredImport: "components"
+        }
+    }
+}

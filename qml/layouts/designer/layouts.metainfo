@@ -1,0 +1,29 @@
+MetaInfo {
+    Type {
+        name: "layouts.DensityScope"
+        ItemLibraryEntry {
+            name: "DensityScope"
+            category: "AZENZ / Layouts"
+            version: "1.0"
+            requiredImport: "layouts"
+        }
+    }
+    Type {
+        name: "layouts.DesktopShell"
+        ItemLibraryEntry {
+            name: "DesktopShell"
+            category: "AZENZ / Layouts"
+            version: "1.0"
+            requiredImport: "layouts"
+        }
+    }
+    Type {
+        name: "layouts.Panel"
+        ItemLibraryEntry {
+            name: "Panel"
+            category: "AZENZ / Layouts"
+            version: "1.0"
+            requiredImport: "layouts"
+        }
+    }
+}

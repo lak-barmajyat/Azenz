@@ -1,0 +1,37 @@
+{
+  "source_document": "stitch_azenz_erp_ventes_interface/code.html",
+  "assets": [
+    {
+      "path": "resources/images/azenz-light.png",
+      "source": "https://lh3.googleusercontent.com/aida-public/AB6AXuD-JZ06Tj6SowSy_s3sV7DIAICG8Yy7mRtqSkC0IJs5hIJqqcfku-EowMW7sDIXz5ZOXhnC9yHMk60LaKMV0h8AsDCp-Gsf0hVOA6NzeJl0SpcyZtkah_R1a9Jfdg5iJ12fRezqqIMiN5BPpQCYwCmH0lrmydtagqCFShYPDsU9Amz43yzyl-asS99D1gQLujSXYkr1cp1kGu8L2vzh-ACmbOzAuDYqO73GaOUp1RcW1XGZFzKicc5ZjuSAYXJhAl0tag",
+      "sha256": "8905281c9d1e21ad911145d32efbe8dbdfaee6fbf33a31d2dc74de7ee7aa4693"
+    },
+    {
+      "path": "resources/images/azenz-dark.png",
+      "source": "https://lh3.googleusercontent.com/aida-public/AB6AXuBylq_4BkOBf6IL_CNC-0NMwOdPiG1JqE13P-PVRazLx3dvaPVz896fJV6qL1rDkTKHiMZQMJGgprfIfSnkzSddbx7ltA_66GuafiLfHs4DUmSz-CBYfGza2H2BUEEkosSUJs0G-auG8u0fDDhZy92zOve3CtnG_JfA403Iyu7okxjqje_1rViKi-qTyTbiLvDfxd9nLT9r5iEgZbW9IeF1RYQqad77NmmZTunuZz7g4L-gowPa9n84SLy-NfxwdzsRUA",
+      "sha256": "3fa9c6ccbdbfb93b76e2ba6f2509ef4f3d3d378439deb19df5f3143d44fd46f3"
+    },
+    {
+      "path": "resources/images/azenz-symbol.png",
+      "source": "https://lh3.googleusercontent.com/aida-public/AB6AXuDW0M-eg3KNdj3Cm-8Fw40_9_UkeAnaHFYWGryQyqFltjUI06vTZ8PfPhDh7k0XH1GfiienkKAC2fuPBaQAwN5Pc7g6SonFSlHRSJaI1Phl3sHJJui2D_7YRiLjvwKS1fVosd2lJK2cYsCaOV__NU44h-hSeqCoiRx5t0IKOC4upqEesb97mNLfnv8IYWeGMroCordRnBW3Th6usf33r1xy7KT_c6G4f-GonUjOaKDwEyOaxhhez5E6-zXPen7yhSP0jQ",
+      "sha256": "3e374308f2f3486e2c636afe5578c096dbf81e3e1ca3c1ffb4d10126406c1a19"
+    },
+    {
+      "path": "resources/images/azenz-monochrome.png",
+      "source": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdAKl8bp3G9g4-bOXLGWbl2AcXw1mKxyNK-Pl5GwPMw9qEKsY2S_CxNapqJ9vSI4IGgEwQ8z2FAlgsVuYiHhpvk4eaA177TQlUZE8DDEHoF-9g1354KcmF_Z0g7AXjsNmAPcG4NLKCOUwfbMLsQofN7CtRXLR0BxWHVPh6mP_YAzP_IVZBn2ga0xxgXotOgyrL5sEFfNhtHy0pibFL9-R-gm67HurG2gxpgc9AqNtHNV1BnwfmZxwVr5izd13tpDESpw",
+      "sha256": "8905281c9d1e21ad911145d32efbe8dbdfaee6fbf33a31d2dc74de7ee7aa4693"
+    },
+    {
+      "path": "resources/fonts/Inter.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/inter/Inter%5Bopsz,wght%5D.ttf",
+      "license": "resources/fonts/Inter-OFL.txt",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+    },
+    {
+      "path": "resources/fonts/NotoSansArabic.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/NotoSansArabic%5Bwdth,wght%5D.ttf",
+      "license": "resources/fonts/NotoSansArabic-OFL.txt",
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+    }
+  ]
+}

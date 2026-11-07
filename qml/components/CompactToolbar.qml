@@ -1,0 +1,3 @@
+PageActionToolbar {
+    density: "compact"
+}

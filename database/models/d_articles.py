@@ -19,12 +19,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models.d_document_lignes import DDocumentLignes
-    from database.models.d_familles import DFamilles
-    from database.models.d_mouvements_stock import DMouvementsStock
-    from database.models.d_stock import DStock
-    from database.models.p_tvas import PTvas
-    from database.models.p_utilisateurs import PUtilisateurs
+    from database.models import (
+        DDocumentLignes,
+        DFamilles,
+        DMouvementsStock,
+        DStock,
+        PTvas,
+        PUtilisateurs,
+    )
 
 
 class DArticlesTypeArticle(str, enum.Enum):
