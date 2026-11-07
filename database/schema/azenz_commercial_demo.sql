@@ -1,12 +1,9 @@
 -- Azenz realistic Moroccan demonstration dataset (2026).
 -- DEMO ONLY: company details are fictional; no valid tax IDs or real contact details.
--- Demo user accounts have DISABLED login hashes; reset passwords in application before login.
--- Target: EMPTY database created from azenz_commercial(3).sql.
+-- Demo users are inactive Merchants with disabled hashes. Setup creates the real Manager separately.
+-- Target: EMPTY application tables created by Alembic revision 0001.
 -- Do NOT run twice. No table creation or deletion included.
 -- All document and stock/payment totals precomputed consistently.
-SET NAMES utf8mb4;
-USE `azenz_commercial`;
-START TRANSACTION;
 
 -- p_types_documents: 6 rows
 INSERT INTO `p_types_documents` (`id`, `code_type_document`, `nom_type_document`, `domaine`, `sens_stock`, `impacte_stock`, `impacte_reglement`, `actif`) VALUES
@@ -28,11 +25,11 @@ INSERT INTO `p_numerotation_documents` (`id`, `type_document_id`, `prefixe`, `an
 
 -- p_utilisateurs: 5 rows
 INSERT INTO `p_utilisateurs` (`id`, `nom_utilisateur`, `email`, `telephone`, `mot_de_passe_hash`, `role`, `date_derniere_connexion`, `actif`) VALUES
-(1, 'admin', 'yassine.elamrani@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MANAGER', NULL, 1),
-(2, 'salma.bennani', 'salma.bennani@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MANAGER', NULL, 1),
-(3, 'hamza.alaoui', 'hamza.alaoui@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MERCHANT', NULL, 1),
-(4, 'imane.tazi', 'imane.tazi@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MERCHANT', NULL, 1),
-(5, 'soufiane.belkadi', 'soufiane.belkadi@example.com', NULL, '$2b$12$ZPkb3v5W0caKpiT5miNXGecUDGbavIJdcwuPiPiDM3vW4bJIl7RF2', 'MERCHANT', NULL, 1);
+(1, 'demo.admin', 'yassine.elamrani@example.com', NULL, '!disabled', 'MERCHANT', NULL, 0),
+(2, 'salma.bennani', 'salma.bennani@example.com', NULL, '!disabled', 'MERCHANT', NULL, 0),
+(3, 'hamza.alaoui', 'hamza.alaoui@example.com', NULL, '!disabled', 'MERCHANT', NULL, 0),
+(4, 'imane.tazi', 'imane.tazi@example.com', NULL, '!disabled', 'MERCHANT', NULL, 0),
+(5, 'soufiane.belkadi', 'soufiane.belkadi@example.com', NULL, '!disabled', 'MERCHANT', NULL, 0);
 
 -- p_tvas: 5 rows
 INSERT INTO `p_tvas` (`id`, `code_tva`, `nom_tva`, `taux`) VALUES
@@ -1664,5 +1661,3 @@ INSERT INTO `d_mouvements_stock` (`id`, `article_id`, `document_id`, `document_l
 (248, 84, 81, 242, 'SORTIE', 'OUT', 8, '2026-06-10 11:40:00', 'Mouvement lié au BL 81', 3, '2026-06-10 11:40:00'),
 (249, 108, 89, 265, 'SORTIE', 'OUT', 4, '2026-07-16 12:45:00', 'Mouvement lié au BL 89', 3, '2026-07-16 12:45:00'),
 (250, 33, 91, 271, 'SORTIE', 'OUT', 7, '2026-02-11 16:10:00', 'Mouvement lié au BL 91', 3, '2026-02-11 16:10:00');
-
-COMMIT;
