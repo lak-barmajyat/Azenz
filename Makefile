@@ -21,20 +21,14 @@ test:
 
 check: lint test
 
-create-database:
-	@uv run python -m database.setup create
-
-destroy-database:
-	@uv run python -m database.setup destroy
-
-load-demo-data:
-	@uv run python -m database.setup demo
+init-database create-database:
+	@uv run python -m database.setup init
 
 create-migration:
 	@uv run alembic revision --autogenerate -m "initial schema"
 
 apply-migrations:
-	@uv run alembic upgrade head
+	@uv run python -m database.setup init
 
 show-current-revision:
 	@uv run alembic current

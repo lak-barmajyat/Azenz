@@ -17,9 +17,10 @@ I18N_DIR = PROJECT_ROOT / "i18n"
 def app_data_dir() -> Path:
     """Return the writable OS-specific Azenz data directory."""
     path = Path(
-        QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppLocalDataLocation)
+        QStandardPaths.writableLocation(QStandardPaths.StandardLocation.GenericDataLocation)
     )
 
+    path = path / "Azenz"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
