@@ -19,7 +19,8 @@ ApplicationWindow {
     }
     ScreensPreview {
         anchors.fill: parent
-        screen: Qt.application.arguments.indexOf("--nouveau-document") >= 0 ? "new-document"
+        screen: Qt.application.arguments.indexOf("--reglements") >= 0 ? "payments"
+                : Qt.application.arguments.indexOf("--nouveau-document") >= 0 ? "new-document"
                 : Qt.application.arguments.indexOf("--ventes") >= 0 ? "ventes" : "login"
         onCloseRequested: window.close()
         onMinimizeRequested: window.showMinimized()

@@ -1,0 +1,12 @@
+.pragma library
+
+var rows = [
+    {id: 192, category: "clients", code: "REG-2025-0192", tierCode: "CL-00101", tier: "SARL Atlas Distribution (CL-00101)", mode: "Virement Bancaire", status: "Validé", statusVariant: "success", date: "14/08/2025", amount: 35500, comment: "Acompte à la commande par virement (Attestation #V-8941)", affected: true},
+    {id: 193, category: "clients", code: "REG-2025-0193", tierCode: "CL-00142", tier: "Electro Maroc Tech SARL (CL-00142)", mode: "Traite", status: "En attente", statusVariant: "warning", date: "14/09/2025", amount: 28200, comment: "Solde convenu à livraison / échéance 30j", affected: true},
+    {id: 194, category: "clients", code: "REG-2025-0194", tierCode: "CL-00088", tier: "Comptoir Marocain d'équipement (CL-00088)", mode: "Chèque", status: "Validé", statusVariant: "success", date: "12/08/2025", amount: 18450, comment: "Chèque n° 884012 encaissé - Facture FA-2025-0792", affected: true},
+    {id: 195, category: "clients", code: "REG-2025-0195", tierCode: "CL-00204", tier: "Société Générale de Bâtiment (CL-00204)", mode: "Virement Bancaire", status: "Validé", statusVariant: "success", date: "10/08/2025", amount: 15000, comment: "Règlement partiel commande gros œuvre #COM-441", affected: true},
+    {id: 196, category: "clients", code: "REG-2025-0196", tierCode: "CL-00055", tier: "Batipro Casablanca (CL-00055)", mode: "Espèces", status: "Brouillon", statusVariant: "neutral", date: "08/08/2025", amount: 12450, comment: "Reçu de caisse temporaire en attente de validation comptable", affected: false},
+    {id: 210, category: "fournisseurs", code: "REG-2025-0210", tierCode: "FR-00102", tier: "Câbleries du Maroc SA (FR-00102)", mode: "Virement Bancaire", status: "Validé", statusVariant: "success", date: "18/08/2025", amount: 42800, comment: "Acompte commande composants cuivre - Facture FA-FR-889", affected: true},
+    {id: 211, category: "fournisseurs", code: "REG-2025-0211", tierCode: "FR-00045", tier: "Maghreb Outillage Industriel (FR-00045)", mode: "Traite", status: "En attente", statusVariant: "warning", date: "25/08/2025", amount: 18500, comment: "Traite à échéance 60j - Remplacement outillage atelier", affected: false},
+    {id: 212, category: "fournisseurs", code: "REG-2025-0212", tierCode: "FR-00078", tier: "Société Marocaine d'Emballage (FR-00078)", mode: "Chèque", status: "Validé", statusVariant: "success", date: "10/08/2025", amount: 7650, comment: "Chèque n° 458921 encaissé - Fourniture cartons & palettes", affected: true}
+];

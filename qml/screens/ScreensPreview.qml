@@ -49,7 +49,7 @@ Item {
         onPageRequested: function (page) {
             root.screen = page === "sales" ? "ventes"
                           : page === "sales/new" ? "new-document" : page;
-            if (page !== "sales" && page !== "sales/new" && page !== "dashboard")
+            if (page !== "sales" && page !== "sales/new" && page !== "payments" && page !== "dashboard")
                 notices.show(qsTr("Navigation : %1").arg(page),
                              qsTr("Ce module n'est pas inclus dans cet aperçu."), "info");
         }
@@ -72,6 +72,10 @@ Item {
         onDocumentSaveRequested: function (document) {
             notices.show(qsTr("Document prêt à enregistrer"),
                          qsTr("Aperçu local : aucun document réel n'a été enregistré."), "info");
+        }
+        onPaymentActionRequested: function (action, records) {
+            notices.show(qsTr("Action règlement : %1").arg(action),
+                         qsTr("Aperçu local : aucun règlement réel n'a été modifié."), "info");
         }
     }
     ToastHost {

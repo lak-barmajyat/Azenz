@@ -9,6 +9,7 @@ QtObject {
             "minus": '<path d="M5 12h14"/>',
             "maximize": '<rect x="5" y="5" width="14" height="14" rx="1"/>',
             "search": '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+            "filter": '<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
             "edit": '<path d="m15 4 5 5M4 20l5-1L20 8a3 3 0 0 0-4-4L5 15z"/>',
             "delete": '<path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/>',
             "copy": '<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',

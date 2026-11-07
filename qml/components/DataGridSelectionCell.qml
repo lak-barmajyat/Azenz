@@ -17,6 +17,6 @@ Item {
         nextCheckState: function () {
             return checkState === Qt.Checked ? Qt.Unchecked : Qt.Checked;
         }
-        onToggled: root.toggled()
+        onClicked: root.toggled()
     }
 }
