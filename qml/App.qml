@@ -27,6 +27,7 @@ ApplicationWindow {
     property var authModel: null
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
+    signal documentSaveRequested(var document)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
     function completeAuthentication(success, message) {
@@ -64,7 +65,13 @@ ApplicationWindow {
         userName: "Mohammed"
         connected: app.connected
         pageData: app.salesRecords
-        onPageRequested: app.currentPage = page
+        onPageRequested: function(page) { app.currentPage = page; }
+        onSalesActionRequested: function (action, records) {
+            app.salesActionRequested(action, records);
+        }
+        onDocumentSaveRequested: function (document) {
+            app.documentSaveRequested(document);
+        }
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()

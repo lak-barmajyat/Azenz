@@ -1,6 +1,6 @@
 import QtQuick
 import "../../modules/login" as LoginModule
-import "../../modules/ventes/liste_ventes" as VentesModule
+import "../../modules/shell" as ShellModule
 import "../../modules/ventes/liste_ventes/VentesSample.js" as Sample
 import "../components"
 
@@ -9,6 +9,9 @@ Item {
     width: 1600
     height: 1000
     property string screen: "login"
+    onScreenChanged: if (screen !== "login")
+        shell.currentPage = screen === "ventes" ? "sales"
+                            : screen === "new-document" ? "sales/new" : screen
     signal closeRequested
     signal minimizeRequested
     signal maximizeRequested
@@ -22,44 +25,53 @@ Item {
             login.completeAuthentication(true, "");
         }
         onAuthenticated: function (username) {
-            sales.userName = username;
-            root.screen = "sales";
+            shell.userName = username;
+            root.screen = "ventes";
         }
         onQuitRequested: root.closeRequested()
         onMinimizeRequested: root.minimizeRequested()
         onMaximizeRequested: root.maximizeRequested()
     }
-    VentesModule.Ventes {
-        id: sales
-        objectName: "ventesScreen"
+    ShellModule.Shell {
+        id: shell
+        objectName: "previewShell"
         anchors.fill: parent
-        visible: root.screen === "sales"
+        visible: root.screen !== "login"
         previewMode: true
-        sourceRows: Sample.rows
-        connectionText: "Aperçu local"
+        currentPage: root.screen === "ventes" ? "sales"
+                     : root.screen === "new-document" ? "sales/new"
+                     : root.screen === "login" ? "dashboard" : root.screen
+        pageData: Sample.rows
         connected: false
-        onBackRequested: root.screen = "login"
         onQuitRequested: root.closeRequested()
         onMinimizeRequested: root.minimizeRequested()
         onMaximizeRequested: root.maximizeRequested()
-        onNavigationRequested: function (page) {
-            if (page !== "sales")
-                notices.show("Navigation : " + page, "Ce module n'est pas inclus dans cet aperçu.", "info");
+        onPageRequested: function (page) {
+            root.screen = page === "sales" ? "ventes"
+                          : page === "sales/new" ? "new-document" : page;
+            if (page !== "sales" && page !== "sales/new" && page !== "dashboard")
+                notices.show(qsTr("Navigation : %1").arg(page),
+                             qsTr("Ce module n'est pas inclus dans cet aperçu."), "info");
         }
-        onActionRequested: function (action, records) {
+        onSalesActionRequested: function (action, records) {
             if (action === "delete") {
                 var ids = records.map(function (row) {
                     return row.id;
                 });
-                sourceRows = sourceRows.filter(function (row) {
+                shell.pageData = shell.pageData.filter(function (row) {
                     return ids.indexOf(row.id) < 0;
                 });
-                notices.show("Aperçu : suppression", "Les données d'exemple ont été modifiées en mémoire.");
+                notices.show(qsTr("Aperçu : suppression"), qsTr("Les données d'exemple ont été modifiées en mémoire."));
             } else if (action === "refresh") {
-                sourceRows = Sample.rows.slice();
-                notices.show("Aperçu actualisé", "Les données d'exemple ont été restaurées.");
+                shell.pageData = Sample.rows.slice();
+                notices.show(qsTr("Aperçu actualisé"), qsTr("Les données d'exemple ont été restaurées."));
             } else
-                notices.show("Action demandée : " + action, "À connecter au service métier. Aucun document réel n'est modifié.", "info");
+                notices.show(qsTr("Action demandée : %1").arg(action),
+                             qsTr("À connecter au service métier. Aucun document réel n'est modifié."), "info");
+        }
+        onDocumentSaveRequested: function (document) {
+            notices.show(qsTr("Document prêt à enregistrer"),
+                         qsTr("Aperçu local : aucun document réel n'a été enregistré."), "info");
         }
     }
     ToastHost {

@@ -8,6 +8,8 @@ Rectangle {
     property int recordCount: 0
     property int selectionCount: 0
     property int totalCount: recordCount
+    property string summaryText: qsTr("Lignes : %1 • Sélections : %2 • Affichage continu (%3 affichées sur %4)").arg(recordCount).arg(selectionCount).arg(recordCount).arg(totalCount)
+    property string hintText: qsTr("Défilement continu")
     implicitHeight: 28
     color: Colors.canvas
     RowLayout {
@@ -15,13 +17,13 @@ Rectangle {
         anchors.leftMargin: 12
         anchors.rightMargin: 12
         Label {
-            text: qsTr("Lignes : %1 • Sélections : %2 • Affichage continu (%3 affichées sur %4)").arg(root.recordCount).arg(root.selectionCount).arg(root.recordCount).arg(root.totalCount)
+            text: root.summaryText
             font.pixelSize: 11
             color: Colors.textSecondary
             Layout.fillWidth: true
         }
         Label {
-            text: qsTr("Défilement continu")
+            text: root.hintText
             font.pixelSize: 11
             color: Colors.textSecondary
             visible: root.width > 680

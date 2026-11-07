@@ -5,6 +5,6 @@ Item {
     height: 1000
     ScreensPreview {
         anchors.fill: parent
-        screen: "ventes"
+        screen: "new-document"
     }
 }

@@ -63,7 +63,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 8
                 Repeater {
-                    model: ["Boutons & Inputs", "Navigation", "Grilles & Menus", "Feedback & États", "Fondations"]
+                    model: ["Boutons & Inputs", "Navigation", "Grilles & Menus", "Feedback & États", "Fondations", "Saisie"]
                     AzenzButton {
                         required property string modelData
                         required property int index
@@ -101,7 +101,7 @@ Rectangle {
                     x: 24
                     y: 24
                     width: parent.width - 48
-                    source: ["ControlsPage.qml", "NavigationPage.qml", "TablesPage.qml", "FeedbackPage.qml", "FoundationsPage.qml"][root.pageIndex]
+                    source: ["ControlsPage.qml", "NavigationPage.qml", "TablesPage.qml", "FeedbackPage.qml", "FoundationsPage.qml", "SearchEntryTablePage.qml"][root.pageIndex]
                     Connections {
                         target: loader.item
                         ignoreUnknownSignals: true

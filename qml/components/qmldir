@@ -30,6 +30,8 @@ Popover 1.0 Popover.qml
 Sidebar 1.0 Sidebar.qml
 SidebarGroup 1.0 SidebarGroup.qml
 SidebarItem 1.0 SidebarItem.qml
+SearchEntryField 1.0 SearchEntryField.qml
+SearchEntryTable 1.0 SearchEntryTable.qml
 Skeleton 1.0 Skeleton.qml
 StatusBar 1.0 StatusBar.qml
 Toast 1.0 Toast.qml
