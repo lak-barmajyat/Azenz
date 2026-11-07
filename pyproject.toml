@@ -32,6 +32,7 @@ check_untyped_defs = true
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+addopts = ["--import-mode=importlib"]
 
 [tool.pyside6-project]
 files = [

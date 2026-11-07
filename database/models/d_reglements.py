@@ -19,7 +19,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import DDocumentReglements, DTiers, PUtilisateurs
+    from database.models.d_document_reglements import DDocumentReglements
+    from database.models.d_tiers import DTiers
+    from database.models.p_utilisateurs import PUtilisateurs
 
 
 class DReglementsSensReglement(str, enum.Enum):

@@ -8,7 +8,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import DArticles, DDocumentLignes, DFamilles, PInformationsSociete
+    from database.models.d_articles import DArticles
+    from database.models.d_document_lignes import DDocumentLignes
+    from database.models.d_familles import DFamilles
+    from database.models.p_informations_societe import PInformationsSociete
 
 
 class PTvas(Base):

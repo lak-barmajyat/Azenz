@@ -17,7 +17,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import DArticles, PTvas, PUtilisateurs
+    from database.models.d_articles import DArticles
+    from database.models.p_tvas import PTvas
+    from database.models.p_utilisateurs import PUtilisateurs
 
 
 class DFamillesTypeFamille(str, enum.Enum):

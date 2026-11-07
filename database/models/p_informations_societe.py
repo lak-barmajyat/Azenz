@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import PTvas
+    from database.models.p_tvas import PTvas
 
 
 class PInformationsSociete(Base):

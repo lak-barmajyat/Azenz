@@ -11,7 +11,7 @@ session_factory: sessionmaker[Session] | None = None
 
 def setup_session() -> None:
     global session_factory
-    session_factory = sessionmaker(bind=database.engine, expire_on_commit=False)
+    session_factory = sessionmaker(bind=database.engine)
 
 
 def with_session() -> Callable[..., Any]:

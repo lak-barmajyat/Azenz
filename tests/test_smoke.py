@@ -1,2 +1,2 @@
-def test_project_starts():
+def test_smoke():
     assert True

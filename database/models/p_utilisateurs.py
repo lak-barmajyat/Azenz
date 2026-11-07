@@ -15,16 +15,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import (
-        DArticles,
-        DDocumentLignes,
-        DDocumentReglements,
-        DDocuments,
-        DFamilles,
-        DMouvementsStock,
-        DReglements,
-        DTiers,
-    )
+    from database.models.d_articles import DArticles
+    from database.models.d_document_lignes import DDocumentLignes
+    from database.models.d_document_reglements import DDocumentReglements
+    from database.models.d_documents import DDocuments
+    from database.models.d_familles import DFamilles
+    from database.models.d_mouvements_stock import DMouvementsStock
+    from database.models.d_reglements import DReglements
+    from database.models.d_tiers import DTiers
 
 
 class PUtilisateursRole(str, enum.Enum):

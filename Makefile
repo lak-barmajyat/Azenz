@@ -44,3 +44,10 @@ show-migration-history:
 
 check-migrations:
 	@uv run alembic check
+
+win-check:
+	@uv run pyside6-project qmllint
+	@uv run ruff check .
+	@uv run ruff format --check .
+	@uv run mypy main.py modules database services
+	@uv run pytest

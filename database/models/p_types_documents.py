@@ -8,7 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models import DDocuments, PNumerotationDocuments
+    from database.models.d_documents import DDocuments
+    from database.models.p_numerotation_documents import PNumerotationDocuments
 
 
 class PTypesDocumentsDomaine(str, enum.Enum):
