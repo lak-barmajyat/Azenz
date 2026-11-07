@@ -26,14 +26,14 @@ Rectangle {
         {key: "quantity", title: qsTr("Quantité"), width: 78, editable: true,
          inputType: "number", alignment: "right", defaultValue: 1},
         {key: "priceHT", title: qsTr("Prix HT"), width: 110, editable: true,
-         inputType: "currency", alignment: "right", decimals: 2, suffix: "MAD"},
+         inputType: "currency", alignment: "right", decimals: 2},
         {key: "priceTTC", title: qsTr("Prix TTC"), width: 110, alignment: "right",
-         decimals: 2, suffix: "MAD"},
+         decimals: 2},
         {key: "totalHT", title: qsTr("Total HT"), width: 120, alignment: "right",
-         decimals: 2, suffix: "MAD"},
+         decimals: 2},
         {key: "vat", title: qsTr("TVA"), width: 75, alignment: "center", suffix: "%"},
         {key: "totalTTC", title: qsTr("Total TTC"), width: 125, alignment: "right",
-         decimals: 2, suffix: "MAD"}
+         decimals: 2}
     ]
     property string totalHTText: "0,00 MAD"
     property string totalVATText: "0,00 MAD"

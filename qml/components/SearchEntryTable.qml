@@ -349,8 +349,8 @@ Rectangle {
                                 anchors.fill: parent
                                 anchors.leftMargin: 8
                                 anchors.rightMargin: 8
-                                anchors.topMargin: 4
-                                anchors.bottomMargin: 4
+                                anchors.topMargin: draftCell.modelData.searchable === true ? 0 : 4
+                                anchors.bottomMargin: draftCell.modelData.searchable === true ? 0 : 4
                                 sourceComponent: draftCell.modelData.searchable === true ? searchCell
                                                : draftCell.modelData.editable === true ? inputCell : valueCell
                             }

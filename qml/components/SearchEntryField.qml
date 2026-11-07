@@ -29,7 +29,7 @@ AzenzTextField {
     background: Rectangle {
         color: root.inlineMode ? "transparent" : Colors.surface
         radius: 3
-        border.width: root.inlineMode && !root.activeFocus ? 0 : 1
+        border.width: root.inlineMode ? 0 : 1
         border.color: root.activeFocus ? Colors.accent : Colors.border
     }
     onValueChanged: if (text !== value)

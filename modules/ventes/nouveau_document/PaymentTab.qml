@@ -110,7 +110,7 @@ ColumnLayout {
                 AzenzTextField {
                     id: amount
                     inputType: "currency"
-                    suffix: "MAD"
+                    suffix: ""
                     Layout.fillWidth: true
                     placeholderText: "0,00"
                 }
@@ -147,15 +147,20 @@ ColumnLayout {
     DataGrid {
         id: paymentGrid
         Layout.fillWidth: true
-        Layout.preferredHeight: 60 + root.payments.length * 28
-        Layout.minimumHeight: 116
+        Layout.preferredHeight: root.payments.length === 0 ? 132 : 70 + root.payments.length * 28
+        Layout.minimumHeight: root.payments.length === 0 ? 132 : 126
         rows: root.payments
         selectable: false
         density: "compact"
         headerBackground: "#EEF2F6"
         headerForeground: Colors.textSecondary
-        footerSummary: qsTr("%1 règlements émis • Échéance totale 100%").arg(root.payments.length)
-        footerHint: qsTr("Clic droit sur une ligne pour les options contextuelles")
+        compactEmptyState: true
+        emptyTitle: qsTr("Aucun règlement enregistré")
+        footerSummary: root.payments.length === 1 ? qsTr("1 règlement enregistré")
+                        : qsTr("%1 règlements enregistrés").arg(root.payments.length)
+        footerHint: root.payments.length > 0 ? qsTr("Clic droit sur une ligne pour les options contextuelles") : ""
+        footerBackground: "#F8FAFC"
+        footerTopBorder: true
         columns: [
             {key: "code", title: qsTr("Code règlement"), width: 145, type: "code", sortable: false},
             {key: "description", title: qsTr("Description"), width: Math.max(260, paymentGrid.width - 565), sortable: false},
