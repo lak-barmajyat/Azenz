@@ -34,24 +34,6 @@ Rectangle {
         anchors.margins: 12
         spacing: 9
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-            Label {
-                text: qsTr("Règlements")
-                color: Colors.navy
-                font.pixelSize: 17
-                font.weight: Font.Bold
-            }
-            Label {
-                text: qsTr("Finances  >  Règlements")
-                color: Colors.textSecondary
-                font.pixelSize: 11
-                Layout.fillWidth: true
-            }
-            Badge { text: qsTr("Gestion Trésorerie"); variant: "info" }
-        }
-
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 44

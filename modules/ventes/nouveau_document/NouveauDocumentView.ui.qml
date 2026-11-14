@@ -74,28 +74,6 @@ Rectangle {
             height: Math.max(verticalScroll.height - 24, implicitHeight)
             spacing: 9
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-            Label {
-                text: qsTr("Nouveau document")
-                color: Colors.navy
-                font.pixelSize: 17
-                font.weight: Font.Bold
-            }
-            Label {
-                text: qsTr("Documents  >  Ventes  >  Nouveau document")
-                color: Colors.textSecondary
-                font.pixelSize: 11
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-            }
-            Badge {
-                text: qsTr("Mode saisie") + "  " + documentType.currentText
-                variant: "info"
-            }
-        }
-
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: documentFields.implicitHeight + 16

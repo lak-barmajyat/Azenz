@@ -40,36 +40,12 @@ Rectangle {
         spacing: 0
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 94
+            Layout.preferredHeight: 50
             color: Colors.surface
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 16
                 spacing: 8
-                RowLayout {
-                    Layout.fillWidth: true
-                    Label {
-                        text: qsTr("Ventes")
-                        color: Colors.navy
-                        font.pixelSize: 18
-                        font.weight: Font.Bold
-                    }
-                    ToolbarSeparator { implicitHeight: 18 }
-                    Breadcrumb {}
-                    Item { Layout.fillWidth: true }
-                    AzenzButton {
-                        id: refresh
-                        text: qsTr("Actualiser")
-                        iconName: "refresh"
-                        variant: "secondary"
-                        size: "compact"
-                    }
-                }
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 1
-                    color: Colors.subtle
-                }
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 6
@@ -120,6 +96,13 @@ Rectangle {
                         enabled: root.records.length > 0
                     }
                     Item { Layout.fillWidth: true }
+                    AzenzButton {
+                        id: refresh
+                        text: qsTr("Actualiser")
+                        iconName: "refresh"
+                        variant: "secondary"
+                        size: "compact"
+                    }
                     AzenzButton {
                         id: back
                         text: qsTr("Retour")
