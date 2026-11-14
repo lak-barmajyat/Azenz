@@ -183,7 +183,7 @@ to five seconds; warnings, errors, and actionable notices persist. Hover pauses
 automatic dismissal. Inline banners stay until their owner or close button hides
 them. Skeleton animation is off by default and respects `Theme.reducedMotion`.
 
-## Assets and verification
+## Assets
 
 `resources/fonts` contains the two fonts and their OFL licenses. The four logo
 images are the exact URLs referenced by the source HTML. `resources/kit-assets.json`
@@ -191,17 +191,3 @@ records their source URLs and hashes. Icons use local inline SVG geometry expose
 by `Icons.paths`; these are functional equivalents of the HTML's Material Symbols,
 not the original Material Symbols font. Shadows/backdrop blur are reduced to crisp
 Qt borders and overlay scrims to avoid a Qt Quick Effects dependency.
-
-```powershell
-.\.venv-qml\Scripts\python.exe tests/validate_qml.py --render
-.\.venv-qml\Scripts\python.exe tests/test_qml_interactions.py
-```
-
-The first script instantiates all component types and renders every gallery tab,
-failing on Qt warnings/errors; screenshots go to `build/qml-preview`. The second
-uses real Qt keyboard and pointer input to check density inheritance, invalid and
-leap dates, numeric bounds, searchable selection, numeric/date sorting, selection
-identity, disabled rows, context targets, resize dragging, Ctrl/Shift selection,
-modal focus/cancel behavior, calendar navigation, and the toast queue. These checks
-run without a database. The existing backend tests and application startup are
-outside this UI conversion.

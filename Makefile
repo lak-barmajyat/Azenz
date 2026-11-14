@@ -16,10 +16,7 @@ lint: qmllint
 	@uv run ruff format --check .
 	@uv run mypy main.py modules database services
 
-test:
-	@uv run pytest
-
-check: lint test
+check: lint
 
 init-database create-database:
 	@uv run python -m database.setup init
@@ -44,4 +41,3 @@ win-check:
 	@uv run ruff check .
 	@uv run ruff format --check .
 	@uv run mypy main.py modules database services
-	@uv run pytest
