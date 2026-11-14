@@ -4,8 +4,8 @@ The two supplied HTML screens are implemented with the existing QML component ki
 
 | Reference | Visual form | Interactive screen |
 | --- | --- | --- |
-| `code2.html`: Connexion | `modules/login/LoginView.ui.qml` | `modules/login/Login.qml` |
-| `code.html`: Ventes | `modules/ventes/liste_ventes/VentesView.ui.qml` | `modules/ventes/liste_ventes/Ventes.qml` |
+| `UI_azenz/screens/login/login.html`: Connexion | `modules/login/LoginView.ui.qml` | `modules/login/Login.qml` |
+| `UI_azenz/screens/ventes/liste/ventes_liste.html`: Ventes | `modules/ventes/liste_ventes/VentesView.ui.qml` | `modules/ventes/liste_ventes/Ventes.qml` |
 
 Open **AzenzScreens.qmlproject** in Qt Design Studio. The main visual form previews
 ventes; running the project starts with login. The `.ui.qml` files contain the
