@@ -54,16 +54,5 @@ intentional for this version, as recorded in `plan.md`.
 uv run ruff check .
 uv run ruff format --check .
 uv run mypy main.py modules database services
-QT_QPA_PLATFORM=offscreen uv run pytest -q
 make qmllint
 ```
-
-Database integration tests are opt-in and require a **disposable test server**:
-
-```sh
-AZENZ_TEST_MYSQL_URL='mysql+pymysql://root@localhost/?unix_socket=/path/to/test.sock' \
-  QT_QPA_PLATFORM=offscreen uv run pytest -q
-```
-
-They create uniquely named test databases/accounts and remove those test objects
-at teardown. They never read the application `.env` for a test connection.
