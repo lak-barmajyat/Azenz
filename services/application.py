@@ -17,7 +17,8 @@ def run_application(argv: list[str]) -> int:
     model = LoginModel(engine)
     engine.addImportPath(str(PROJECT_ROOT))
     engine.addImportPath(str(QML_DIR))
-    engine.setInitialProperties({"authModel": model, "authenticationAvailable": True})
+    engine.rootContext().setContextProperty("loginModel", model)
+    app.aboutToQuit.connect(model.shutdown)
     engine.load(QUrl.fromLocalFile(str(QML_DIR / "App.qml")))
     if not engine.rootObjects():
         raise RuntimeError("Unable to load the application UI")

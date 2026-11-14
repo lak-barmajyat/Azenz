@@ -18,9 +18,6 @@ Item {
         anchors.fill: parent
         visible: root.screen === "login"
         previewMode: true
-        onLoginRequested: function (username, password, language) {
-            login.completeAuthentication(true, "");
-        }
         onAuthenticated: function (username) {
             sales.userName = username;
             root.screen = "sales";

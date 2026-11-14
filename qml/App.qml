@@ -19,19 +19,14 @@ ApplicationWindow {
     color: "transparent"
 
     flags: Qt.Window | Qt.FramelessWindowHint
-    property bool authenticationAvailable: false
     property bool signedIn: false
     property var salesRecords: []
     property alias sales: shell.sales
     property bool connected: false
-    property var authModel: null
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
-    function completeAuthentication(success, message) {
-        login.completeAuthentication(success, message);
-    }
     function toggleMaximize() {
         if (visibility === Window.Maximized)
             showNormal();
@@ -42,12 +37,6 @@ ApplicationWindow {
         id: login
         anchors.fill: parent
         visible: !app.signedIn
-        onLoginRequested: function (username, password, language) {
-            if (app.authenticationAvailable)
-                app.authModel.authenticate(username, password, language);
-            else
-                app.completeAuthentication(false, "Le service d'authentification n'est pas encore connecté.");
-        }
         onAuthenticated: function (username) {
             shell.userName = username;
             app.signedIn = true;
@@ -68,18 +57,6 @@ ApplicationWindow {
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()
-    }
-    Connections {
-        target: app.authModel
-        function onAuthenticationCompleted(success, message, username) {
-            if (success) {
-                shell.userName = username;
-                app.signedIn = true;
-                login.completeAuthentication(true, "");
-            } else {
-                login.completeAuthentication(false, message);
-            }
-        }
     }
     MouseArea {
         anchors.right: parent.right
