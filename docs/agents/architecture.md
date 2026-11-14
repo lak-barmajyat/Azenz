@@ -8,7 +8,6 @@
 - `database/` — SQLAlchemy models, sessions, and Alembic migrations.
 - `resources/` — Fonts, images, and icons.
 - `i18n/` — Translations.
-- `tests/` — Centralized tests.
 
 ## Modules and Windows
 

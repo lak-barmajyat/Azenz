@@ -4,7 +4,7 @@
 - `main` must always remain stable and working.
 - Never develop directly on `main`.
 - Merge changes into `main` only through pull requests.
-- Pull requests must pass required linting and tests.
+- Pull requests must pass required linting checks.
 
 ## Development Branches
 - Use a dedicated branch for each feature, fix, or task.

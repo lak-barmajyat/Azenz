@@ -43,7 +43,7 @@
 
 ## Verification
 - Run `make qmllint` after QML changes.
-- Run `make check` for full validation (includes QML linting, Python linting, and tests).
+- Run `make check` for full validation (includes QML linting, Python linting, and type checking).
 - On Windows, use `make win-check` if Make is available.
 - Keep `.ui.qml` files compatible with Qt Design Studio.
 - Open modified `.ui.qml` files in Qt Design Studio when possible.

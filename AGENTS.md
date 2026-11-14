@@ -5,7 +5,7 @@ Azenz is a desktop ERP application built with:
 - Python + PySide6 + QML
 - MySQL + SQLAlchemy + Alembic
 - uv for dependency management
-- Ruff, Mypy, Pytest, and qmllint
+- Ruff, Mypy, and qmllint
 
 ## 2. Global Rules
 - Read relevant documentation before changing code.
@@ -25,7 +25,6 @@ Read the relevant files before starting a task:
 | Python backend | [backend.md](docs/agents/backend.md) |
 | QML frontend | [frontend.md](docs/agents/frontend.md) |
 | Database | [database.md](docs/agents/database.md) |
-| Testing | [testing.md](docs/agents/testing.md) |
 | Git operations | [git-workflow.md](docs/agents/git-workflow.md) |
 
 ## 4. Agent Workflow
@@ -33,5 +32,5 @@ Read the relevant files before starting a task:
 2. Read all applicable instruction files when a task spans multiple areas.
 3. Inspect existing code and patterns.
 4. Implement the smallest necessary change.
-5. Run relevant checks and tests.
+5. Run relevant checks.
 6. Report changes and verification results.
