@@ -20,7 +20,6 @@ ApplicationWindow {
 
     flags: Qt.Window | Qt.FramelessWindowHint
     property bool signedIn: false
-    property var salesRecords: []
     property alias sales: shell.sales
     property bool connected: false
     property string currentPage: "dashboard"
@@ -52,7 +51,6 @@ ApplicationWindow {
         companyName: "Atlas Distribution"
         userName: "Mohammed"
         connected: app.connected
-        pageData: app.salesRecords
         onPageRequested: app.currentPage = page
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()

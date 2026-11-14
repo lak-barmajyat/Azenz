@@ -1,7 +1,7 @@
 import QtQuick
 import "../../modules/login" as LoginModule
 import "../../modules/ventes/liste_ventes" as VentesModule
-import "../../modules/ventes/liste_ventes/VentesSample.js" as Sample
+import "../../modules/ventes/liste_ventes/SalesSample.js" as Sample
 import "../components"
 
 Item {
@@ -26,11 +26,11 @@ Item {
         onMinimizeRequested: root.minimizeRequested()
         onMaximizeRequested: root.maximizeRequested()
     }
-    VentesModule.Ventes {
+    VentesModule.ListeVentes {
         id: sales
         objectName: "ventesScreen"
         anchors.fill: parent
-        visible: root.screen === "sales"
+        visible: root.screen === "sales" || root.screen === "ventes"
         previewMode: true
         sourceRows: Sample.rows
         connectionText: "Aperçu local"

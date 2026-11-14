@@ -3,7 +3,6 @@ import QtQuick
 ShellView {
     id: root
     property string currentPage: "dashboard"
-    property var pageData: []
     property var sales: pageLoader.item
     signal pageRequested(string page)
 
@@ -11,12 +10,8 @@ ShellView {
         id: pageLoader
         anchors.fill: root.contentFrame
         source: root.currentPage === "sales"
-                ? "../ventes/liste_ventes/Ventes.qml"
+                ? "../ventes/liste_ventes/ListeVentes.qml"
                 : ""
-        onLoaded: {
-            if (item)
-                item.sourceRows = root.pageData;
-        }
         Connections {
             target: pageLoader.item
             function onBackRequested() {
@@ -29,9 +24,6 @@ ShellView {
         currentPage = page;
         pageRequested(page);
     }
-
-    onPageDataChanged: if (pageLoader.item)
-        pageLoader.item.sourceRows = pageData;
 
     onNavigationRequested: function (page) {
         showPage(page);

@@ -5,13 +5,13 @@ import "../../../qml/theme"
 
 Rectangle {
     id: root
-    property string title: "Total HT"
+    property string title: qsTr("Total HT")
     property real amount: 0
     property bool emphasized: false
     implicitWidth: 168
     implicitHeight: 48
     radius: 4
-    color: emphasized ? "#F0F6FC" : Colors.canvas
+    color: emphasized ? Colors.rowSelected : Colors.canvas
     border.color: emphasized ? Colors.navy : Colors.border
     ColumnLayout {
         anchors.fill: parent
@@ -24,9 +24,9 @@ Rectangle {
             color: root.emphasized ? Colors.navy : Colors.textSecondary
         }
         Label {
-            text: root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + " MAD"
+            text: root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + qsTr(" MAD")
             tabular: true
-            font.pixelSize: root.emphasized ? 15 : 13
+            font.pixelSize: root.emphasized ? Typography.subtitle : Typography.body
             font.weight: Font.Bold
             color: root.emphasized ? Colors.navy : Colors.text
             Layout.fillWidth: true

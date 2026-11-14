@@ -221,8 +221,11 @@ Rectangle {
                         }).map(function (row) {
                             return root.rowId(row);
                         });
-                    } else
+                    } else {
+                        if (root.selectable && modelData.enabled !== false)
+                            root.selectedIds = [root.rowId(modelData)];
                         root.selectionAnchor = index;
+                    }
                 }
                 onContextRequested: function (x, y) {
                     var point = mapToItem(root, x, y);

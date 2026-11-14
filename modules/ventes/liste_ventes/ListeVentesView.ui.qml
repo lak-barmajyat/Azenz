@@ -9,13 +9,14 @@ Rectangle {
     color: Colors.canvas
     property var records: []
     property var columns: []
+    property var documentTypes: []
     property string viewState: "default"
     property string filterError: ""
     property real totalHT: 0
     property real totalVAT: 0
     property real totalTTC: 0
     property string userName: "Mohammed"
-    property string connectionText: "Hors connexion"
+    property string connectionText: qsTr("Hors connexion")
     property bool connected: false
     property bool previewMode: false
     property alias grid: grid
@@ -51,12 +52,16 @@ Rectangle {
                     Label {
                         text: qsTr("Ventes")
                         color: Colors.navy
-                        font.pixelSize: 18
+                        font.pixelSize: Typography.section
                         font.weight: Font.Bold
                     }
-                    ToolbarSeparator { implicitHeight: 18 }
+                    ToolbarSeparator {
+                        implicitHeight: 18
+                    }
                     Breadcrumb {}
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
                     AzenzButton {
                         id: refresh
                         text: qsTr("Actualiser")
@@ -67,7 +72,7 @@ Rectangle {
                 }
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 1
+                    Layout.preferredHeight: 1
                     color: Colors.subtle
                 }
                 RowLayout {
@@ -119,7 +124,9 @@ Rectangle {
                         size: "compact"
                         enabled: root.records.length > 0
                     }
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
                     AzenzButton {
                         id: back
                         text: qsTr("Retour")
@@ -132,11 +139,14 @@ Rectangle {
         }
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 58
+            Layout.preferredHeight: filters.implicitHeight + 20
             color: Colors.canvas
             border.color: Colors.border
             Flow {
-                anchors.fill: parent
+                id: filters
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
                 anchors.margins: 10
                 spacing: 8
                 AzenzTextField {
@@ -150,13 +160,7 @@ Rectangle {
                     id: typeFilter
                     width: 160
                     height: 30
-                    model: [
-                        { text: qsTr("Tous les types"), value: "" },
-                        { text: qsTr("Devis commercial"), value: "Devis" },
-                        { text: qsTr("Facture de vente"), value: "Facture" },
-                        { text: qsTr("Bon de commande"), value: "Commande" },
-                        { text: qsTr("Bon de livraison"), value: "Livraison" }
-                    ]
+                    model: root.documentTypes
                     currentIndex: 0
                 }
                 DateInput {
@@ -201,7 +205,7 @@ Rectangle {
             viewState: root.viewState
             density: "comfortable"
             headerBackground: Colors.navy
-            headerForeground: "white"
+            headerForeground: Colors.surface
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 16
@@ -214,15 +218,23 @@ Rectangle {
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: 16
-                FinancialTotal { title: qsTr("Total HT"); amount: root.totalHT }
-                FinancialTotal { title: qsTr("TVA"); amount: root.totalVAT }
+                FinancialTotal {
+                    title: qsTr("Total HT")
+                    amount: root.totalHT
+                }
+                FinancialTotal {
+                    title: qsTr("TVA")
+                    amount: root.totalVAT
+                }
                 FinancialTotal {
                     title: qsTr("Total TTC")
                     amount: root.totalTTC
                     emphasized: true
                     implicitWidth: 170
                 }
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
                 AzenzButton {
                     id: newDocument
                     text: qsTr("Nouveau document")

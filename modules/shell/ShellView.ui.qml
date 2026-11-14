@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import "../../qml/components"
 import "../../qml/theme"
-import "../ventes/liste_ventes"
 
 Rectangle {
     id: root
@@ -52,10 +51,9 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 0
-            VentesSidebar {
+            Sidebar {
                 id: sidebar
                 companyName: root.companyName
-                userName: root.userName
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 onNavigate: function (page) {
