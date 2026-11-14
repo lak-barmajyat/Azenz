@@ -14,6 +14,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from database.engine import database
 from database.session import setup_session
 from modules.ventes.liste_ventes.model import ListeVentesModel
+from modules.ventes.nouveau_doc import NouveauDocModel
 from services.config import load_config
 from services.logger import setup_logging
 from services.paths import PROJECT_ROOT, QML_DIR
@@ -21,8 +22,11 @@ from services.paths import PROJECT_ROOT, QML_DIR
 WINDOW_QML = """
 import QtQuick
 import QtQuick.Controls.Basic
+import "../nouveau_doc"
 
 ApplicationWindow {
+    id: window
+    property bool creatingDocument: false
     width: 1200
     height: 800
     minimumWidth: 800
@@ -30,10 +34,26 @@ ApplicationWindow {
     visible: true
     title: qsTr("Azenz — Liste des ventes")
 
-    ListeVentes {
+    Loader {
         anchors.fill: parent
-        onBackRequested: Qt.quit()
-        onQuitRequested: Qt.quit()
+        sourceComponent: window.creatingDocument ? documentFrame : listFrame
+    }
+    Component {
+        id: listFrame
+        ListeVentes {
+            onBackRequested: Qt.quit()
+            onQuitRequested: Qt.quit()
+            onActionRequested: function(action, records) {
+                if (action === "new")
+                    window.creatingDocument = true;
+            }
+        }
+    }
+    Component {
+        id: documentFrame
+        NouveauDoc {
+            onBackRequested: window.creatingDocument = false
+        }
     }
 }
 """
@@ -47,6 +67,9 @@ def main() -> int:
     engine = QQmlApplicationEngine()
     engine.addImportPath(str(PROJECT_ROOT))
     engine.addImportPath(str(QML_DIR))
+    document_model = NouveauDocModel(engine)
+    app.aboutToQuit.connect(document_model.shutdown)
+    engine.rootContext().setContextProperty("nouveauDocModel", document_model)
     model = ListeVentesModel(engine)
     engine.rootContext().setContextProperty("listeVentesModel", model)
     app.aboutToQuit.connect(model.shutdown)
@@ -59,6 +82,7 @@ def main() -> int:
             return 1
         return app.exec()
     finally:
+        document_model.shutdown()
         model.shutdown()
         database.close()
 

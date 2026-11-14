@@ -26,7 +26,6 @@ ApplicationWindow {
     property bool connected: false
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
-    signal documentSaveRequested(var document)
     signal paymentActionRequested(string action, var records)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
@@ -62,9 +61,6 @@ ApplicationWindow {
         }
         onSalesActionRequested: function (action, records) {
             app.salesActionRequested(action, records);
-        }
-        onDocumentSaveRequested: function (document) {
-            app.documentSaveRequested(document);
         }
         onPaymentActionRequested: function (action, records) {
             app.paymentActionRequested(action, records);

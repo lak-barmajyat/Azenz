@@ -37,6 +37,8 @@ files = [
     "modules/ventes/liste_ventes/ListeVentes.qml",
     "modules/ventes/liste_ventes/ListeVentesView.ui.qml",
     "modules/ventes/liste_ventes/FinancialTotal.qml",
+    "modules/ventes/nouveau_doc/NouveauDoc.qml",
+    "modules/ventes/nouveau_doc/NouveauDocView.ui.qml",
     "qml/theme/Theme.qml",
     "qml/theme/Colors.qml",
     "qml/theme/Typography.qml",

@@ -6,6 +6,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 
 from modules.login.model import LoginModel
 from modules.ventes.liste_ventes.model import ListeVentesModel
+from modules.ventes.nouveau_doc import NouveauDocModel
 from services.logger import get_logger
 from services.paths import PROJECT_ROOT, QML_DIR
 
@@ -15,6 +16,9 @@ def run_application(argv: list[str]) -> int:
     app.setApplicationName("Azenz")
     app.setOrganizationName("LakSoftware")
     engine = QQmlApplicationEngine()
+    document_model = NouveauDocModel(engine)
+    app.aboutToQuit.connect(document_model.shutdown)
+    engine.rootContext().setContextProperty("nouveauDocModel", document_model)
     model = LoginModel(engine)
     sales_model = ListeVentesModel(engine)
     engine.addImportPath(str(PROJECT_ROOT))

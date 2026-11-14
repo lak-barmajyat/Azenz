@@ -13,6 +13,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
 from modules.ventes.liste_ventes.model import ListeVentesModel
+from modules.ventes.nouveau_doc import NouveauDocModel
 from services.paths import PROJECT_ROOT
 
 
@@ -20,6 +21,9 @@ def main():
     app = QGuiApplication(sys.argv)
     root = PROJECT_ROOT
     engine = QQmlApplicationEngine()
+    document_model = NouveauDocModel(engine, preview=True)
+    app.aboutToQuit.connect(document_model.shutdown)
+    engine.rootContext().setContextProperty("nouveauDocModel", document_model)
     model = ListeVentesModel(engine, preview=True)
     engine.rootContext().setContextProperty("listeVentesModel", model)
     engine.addImportPath(str(root / "qml"))
