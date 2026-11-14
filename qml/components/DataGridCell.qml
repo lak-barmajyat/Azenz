@@ -36,7 +36,7 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        visible: !root.editing && ["status", "checkbox", "bool"].indexOf(root.cellType) < 0
+        visible: !root.editing && ["status", "checkbox", "bool", "paymentMethod"].indexOf(root.cellType) < 0
         text: root.displayText + (root.suffix ? " " + root.suffix : "")
         font.pixelSize: 12
         tabular: true
@@ -45,11 +45,29 @@ Item {
     }
     Badge {
         anchors.verticalCenter: parent.verticalCenter
-        x: 8
+        x: root.alignment === "center" ? (parent.width - width) / 2 : 8
         visible: root.cellType === "status"
         text: root.displayText
         variant: root.statusVariant
         dot: false
+    }
+    Row {
+        x: 10
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 6
+        visible: root.cellType === "paymentMethod"
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 6
+            height: 6
+            radius: 3
+            color: root.displayText === qsTr("Traite") ? Colors.warning : Colors.success
+        }
+        Label {
+            text: root.displayText
+            font.pixelSize: 12
+            color: Colors.text
+        }
     }
     AzenzCheckBox {
         anchors.centerIn: parent
