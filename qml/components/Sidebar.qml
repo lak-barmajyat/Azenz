@@ -8,7 +8,7 @@ import "../theme"
 Rectangle {
     id: root
     property bool collapsed: false
-    property string currentPage: "sales"
+    property string currentPage: "dashboard"
     property alias companyName: identity.companyName
     property alias branchName: identity.branchName
     property alias companyLogo: identity.logoSource
@@ -102,10 +102,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.leftMargin: 8
                     Layout.rightMargin: 8
-                    onClicked: {
-                        root.currentPage = "dashboard";
-                        root.navigate("dashboard");
-                    }
+                    onClicked: root.navigate("dashboard")
                 }
                 Repeater {
                     model: root.groups
@@ -126,10 +123,7 @@ Rectangle {
                                 active: root.currentPage === modelData.key
                                 collapsed: root.collapsed
                                 Layout.fillWidth: true
-                                onClicked: {
-                                    root.currentPage = modelData.key;
-                                    root.navigate(modelData.key);
-                                }
+                                onClicked: root.navigate(modelData.key)
                             }
                         }
                     }
@@ -142,10 +136,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.leftMargin: 8
                     Layout.rightMargin: 8
-                    onClicked: {
-                        root.currentPage = "payments";
-                        root.navigate("payments");
-                    }
+                    onClicked: root.navigate("payments")
                 }
             }
         }

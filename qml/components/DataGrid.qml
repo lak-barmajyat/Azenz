@@ -9,6 +9,12 @@ Rectangle {
     property string density: Theme.densityFor(parent)
     property color headerBackground: Colors.header
     property color headerForeground: Colors.navy
+    property bool compactEmptyState: false
+    property string emptyTitle: qsTr("Aucun résultat")
+    property color footerBackground: Colors.canvas
+    property bool footerTopBorder: false
+    property string footerSummary: qsTr("Lignes : %1 • Sélections : %2 • Affichage continu (%3 affichées sur %4)").arg(rows.length).arg(selectionCount).arg(rows.length).arg(totalCount)
+    property string footerHint: qsTr("Défilement continu")
     property var rows: [] // Plain JS record array; replace after backend updates.
     property var columns: [] // {key, title, width, type, alignment, sortable, editable}
     property string idRole: "id"
@@ -239,7 +245,8 @@ Rectangle {
         anchors.topMargin: Theme.headerHeight(root.density)
         anchors.bottomMargin: footer.height
         active: root.viewState !== "default" || root.rows.length === 0
-        sourceComponent: root.viewState === "loading" ? loading : root.viewState === "error" ? error : empty
+        sourceComponent: root.viewState === "loading" ? loading : root.viewState === "error" ? error
+                       : root.compactEmptyState ? compactEmpty : empty
     }
     Component {
         id: loading
@@ -264,6 +271,26 @@ Rectangle {
             variant: "noResults"
         }
     }
+    Component {
+        id: compactEmpty
+        Item {
+            Row {
+                anchors.centerIn: parent
+                spacing: 8
+                Icon {
+                    name: "money"
+                    width: 16
+                    height: 16
+                    color: Colors.textSecondary
+                }
+                Label {
+                    text: root.emptyTitle
+                    color: Colors.textSecondary
+                    font.pixelSize: 12
+                }
+            }
+        }
+    }
     DataGridFooter {
         id: footer
         anchors.left: parent.left
@@ -272,5 +299,9 @@ Rectangle {
         recordCount: root.rows.length
         selectionCount: root.selectionCount
         totalCount: root.totalCount
+        summaryText: root.footerSummary
+        hintText: root.footerHint
+        backgroundColor: root.footerBackground
+        showTopBorder: root.footerTopBorder
     }
 }

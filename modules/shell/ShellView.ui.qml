@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import "../../qml/components"
 import "../../qml/theme"
-import "../ventes/liste_ventes"
 
 Rectangle {
     id: root
@@ -11,6 +10,7 @@ Rectangle {
     property string connectionText: "Hors connexion"
     property bool connected: false
     property bool previewMode: false
+    property string currentPage: "dashboard"
     property alias titleBar: titleBar
     property alias menuBar: menuBar
     property alias sidebar: sidebar
@@ -52,10 +52,10 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 0
-            VentesSidebar {
+            Sidebar {
                 id: sidebar
                 companyName: root.companyName
-                userName: root.userName
+                currentPage: root.currentPage
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 onNavigate: function (page) {
