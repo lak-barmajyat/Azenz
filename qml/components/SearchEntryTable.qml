@@ -26,8 +26,8 @@ Rectangle {
     property int rowNumberWidth: 34
     property int typeIconWidth: 44
     property string rowTypeIcon: "inventory_2"
-    property color headerBackground: Colors.header
-    property color headerForeground: Colors.navy
+    property color headerBackground: Colors.navy
+    property color headerForeground: "white"
     property string localeName: Qt.locale().name
     property string suggestionPrimaryKey: "description"
     property string suggestionSecondaryKey: "reference"

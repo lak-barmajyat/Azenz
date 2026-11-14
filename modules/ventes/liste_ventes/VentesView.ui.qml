@@ -103,13 +103,6 @@ Rectangle {
                         variant: "secondary"
                         size: "compact"
                     }
-                    AzenzButton {
-                        id: back
-                        text: qsTr("Retour")
-                        iconName: "left"
-                        variant: "secondary"
-                        size: "compact"
-                    }
                 }
             }
         }
@@ -183,8 +176,6 @@ Rectangle {
             columns: root.columns
             viewState: root.viewState
             density: "comfortable"
-            headerBackground: Colors.navy
-            headerForeground: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 16
@@ -206,6 +197,13 @@ Rectangle {
                     implicitWidth: 170
                 }
                 Item { Layout.fillWidth: true }
+                AzenzButton {
+                    id: back
+                    text: qsTr("Retour")
+                    iconName: "left"
+                    variant: "secondary"
+                    size: "compact"
+                }
                 AzenzButton {
                     id: newDocument
                     text: qsTr("Nouveau document")

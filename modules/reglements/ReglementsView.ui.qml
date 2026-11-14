@@ -108,8 +108,6 @@ Rectangle {
             Layout.minimumHeight: 180
             rows: root.rows
             density: "compact"
-            headerBackground: "#EEF2F6"
-            headerForeground: Colors.textSecondary
             footerSummary: root.footerText
             footerHint: qsTr("Clic droit sur une ligne pour les options contextuelles")
             footerBackground: "#F8FAFC"

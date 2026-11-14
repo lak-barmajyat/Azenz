@@ -10,8 +10,8 @@ Row {
     property int sortColumn: -1
     property string sortDirection: "asc"
     property string density: Theme.densityFor(parent)
-    property color headerBackground: Colors.header
-    property color headerForeground: Colors.navy
+    property color headerBackground: Colors.navy
+    property color headerForeground: "white"
     signal selectAllRequested(bool checked)
     signal sortRequested(int column)
     signal resizeStarted(int column)

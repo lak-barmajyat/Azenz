@@ -285,8 +285,6 @@ Rectangle {
                                                      : qsTr("Ajouter la ligne")
                     rowHeight: 44
                     headerHeight: 44
-                    headerBackground: "#EEF2F6"
-                    headerForeground: Colors.textSecondary
                 }
             }
             PaymentTab {
@@ -317,40 +315,14 @@ Rectangle {
                 anchors.fill: parent
                 anchors.margins: 8
                 spacing: 8
-                Repeater {
-                    model: [
-                        {label: qsTr("Total HT"), value: root.totalHTText, highlighted: false},
-                        {label: qsTr("Montant TVA (20%)"), value: root.totalVATText, highlighted: false},
-                        {label: qsTr("Total TTC (net à payer)"), value: root.totalTTCText, highlighted: true}
-                    ]
-                    Rectangle {
-                        id: totalCard
-                        required property var modelData
-                        Layout.preferredWidth: modelData.highlighted ? 200 : 135
-                        Layout.fillHeight: true
-                        radius: 4
-                        color: modelData.highlighted ? Colors.navy : Colors.canvas
-                        border.color: modelData.highlighted ? Colors.navy : Colors.border
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 6
-                            spacing: 2
-                            Label {
-                                text: totalCard.modelData.label
-                                color: totalCard.modelData.highlighted ? "#CBD5E1" : Colors.textSecondary
-                                font.pixelSize: 9
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
-                            }
-                            Label {
-                                text: totalCard.modelData.value
-                                color: totalCard.modelData.highlighted ? "#86EFAC" : Colors.text
-                                font.pixelSize: totalCard.modelData.highlighted ? 15 : 12
-                                font.weight: Font.Bold
-                                tabular: true
-                            }
-                        }
-                    }
+                FinancialTotal { title: qsTr("Total HT"); amountText: root.totalHTText; Layout.fillHeight: true }
+                FinancialTotal { title: qsTr("TVA"); amountText: root.totalVATText; Layout.fillHeight: true }
+                FinancialTotal {
+                    title: qsTr("Total TTC")
+                    amountText: root.totalTTCText
+                    emphasized: true
+                    implicitWidth: 170
+                    Layout.fillHeight: true
                 }
                 Item { Layout.fillWidth: true }
                 AzenzButton {

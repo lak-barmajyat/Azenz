@@ -152,8 +152,6 @@ ColumnLayout {
         rows: root.payments
         selectable: false
         density: "compact"
-        headerBackground: "#EEF2F6"
-        headerForeground: Colors.textSecondary
         compactEmptyState: true
         emptyTitle: qsTr("Aucun règlement enregistré")
         footerSummary: root.payments.length === 1 ? qsTr("1 règlement enregistré")
