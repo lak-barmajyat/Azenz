@@ -20,10 +20,14 @@ ApplicationWindow {
 
     flags: Qt.Window | Qt.FramelessWindowHint
     property bool signedIn: false
+    property var salesRecords: []
+    property var paymentRecords: []
     property alias sales: shell.sales
     property bool connected: false
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
+    signal documentSaveRequested(var document)
+    signal paymentActionRequested(string action, var records)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
     function toggleMaximize() {
@@ -51,7 +55,20 @@ ApplicationWindow {
         companyName: "Atlas Distribution"
         userName: "Mohammed"
         connected: app.connected
-        onPageRequested: app.currentPage = page
+        pageData: app.salesRecords
+        paymentRows: app.paymentRecords
+        onPageRequested: function (page) {
+            app.currentPage = page;
+        }
+        onSalesActionRequested: function (action, records) {
+            app.salesActionRequested(action, records);
+        }
+        onDocumentSaveRequested: function (document) {
+            app.documentSaveRequested(document);
+        }
+        onPaymentActionRequested: function (action, records) {
+            app.paymentActionRequested(action, records);
+        }
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()

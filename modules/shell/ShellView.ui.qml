@@ -10,6 +10,7 @@ Rectangle {
     property string connectionText: "Hors connexion"
     property bool connected: false
     property bool previewMode: false
+    property string currentPage: "dashboard"
     property alias titleBar: titleBar
     property alias menuBar: menuBar
     property alias sidebar: sidebar
@@ -54,6 +55,7 @@ Rectangle {
             Sidebar {
                 id: sidebar
                 companyName: root.companyName
+                currentPage: root.currentPage
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 onNavigate: function (page) {
