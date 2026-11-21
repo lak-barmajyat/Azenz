@@ -7,6 +7,8 @@ ShellView {
     property var paymentRows: []
     property string documentAction: "new"
     property int documentId: 0
+    property string purchaseDocumentAction: "new"
+    property int purchaseDocumentId: 0
     readonly property var sales: root.currentPage === "sales" && pageLoader.status === Loader.Ready
                                  ? pageLoader.item : null
     readonly property var purchases: root.currentPage === "purchases"
@@ -14,6 +16,9 @@ ShellView {
                                      ? pageLoader.item : null
     readonly property var document: root.currentPage === "sales/new" && pageLoader.status === Loader.Ready
                                     ? pageLoader.item : null
+    readonly property var purchaseDocument: root.currentPage === "purchases/new"
+                                            && pageLoader.status === Loader.Ready
+                                            ? pageLoader.item : null
     readonly property var payments: root.currentPage === "payments" && pageLoader.status === Loader.Ready
                                     ? pageLoader.item : null
     signal pageRequested(string page)
@@ -30,6 +35,8 @@ ShellView {
                 ? "../achats/liste_achats/ListeAchats.qml"
                 : root.currentPage === "sales/new"
                 ? "../ventes/nouveau_doc/NouveauDoc.qml"
+                : root.currentPage === "purchases/new"
+                ? "../achats/nouveau_doc/NouveauDoc.qml"
                 : root.currentPage === "payments"
                 ? "../reglements/Reglements.qml" : ""
         onLoaded: {
@@ -42,6 +49,9 @@ ShellView {
             } else if (root.currentPage === "sales/new") {
                 item.previewMode = root.previewMode;
                 item.openDocument(root.documentAction, root.documentId);
+            } else if (root.currentPage === "purchases/new") {
+                item.previewMode = root.previewMode;
+                item.openDocument(root.purchaseDocumentAction, root.purchaseDocumentId);
             } else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
                 item.previewMode = root.previewMode;
@@ -74,13 +84,28 @@ ShellView {
                 root.showPage("dashboard");
             }
             function onActionRequested(action, records) {
-                root.purchaseActionRequested(action, records);
+                if (action === "new") {
+                    root.purchaseDocumentAction = "new";
+                    root.purchaseDocumentId = 0;
+                    root.showPage("purchases/new");
+                } else if (["edit", "open", "duplicate"].indexOf(action) >= 0 && records.length === 1) {
+                    root.purchaseDocumentAction = action === "duplicate" ? "duplicate" : "edit";
+                    root.purchaseDocumentId = records[0].id;
+                    root.showPage("purchases/new");
+                } else {
+                    root.purchaseActionRequested(action, records);
+                }
             }
         }
         Connections {
             target: root.document
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("sales"); }
+        }
+        Connections {
+            target: root.purchaseDocument
+            ignoreUnknownSignals: true
+            function onBackRequested() { root.showPage("purchases"); }
         }
         Connections {
             target: root.payments

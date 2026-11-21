@@ -43,6 +43,8 @@ files = [
     "modules/achats/liste_achats/FinancialTotal.qml",
     "modules/ventes/nouveau_doc/NouveauDoc.qml",
     "modules/ventes/nouveau_doc/NouveauDocView.ui.qml",
+    "modules/achats/nouveau_doc/NouveauDoc.qml",
+    "modules/achats/nouveau_doc/NouveauDocView.ui.qml",
     "qml/theme/Theme.qml",
     "qml/theme/Colors.qml",
     "qml/theme/Typography.qml",
