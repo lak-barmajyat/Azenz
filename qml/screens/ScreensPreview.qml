@@ -1,7 +1,7 @@
 import QtQuick
 import "../../modules/login" as LoginModule
 import "../../modules/shell" as ShellModule
-import "../../modules/ventes/liste_ventes/VentesSample.js" as Sample
+import "../../modules/ventes/liste_ventes/SalesSample.js" as Sample
 import "../components"
 
 Item {
@@ -21,9 +21,6 @@ Item {
         anchors.fill: parent
         visible: root.screen === "login"
         previewMode: true
-        onLoginRequested: function (username, password, language) {
-            login.completeAuthentication(true, "");
-        }
         onAuthenticated: function (username) {
             shell.userName = username;
             root.screen = "ventes";
@@ -68,10 +65,6 @@ Item {
             } else
                 notices.show(qsTr("Action demandée : %1").arg(action),
                              qsTr("À connecter au service métier. Aucun document réel n'est modifié."), "info");
-        }
-        onDocumentSaveRequested: function (document) {
-            notices.show(qsTr("Document prêt à enregistrer"),
-                         qsTr("Aperçu local : aucun document réel n'a été enregistré."), "info");
         }
         onPaymentActionRequested: function (action, records) {
             notices.show(qsTr("Action règlement : %1").arg(action),

@@ -8,6 +8,7 @@ dependencies = [
     "pymysql[rsa]>=1.2.3",
     "pyside6>=6.11.2",
     "python-dotenv>=1.2.4",
+    "reportlab>=4.4.4",
     "sqlalchemy>=2.1.1",
 ]
 
@@ -34,6 +35,11 @@ files = [
     "main.py",
     "modules/login/Login.qml",
     "modules/login/LoginView.ui.qml",
+    "modules/ventes/liste_ventes/ListeVentes.qml",
+    "modules/ventes/liste_ventes/ListeVentesView.ui.qml",
+    "modules/ventes/liste_ventes/FinancialTotal.qml",
+    "modules/ventes/nouveau_doc/NouveauDoc.qml",
+    "modules/ventes/nouveau_doc/NouveauDocView.ui.qml",
     "qml/theme/Theme.qml",
     "qml/theme/Colors.qml",
     "qml/theme/Typography.qml",
