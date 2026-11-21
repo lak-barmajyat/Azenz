@@ -7,6 +7,9 @@ ShellView {
     property var paymentRows: []
     property string documentAction: "new"
     property int documentId: 0
+    documentPageTitle: documentAction === "edit" ? qsTr("Modifier le document")
+                       : documentAction === "duplicate" ? qsTr("Dupliquer le document")
+                       : qsTr("Nouveau document")
     readonly property var sales: root.currentPage === "sales" && pageLoader.status === Loader.Ready
                                  ? pageLoader.item : null
     readonly property var purchases: root.currentPage === "purchases"
@@ -41,7 +44,7 @@ ShellView {
                 item.sourceRows = root.purchaseRows;
             } else if (root.currentPage === "sales/new") {
                 item.previewMode = root.previewMode;
-                item.openDocument(root.documentAction, root.documentId);
+                root.document.openDocument(root.documentAction, root.documentId);
             } else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
                 item.previewMode = root.previewMode;
@@ -104,5 +107,25 @@ ShellView {
 
     onNavigationRequested: function (page) {
         showPage(page);
+    }
+
+    Connections {
+        target: root.titleBar
+        function onCloseRequested() { root.quitRequested(); }
+        function onMinimizeRequested() { root.minimizeRequested(); }
+        function onMaximizeRequested() { root.maximizeRequested(); }
+    }
+    Connections {
+        target: root.menuBar
+        function onCommandTriggered(command) {
+            if (command === "quit")
+                root.quitRequested();
+            else if (command === "sidebar")
+                root.sidebar.collapsed = !root.sidebar.collapsed;
+        }
+    }
+    Connections {
+        target: root.sidebar
+        function onNavigate(page) { root.navigationRequested(page); }
     }
 }

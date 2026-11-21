@@ -126,28 +126,6 @@ Rectangle {
             height: Math.max(verticalScroll.height - 24, implicitHeight)
             spacing: 9
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
-                Label {
-                    text: root.pageTitle
-                    color: Colors.navy
-                    font.pixelSize: Typography.section
-                    font.weight: Font.Bold
-                }
-                Label {
-                    text: qsTr("Documents  >  Ventes  >  %1").arg(root.pageTitle)
-                    color: Colors.textSecondary
-                    font.pixelSize: Typography.micro
-                    elide: Text.ElideRight
-                    Layout.fillWidth: true
-                }
-                Badge {
-                    text: qsTr("Mode saisie") + "  " + documentType.currentText
-                    variant: "info"
-                }
-            }
-
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: documentFields.implicitHeight + 16
@@ -385,8 +363,6 @@ Rectangle {
                             addActionLabel: root.editingLine ? qsTr("Mettre à jour la ligne") : qsTr("Ajouter la ligne")
                             rowHeight: 44
                             headerHeight: 44
-                            headerBackground: Colors.subtle
-                            headerForeground: Colors.textSecondary
                         }
                     }
                     ColumnLayout {
@@ -560,8 +536,6 @@ Rectangle {
                             rows: paymentPanel.payments
                             selectable: false
                             density: "compact"
-                            headerBackground: Colors.subtle
-                            headerForeground: Colors.textSecondary
                             compactEmptyState: true
                             emptyTitle: qsTr("Aucun règlement enregistré")
                             footerSummary: paymentPanel.payments.length === 1 ? qsTr("1 règlement enregistré") : qsTr("%1 règlements enregistrés").arg(paymentPanel.payments.length)
@@ -626,52 +600,24 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 8
                     spacing: 8
-                    Repeater {
-                        model: [
-                            {
-                                label: qsTr("Total HT"),
-                                value: root.totalHTText,
-                                highlighted: false
-                            },
-                            {
-                                label: qsTr("Montant TVA"),
-                                value: root.totalVATText,
-                                highlighted: false
-                            },
-                            {
-                                label: qsTr("Total TTC (net à payer)"),
-                                value: root.totalTTCText,
-                                highlighted: true
-                            }
-                        ]
-                        Rectangle {
-                            id: totalCard
-                            required property var modelData
-                            Layout.preferredWidth: modelData.highlighted ? 200 : 135
-                            Layout.fillHeight: true
-                            radius: 4
-                            color: modelData.highlighted ? Colors.navy : Colors.canvas
-                            border.color: modelData.highlighted ? Colors.navy : Colors.border
-                            ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 6
-                                spacing: 2
-                                Label {
-                                    text: totalCard.modelData.label
-                                    color: totalCard.modelData.highlighted ? Colors.borderStrong : Colors.textSecondary
-                                    font.pixelSize: 9
-                                    elide: Text.ElideRight
-                                    Layout.fillWidth: true
-                                }
-                                Label {
-                                    text: totalCard.modelData.value
-                                    color: totalCard.modelData.highlighted ? "#86EFAC" : Colors.text
-                                    font.pixelSize: totalCard.modelData.highlighted ? Typography.subtitle : Typography.caption
-                                    font.weight: Font.Bold
-                                    tabular: true
-                                }
-                            }
-                        }
+                    FinancialTotal {
+                        title: qsTr("Total HT")
+                        amountText: root.totalHTText
+                        Layout.preferredWidth: root.width < 900 ? 136 : 168
+                        Layout.fillHeight: true
+                    }
+                    FinancialTotal {
+                        title: qsTr("TVA")
+                        amountText: root.totalVATText
+                        Layout.preferredWidth: root.width < 900 ? 136 : 168
+                        Layout.fillHeight: true
+                    }
+                    FinancialTotal {
+                        title: qsTr("Total TTC")
+                        amountText: root.totalTTCText
+                        emphasized: true
+                        Layout.preferredWidth: root.width < 900 ? 155 : 170
+                        Layout.fillHeight: true
                     }
                     Item {
                         Layout.fillWidth: true

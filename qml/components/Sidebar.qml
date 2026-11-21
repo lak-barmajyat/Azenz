@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Basic as C
 import QtQuick.Layouts
-import "../controls"
 import "../theme"
 
 Rectangle {
@@ -67,6 +66,10 @@ Rectangle {
     signal navigate(string page)
     implicitWidth: collapsed ? Theme.sidebarCollapsed : Theme.sidebarExpanded
     implicitHeight: 640
+    Behavior on implicitWidth {
+        enabled: !Theme.reducedMotion
+        NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
+    }
     color: Colors.navy
     ColumnLayout {
         anchors.fill: parent
@@ -107,6 +110,7 @@ Rectangle {
                 Repeater {
                     model: root.groups
                     SidebarGroup {
+                        id: group
                         required property var modelData
                         title: modelData.title
                         collapsed: root.collapsed
@@ -114,7 +118,7 @@ Rectangle {
                         Layout.leftMargin: 8
                         Layout.rightMargin: 8
                         Repeater {
-                            model: modelData.items
+                            model: group.modelData.items
                             SidebarItem {
                                 required property var modelData
                                 text: modelData.text

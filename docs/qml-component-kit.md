@@ -4,7 +4,8 @@ This library converts the UI component families in the supplied `code.html` into
 native Qt Quick components. The HTML is a component specification sheet, so the
 conversion provides reusable types and a gallery rather than embedding a web view.
 
-Source references: `stitch_azenz_erp_ventes_interface/code.html` and `DESIGN.md`.
+Source references: `UI_azenz/design_system/component_catalog.html` and
+`UI_azenz/design_system/DESIGN.md`.
 For conflicting values, the HTML's section-specific definitions take precedence:
 orange `#F17D24`, navy `#113657`, 28/32/38px buttons, 32/38px inputs, 28/32px grid
 rows, 32/36px grid headers, and 224/56px sidebars. Documentation cards and state

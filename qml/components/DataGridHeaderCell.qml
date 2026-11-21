@@ -9,8 +9,8 @@ C.AbstractButton {
     property bool sortable: true
     property string sortDirection: "none"
     property bool resizable: true
-    property color headerBackground: Colors.header
-    property color headerForeground: Colors.navy
+    property color headerBackground: Colors.navy
+    property color headerForeground: "white"
     signal resizeStarted
     signal resizeBy(real delta)
     implicitWidth: 160

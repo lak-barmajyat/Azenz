@@ -21,7 +21,7 @@ C.AbstractButton {
         color: root.active ? Colors.accent : root.hovered ? Colors.navHover : "transparent"
         border.color: root.visualFocus ? Colors.accent : "transparent"
         border.width: 2
-        Behavior on color { ColorAnimation { duration: 140 } }
+        Behavior on color { enabled: !Theme.reducedMotion; ColorAnimation { duration: 140 } }
     }
     contentItem: Item {
         Icon {
@@ -32,7 +32,7 @@ C.AbstractButton {
             width: 18
             height: 18
             rotation: root.iconRotation
-            Behavior on rotation { NumberAnimation { duration: 200; easing.type: Easing.InOutCubic } }
+            Behavior on rotation { enabled: !Theme.reducedMotion; NumberAnimation { duration: 200; easing.type: Easing.InOutCubic } }
         }
         Label {
             anchors.left: parent.left
@@ -43,7 +43,7 @@ C.AbstractButton {
             text: root.text
             opacity: root.collapsed ? 0 : 1
             visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 150 } }
+            Behavior on opacity { enabled: !Theme.reducedMotion; NumberAnimation { duration: 150 } }
             color: root.enabled ? "#E2E8F0" : "#66788A"
             font.pixelSize: 12
         }

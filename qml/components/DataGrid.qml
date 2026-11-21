@@ -7,8 +7,8 @@ import "../theme"
 Rectangle {
     id: root
     property string density: Theme.densityFor(parent)
-    property color headerBackground: Colors.header
-    property color headerForeground: Colors.navy
+    property color headerBackground: Colors.navy
+    property color headerForeground: "white"
     property bool compactEmptyState: false
     property string emptyTitle: qsTr("Aucun résultat")
     property color footerBackground: Colors.canvas

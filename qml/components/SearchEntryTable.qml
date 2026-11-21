@@ -26,8 +26,8 @@ Rectangle {
     property int rowNumberWidth: 34
     property int typeIconWidth: 44
     property string rowTypeIcon: "inventory_2"
-    property color headerBackground: Colors.header
-    property color headerForeground: Colors.navy
+    property color headerBackground: Colors.navy
+    property color headerForeground: "white"
     property string localeName: Qt.locale().name
     property string suggestionPrimaryKey: "description"
     property string suggestionSecondaryKey: "reference"
@@ -41,6 +41,7 @@ Rectangle {
     }, (showActions ? actionWidth : 0) +
        (showRowNumber ? rowNumberWidth : 0) +
        (showTypeIcon ? typeIconWidth : 0))
+    readonly property int horizontalBarHeight: tableWidth > width - 2 ? 8 : 0
     readonly property real totalFill: columns.reduce(function(total, column) {
         return total + (Number(column.fill) || 0);
     }, 0)
@@ -51,7 +52,7 @@ Rectangle {
     signal removeRequested(var row)
 
     implicitWidth: 900
-    implicitHeight: headerHeight + (rows.length + (readOnly ? 0 : 1)) * rowHeight + 2
+    implicitHeight: headerHeight + (rows.length + (readOnly ? 0 : 1)) * rowHeight + 2 + horizontalBarHeight
     radius: 6
     color: Colors.surface
     border.color: Colors.borderStrong
@@ -130,11 +131,18 @@ Rectangle {
         id: scroll
         anchors.fill: parent
         anchors.margins: 1
+        anchors.bottomMargin: 1 + root.horizontalBarHeight
         contentWidth: Math.max(width, root.tableWidth)
         contentHeight: tableContent.height
         flickableDirection: Flickable.AutoFlickDirection
         boundsBehavior: Flickable.StopAtBounds
-        C.ScrollBar.horizontal: AzenzScrollBar {}
+        C.ScrollBar.horizontal: AzenzScrollBar {
+            parent: root
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: 8
+        }
         C.ScrollBar.vertical: AzenzScrollBar {}
 
         Column {
@@ -349,8 +357,8 @@ Rectangle {
                                 anchors.fill: parent
                                 anchors.leftMargin: 8
                                 anchors.rightMargin: 8
-                                anchors.topMargin: draftCell.modelData.searchable === true ? 0 : 4
-                                anchors.bottomMargin: draftCell.modelData.searchable === true ? 0 : 4
+                                anchors.topMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
+                                anchors.bottomMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
                                 sourceComponent: draftCell.modelData.searchable === true ? searchCell
                                                : draftCell.modelData.editable === true ? inputCell : valueCell
                             }
@@ -385,8 +393,7 @@ Rectangle {
                             }
                             Component {
                                 id: inputCell
-                                AzenzTextField {
-                                    id: inlineInput
+                                SearchEntryInlineField {
                                     text: String(root.draftValue(draftCell.modelData.key,
                                                  draftCell.modelData.defaultValue ?? ""))
                                     inputType: draftCell.modelData.inputType || "text"
@@ -396,14 +403,6 @@ Rectangle {
                                                          ? TextInput.AlignRight : TextInput.AlignLeft
                                     onTextEdited: root.setDraftValue(draftCell.modelData.key, text, false)
                                     onAccepted: root.addDraft()
-                                    leftPadding: 2
-                                    rightPadding: 2
-                                    background: Rectangle {
-                                        radius: 3
-                                        color: inlineInput.activeFocus ? Colors.surface : "transparent"
-                                        border.width: inlineInput.activeFocus || inlineInput.hovered ? 1 : 0
-                                        border.color: inlineInput.activeFocus ? Colors.accent : Colors.border
-                                    }
                                 }
                             }
                             Component {

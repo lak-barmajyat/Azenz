@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../../qml/controls"
-import "../../../qml/theme"
+import "../controls"
+import "../theme"
 
 Rectangle {
     id: root
     property string title: qsTr("Total HT")
     property real amount: 0
+    property string amountText: ""
     property bool emphasized: false
     implicitWidth: 168
     implicitHeight: 48
@@ -24,7 +25,8 @@ Rectangle {
             color: root.emphasized ? Colors.navy : Colors.textSecondary
         }
         Label {
-            text: root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + qsTr(" MAD")
+            text: root.amountText !== "" ? root.amountText
+                  : root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + qsTr(" MAD")
             tabular: true
             font.pixelSize: root.emphasized ? Typography.subtitle : Typography.body
             font.weight: Font.Bold
