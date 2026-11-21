@@ -25,7 +25,8 @@ Rectangle {
             color: root.emphasized ? Colors.navy : Colors.textSecondary
         }
         Label {
-            text: root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + qsTr(" MAD")
+            text: root.amountText !== "" ? root.amountText
+                  : root.amount.toLocaleString(Qt.locale("fr_FR"), "f", 2) + qsTr(" MAD")
             tabular: true
             font.pixelSize: root.emphasized ? Typography.subtitle : Typography.body
             font.weight: Font.Bold

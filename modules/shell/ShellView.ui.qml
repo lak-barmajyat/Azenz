@@ -12,6 +12,7 @@ Rectangle {
     property bool connected: false
     property bool previewMode: false
     property string currentPage: "dashboard"
+    property string documentPageTitle: qsTr("Nouveau document")
     readonly property var pageTitles: ({"dashboard": qsTr("Tableau de bord"),
                                         "sales": qsTr("Ventes"),
                                         "sales/new": qsTr("Nouveau document"),
@@ -22,8 +23,9 @@ Rectangle {
                                         "suppliers": qsTr("Fournisseurs"),
                                         "articles": qsTr("Articles"),
                                         "families": qsTr("Familles")})
-    readonly property string pageTitle: pageTitles[currentPage] || currentPage
-    readonly property string pagePath: currentPage === "sales/new" ? qsTr("Documents  >  Ventes  >  Nouveau document")
+    readonly property string pageTitle: currentPage === "sales/new" ? documentPageTitle
+                                        : pageTitles[currentPage] || currentPage
+    readonly property string pagePath: currentPage === "sales/new" ? qsTr("Documents  >  Ventes  >  %1").arg(pageTitle)
                                      : currentPage === "sales" || currentPage === "purchases" || currentPage === "stock"
                                      ? qsTr("Documents  >  ") + pageTitle
                                      : currentPage === "payments" ? qsTr("Finances  >  ") + pageTitle
@@ -51,21 +53,12 @@ Rectangle {
             title: "AZENZ ERP Desktop v4.2.1 Pro"
             subtitle: root.previewMode ? "| Aperçu des écrans" : ""
             Layout.fillWidth: true
-            onCloseRequested: root.quitRequested()
-            onMinimizeRequested: root.minimizeRequested()
-            onMaximizeRequested: root.maximizeRequested()
         }
         ApplicationMenuBar {
             id: menuBar
             dark: true
             Layout.fillWidth: true
             Layout.preferredHeight: 28
-            onCommandTriggered: function (command) {
-                if (command === "quit")
-                    root.quitRequested();
-                else if (command === "sidebar")
-                    root.sidebar.collapsed = !root.sidebar.collapsed;
-            }
         }
         RowLayout {
             Layout.fillWidth: true
@@ -77,9 +70,6 @@ Rectangle {
                 currentPage: root.currentPage
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                onNavigate: function (page) {
-                    root.navigationRequested(page);
-                }
             }
             ColumnLayout {
                 Layout.fillWidth: true

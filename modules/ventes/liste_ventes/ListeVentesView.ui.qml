@@ -43,97 +43,66 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 50
             color: Colors.surface
-            ColumnLayout {
+            RowLayout {
                 anchors.fill: parent
-                anchors.margins: 16
-                spacing: 8
-                RowLayout {
-                    Layout.fillWidth: true
-                    Label {
-                        text: qsTr("Ventes")
-                        color: Colors.navy
-                        font.pixelSize: Typography.section
-                        font.weight: Font.Bold
-                    }
-                    ToolbarSeparator {
-                        implicitHeight: 18
-                    }
-                    Breadcrumb {}
-                    Item {
-                        Layout.fillWidth: true
-                    }
-                    AzenzButton {
-                        id: refresh
-                        text: qsTr("Actualiser")
-                        iconName: "refresh"
-                        variant: "secondary"
-                        size: "compact"
-                    }
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                spacing: 6
+                AzenzButton {
+                    id: create
+                    text: qsTr("Nouveau")
+                    iconName: "add"
+                    size: "compact"
                 }
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: Colors.subtle
+                AzenzButton {
+                    id: edit
+                    text: qsTr("Modifier")
+                    iconName: "edit"
+                    variant: "secondary"
+                    size: "compact"
+                    enabled: grid.selectionCount === 1
                 }
-                RowLayout {
+                AzenzButton {
+                    id: remove
+                    text: qsTr("Supprimer")
+                    iconName: "delete"
+                    variant: "danger"
+                    size: "compact"
+                    enabled: grid.selectionCount > 0
+                }
+                AzenzButton {
+                    id: duplicate
+                    text: qsTr("Dupliquer")
+                    iconName: "copy"
+                    variant: "secondary"
+                    size: "compact"
+                    enabled: grid.selectionCount === 1
+                }
+                AzenzButton {
+                    id: printAction
+                    text: qsTr("Imprimer")
+                    iconName: "print"
+                    variant: "secondary"
+                    size: "compact"
+                    enabled: grid.selectionCount > 0
+                }
+                AzenzButton {
+                    id: exportAction
+                    text: qsTr("Exporter Excel")
+                    iconName: "table"
+                    variant: "secondary"
+                    size: "compact"
+                    enabled: root.records.length > 0
+                }
+                Item {
                     Layout.fillWidth: true
-                    spacing: 6
-                    AzenzButton {
-                        id: create
-                        text: qsTr("Nouveau")
-                        iconName: "add"
-                        size: "compact"
-                    }
-                    AzenzButton {
-                        id: edit
-                        text: qsTr("Modifier")
-                        iconName: "edit"
-                        variant: "secondary"
-                        size: "compact"
-                        enabled: grid.selectionCount === 1
-                    }
-                    AzenzButton {
-                        id: remove
-                        text: qsTr("Supprimer")
-                        iconName: "delete"
-                        variant: "danger"
-                        size: "compact"
-                        enabled: grid.selectionCount > 0
-                    }
-                    AzenzButton {
-                        id: duplicate
-                        text: qsTr("Dupliquer")
-                        iconName: "copy"
-                        variant: "secondary"
-                        size: "compact"
-                        enabled: grid.selectionCount === 1
-                    }
-                    AzenzButton {
-                        id: printAction
-                        text: qsTr("Imprimer")
-                        iconName: "print"
-                        variant: "secondary"
-                        size: "compact"
-                        enabled: grid.selectionCount > 0
-                    }
-                    AzenzButton {
-                        id: exportAction
-                        text: qsTr("Exporter Excel")
-                        iconName: "table"
-                        variant: "secondary"
-                        size: "compact"
-                        enabled: root.records.length > 0
-                    }
-                    Item {
-                        Layout.fillWidth: true
-                    }
-                    AzenzButton {
-                        id: refresh
-                        text: qsTr("Actualiser")
-                        iconName: "refresh"
-                        variant: "secondary"
-                        size: "compact"
-                    }
+                }
+                AzenzButton {
+                    id: refresh
+                    text: qsTr("Actualiser")
+                    iconName: "refresh"
+                    variant: "secondary"
+                    size: "compact"
                 }
             }
         }
@@ -221,16 +190,18 @@ Rectangle {
                 FinancialTotal {
                     title: qsTr("Total HT")
                     amount: root.totalHT
+                    Layout.preferredWidth: root.width < 900 ? 136 : 168
                 }
                 FinancialTotal {
                     title: qsTr("TVA")
                     amount: root.totalVAT
+                    Layout.preferredWidth: root.width < 900 ? 136 : 168
                 }
                 FinancialTotal {
                     title: qsTr("Total TTC")
                     amount: root.totalTTC
                     emphasized: true
-                    implicitWidth: 170
+                    Layout.preferredWidth: root.width < 900 ? 155 : 170
                 }
                 Item {
                     Layout.fillWidth: true
