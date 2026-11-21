@@ -27,6 +27,8 @@ import "../nouveau_doc"
 ApplicationWindow {
     id: window
     property bool creatingDocument: false
+    property string documentAction: "new"
+    property int documentId: 0
     width: 1200
     height: 800
     minimumWidth: 800
@@ -44,14 +46,21 @@ ApplicationWindow {
             onBackRequested: Qt.quit()
             onQuitRequested: Qt.quit()
             onActionRequested: function(action, records) {
-                if (action === "new")
+                var opensDocument = action === "edit" || action === "open"
+                                    || action === "duplicate";
+                if (action === "new" || (opensDocument && records.length === 1)) {
+                    window.documentAction = action === "duplicate" ? "duplicate"
+                                          : action === "new" ? "new" : "edit";
+                    window.documentId = action === "new" ? 0 : records[0].id;
                     window.creatingDocument = true;
+                }
             }
         }
     }
     Component {
         id: documentFrame
         NouveauDoc {
+            Component.onCompleted: openDocument(window.documentAction, window.documentId)
             onBackRequested: window.creatingDocument = false
         }
     }

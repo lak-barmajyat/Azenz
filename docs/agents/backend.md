@@ -8,6 +8,7 @@ Applies to Python code in feature windows, especially `model.py`.
 - Each UI action requiring Python logic starts at a clear method in this class.
 - Expose QML-callable methods using PySide6 `@Slot(...)` with appropriate signatures.
 - Use Qt signals and properties to communicate with QML.
+- Generate sequential business codes with `services.code_generation.next_code`; never reimplement increment logic.
 
 ## UI Communication
 - Use signals to report operation success, errors, and loading state to QML.

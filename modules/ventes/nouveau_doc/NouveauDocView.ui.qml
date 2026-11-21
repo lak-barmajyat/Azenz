@@ -88,11 +88,14 @@ Rectangle {
     property string totalTTCText: qsTr("0,00 MAD")
     property string errorMessage: ""
     property bool busy: false
+    property bool canSave: true
+    property string pageTitle: qsTr("Nouveau document")
     property bool editingLine: false
     property bool canAddLine: false
     property alias clientCode: clientCode.text
     property alias clientPicker: client
     property alias documentCode: documentCode.text
+    property alias documentCodeField: documentCode
     property alias documentType: documentType
     property alias documentDate: documentDate
     property alias activeTab: tabs.currentIndex
@@ -127,13 +130,13 @@ Rectangle {
                 Layout.fillWidth: true
                 spacing: 8
                 Label {
-                    text: qsTr("Nouveau document")
+                    text: root.pageTitle
                     color: Colors.navy
                     font.pixelSize: Typography.section
                     font.weight: Font.Bold
                 }
                 Label {
-                    text: qsTr("Documents  >  Ventes  >  Nouveau document")
+                    text: qsTr("Documents  >  Ventes  >  %1").arg(root.pageTitle)
                     color: Colors.textSecondary
                     font.pixelSize: Typography.micro
                     elide: Text.ElideRight
@@ -685,7 +688,7 @@ Rectangle {
                         text: qsTr("Enregistrer")
                         iconName: "save"
                         loading: root.busy
-                        enabled: !root.codeBusy
+                        enabled: !root.busy && !root.codeBusy && root.canSave
                     }
                 }
             }

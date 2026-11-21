@@ -1,20 +1,26 @@
 from __future__ import annotations
 
+import csv
 from collections.abc import Callable
 from datetime import date, datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import Property, QObject, QThread, Signal, Slot
-from sqlalchemy import select
+from PySide6.QtCore import Property, QObject, QThread, QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices
+from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from database.models.d_document_lignes import DDocumentLignes
 from database.models.d_documents import DDocuments
 from database.models.d_tiers import DTiers
 from database.models.p_types_documents import PTypesDocuments
 from database.session import with_session
+from modules.ventes.document_printing import render_sales_documents
 from services.logger import get_logger
+from services.paths import app_data_dir
 
 
 class _LoadThread(QThread):
@@ -35,12 +41,21 @@ class ListeVentesModel(QObject):
     busyChanged = Signal()
     loadFailed = Signal(str)
     validationFailed = Signal(str)
+    deleteCompleted = Signal(int)
+    deleteFailed = Signal(str)
+    exportCompleted = Signal(str)
+    exportFailed = Signal(str)
+    printCompleted = Signal(str)
+    printFailed = Signal(str)
 
     def __init__(self, parent: QObject | None = None, *, preview: bool = False) -> None:
         super().__init__(parent)
         self._logger = get_logger(__name__)
         self._preview = preview
+        self._closing = False
         self._worker: _LoadThread | None = None
+        self._delete_worker: _LoadThread | None = None
+        self._print_worker: _LoadThread | None = None
         self._source: list[dict[str, Any]] = []
         self._records: list[dict[str, Any]] = []
         self._totals = {"ht": 0.0, "vat": 0.0, "ttc": 0.0}
@@ -52,7 +67,11 @@ class ListeVentesModel(QObject):
 
     @Property(bool, notify=busyChanged)
     def busy(self) -> bool:
-        return self._worker is not None
+        return (
+            self._worker is not None
+            or self._delete_worker is not None
+            or self._print_worker is not None
+        )
 
     @Property(list, notify=dataChanged)
     def records(self) -> list[dict[str, Any]]:
@@ -68,7 +87,7 @@ class ListeVentesModel(QObject):
 
     @Slot()
     def refresh(self) -> None:
-        if self._worker is not None:
+        if self._closing or self._worker is not None:
             return
         if self._preview:
             self._publish()
@@ -94,9 +113,241 @@ class ListeVentesModel(QObject):
 
     @Slot()
     def shutdown(self) -> None:
+        self._closing = True
+        if self._delete_worker is not None:
+            self._delete_worker.wait()
+            self._complete_delete()
+        if self._print_worker is not None:
+            self._print_worker.wait()
+            self._complete_print()
         if self._worker is not None:
             self._worker.wait()
             self._complete()
+
+    @Slot("QVariantList")
+    def deleteDocuments(self, document_ids: list[int]) -> None:
+        ids = sorted({int(document_id) for document_id in document_ids if int(document_id) > 0})
+        if not ids or self.busy:
+            return
+        self._delete_worker = _LoadThread(lambda: self._soft_delete(ids), self)
+        self._delete_worker.finished.connect(self._complete_delete)
+        self.busyChanged.emit()
+        self._delete_worker.start()
+
+    @Slot()
+    def _complete_delete(self) -> None:
+        worker = self._delete_worker
+        if worker is None:
+            return
+        self._delete_worker = None
+        self.busyChanged.emit()
+        result = worker.records
+        worker.deleteLater()
+        if result is None:
+            self.deleteFailed.emit("service_unavailable")
+            return
+        deleted = int(result[0]["count"]) if result else 0
+        self.deleteCompleted.emit(deleted)
+        if not self._closing:
+            self.refresh()
+
+    def _soft_delete(self, document_ids: list[int]) -> list[dict[str, Any]] | None:
+        try:
+            return [{"count": self._mark_deleted(document_ids)}]
+        except (SQLAlchemyError, RuntimeError):
+            self._logger.exception("Sales document soft-delete failed")
+            return None
+
+    @with_session()
+    def _mark_deleted(self, document_ids: list[int], *, session: Session) -> int:
+        existing_ids = list(
+            session.scalars(
+                select(DDocuments.id)
+                .join(DDocuments.type_document)
+                .where(
+                    DDocuments.id.in_(document_ids),
+                    DDocuments.supprime == 0,
+                    PTypesDocuments.domaine == "VENTE",
+                )
+            )
+        )
+        if not existing_ids:
+            return 0
+        session.execute(
+            update(DDocuments).where(DDocuments.id.in_(existing_ids)).values(supprime=1)
+        )
+        return len(existing_ids)
+
+    @Slot(QUrl, "QVariantList")
+    def exportCsv(self, destination: QUrl, records: list[dict[str, Any]]) -> None:
+        if destination.isEmpty() or not destination.isLocalFile():
+            self.exportFailed.emit("invalid_destination")
+            return
+        path = Path(destination.toLocalFile())
+        if path.suffix.casefold() != ".csv":
+            path = path.with_suffix(".csv")
+        try:
+            self._write_csv(path, records)
+        except (OSError, ValueError):
+            self._logger.exception("Sales list export failed")
+            self.exportFailed.emit("write_failed")
+            return
+        self.exportCompleted.emit(str(path))
+
+    @staticmethod
+    def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
+        columns = (
+            ("clientCode", "Code client"),
+            ("client", "Client"),
+            ("documentCode", "Code document"),
+            ("documentType", "Type document"),
+            ("date", "Date"),
+            ("ht", "Total HT"),
+            ("vat", "TVA"),
+            ("ttc", "Total TTC"),
+        )
+        with path.open("w", encoding="utf-8-sig", newline="") as output:
+            writer = csv.writer(output, delimiter=";")
+            writer.writerow([title for _, title in columns])
+            for record in records:
+                writer.writerow([record.get(key, "") for key, _ in columns])
+
+    @Slot("QVariantList")
+    def printDocuments(self, document_ids: list[int]) -> None:
+        ids = sorted({int(document_id) for document_id in document_ids if int(document_id) > 0})
+        if not ids or self.busy or self._closing:
+            return
+        if self._preview:
+            self.printFailed.emit("preview_only")
+            return
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+        destination = app_data_dir() / "prints" / f"ventes-{timestamp}.pdf"
+        self._print_worker = _LoadThread(lambda: self._create_printout(ids, destination), self)
+        self._print_worker.finished.connect(self._complete_print)
+        self.busyChanged.emit()
+        self._print_worker.start()
+
+    @Slot()
+    def _complete_print(self) -> None:
+        worker = self._print_worker
+        if worker is None:
+            return
+        self._print_worker = None
+        self.busyChanged.emit()
+        result = worker.records
+        worker.deleteLater()
+        if self._closing:
+            return
+        if result is None:
+            self.printFailed.emit("service_unavailable")
+            return
+        if not result:
+            self.printFailed.emit("not_found")
+            return
+        path = str(result[0]["path"])
+        if not QDesktopServices.openUrl(QUrl.fromLocalFile(path)):
+            self.printFailed.emit("open_failed")
+            return
+        self.printCompleted.emit(path)
+
+    def _create_printout(
+        self, document_ids: list[int], destination: Path
+    ) -> list[dict[str, Any]] | None:
+        try:
+            documents = self._load_print_documents(document_ids)
+            if not documents:
+                return []
+            render_sales_documents(destination, documents)
+            return [{"path": str(destination)}]
+        except (
+            ArithmeticError,
+            KeyError,
+            OSError,
+            RuntimeError,
+            SQLAlchemyError,
+            TypeError,
+            ValueError,
+        ):
+            destination.unlink(missing_ok=True)
+            self._logger.exception("Sales document PDF generation failed")
+            return None
+
+    @with_session()
+    def _load_print_documents(
+        self, document_ids: list[int], *, session: Session
+    ) -> list[dict[str, Any]]:
+        headers = session.execute(
+            select(
+                DDocuments.id,
+                DDocuments.code_document,
+                DDocuments.date_document,
+                DDocuments.montant_ht,
+                DDocuments.montant_tva,
+                DDocuments.montant_remise,
+                DDocuments.montant_net_ttc,
+                DTiers.code_tiers,
+                DTiers.raison_sociale,
+                PTypesDocuments.nom_type_document,
+            )
+            .join(DDocuments.type_document)
+            .outerjoin(DDocuments.tier)
+            .where(
+                DDocuments.id.in_(document_ids),
+                DDocuments.supprime == 0,
+                PTypesDocuments.domaine == "VENTE",
+            )
+            .order_by(DDocuments.date_document, DDocuments.id)
+        ).all()
+        lines_by_document: dict[int, list[dict[str, Any]]] = {
+            int(header.id): [] for header in headers
+        }
+        if lines_by_document:
+            lines = session.execute(
+                select(
+                    DDocumentLignes.document_id,
+                    DDocumentLignes.code_article,
+                    DDocumentLignes.designation,
+                    DDocumentLignes.quantite,
+                    DDocumentLignes.prix_unitaire_ht,
+                    DDocumentLignes.prix_unitaire_ttc,
+                    DDocumentLignes.tva_percentage,
+                    DDocumentLignes.montant_ht,
+                    DDocumentLignes.montant_ttc,
+                )
+                .where(
+                    DDocumentLignes.document_id.in_(list(lines_by_document)),
+                    DDocumentLignes.supprime == 0,
+                )
+                .order_by(DDocumentLignes.document_id, DDocumentLignes.numero_ligne)
+            ).all()
+            for line in lines:
+                lines_by_document[int(line.document_id)].append(
+                    {
+                        "reference": line.code_article or "",
+                        "description": line.designation or "",
+                        "quantity": line.quantite,
+                        "priceHT": line.prix_unitaire_ht,
+                        "priceTTC": line.prix_unitaire_ttc,
+                        "vat": line.tva_percentage,
+                        "totalHT": line.montant_ht,
+                        "totalTTC": line.montant_ttc,
+                    }
+                )
+        return [
+            {
+                "documentCode": header.code_document,
+                "documentType": header.nom_type_document,
+                "date": header.date_document,
+                "clientCode": header.code_tiers or "",
+                "client": header.raison_sociale or "",
+                "totalHT": header.montant_ht,
+                "totalVAT": header.montant_tva,
+                "discount": header.montant_remise,
+                "totalNetTTC": header.montant_net_ttc,
+                "lines": lines_by_document[int(header.id)],
+            }
+            for header in headers
+        ]
 
     @Slot(str, str, str, str)
     def applyFilters(self, code: str, document_type: str, from_date: str, to_date: str) -> None:

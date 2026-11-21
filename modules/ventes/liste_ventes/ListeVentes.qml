@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Dialogs
 import "../../../qml/components"
 
 ListeVentesView {
@@ -60,6 +61,20 @@ ListeVentesView {
         }
         function onValidationFailed(code) {
             root.filterError = code === "invalid_range" ? qsTr("La date de début doit précéder la date de fin.") : qsTr("Veuillez saisir des dates valides (JJ/MM/AAAA).");
+        }
+        function onDeleteFailed(code) {
+            root.filterError = qsTr("La suppression a échoué. Vérifiez la connexion et réessayez.");
+        }
+        function onExportFailed(code) {
+            root.filterError = qsTr("Impossible d'enregistrer le fichier d'export.");
+        }
+        function onPrintFailed(code) {
+            root.filterError = code === "open_failed"
+                    ? qsTr("Le PDF a été créé, mais son ouverture a échoué.")
+                    : qsTr("Impossible de créer le document à imprimer.");
+        }
+        function onPrintCompleted(path) {
+            root.filterError = "";
         }
     }
     columns: [
@@ -163,6 +178,20 @@ ListeVentesView {
         if (action === "delete") {
             pendingDelete = selected.slice();
             confirmDelete.open();
+            return;
+        }
+        if (action === "export") {
+            exportDialog.open();
+            return;
+        }
+        if (action === "print") {
+            if (previewMode) {
+                actionRequested(action, selected);
+            } else if (backend) {
+                backend.printDocuments(selected.map(function (record) {
+                    return record.id;
+                }));
+            }
             return;
         }
         actionRequested(action, action === "export" ? records : selected);
@@ -336,9 +365,24 @@ ListeVentesView {
         message: qsTr("Supprimer %n document(s) sélectionné(s) ?", "", root.pendingDelete.length)
         supportingMessage: qsTr("Vérifiez les documents sélectionnés avant de continuer.")
         onAccepted: {
-            root.actionRequested("delete", root.pendingDelete);
+            if (root.backend) {
+                root.backend.deleteDocuments(root.pendingDelete.map(function (record) {
+                    return record.id;
+                }));
+            }
             root.pendingDelete = [];
         }
         onRejected: root.pendingDelete = []
+    }
+    FileDialog {
+        id: exportDialog
+        title: qsTr("Exporter la liste des ventes")
+        fileMode: FileDialog.SaveFile
+        nameFilters: [qsTr("Fichier Excel CSV (*.csv)")]
+        defaultSuffix: "csv"
+        onAccepted: {
+            if (root.backend)
+                root.backend.exportCsv(selectedFile, root.records);
+        }
     }
 }

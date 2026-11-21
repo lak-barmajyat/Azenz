@@ -4,6 +4,8 @@ ShellView {
     id: root
     property var pageData: []
     property var paymentRows: []
+    property string documentAction: "new"
+    property int documentId: 0
     readonly property var sales: root.currentPage === "sales" && pageLoader.status === Loader.Ready
                                  ? pageLoader.item : null
     readonly property var document: root.currentPage === "sales/new" && pageLoader.status === Loader.Ready
@@ -27,9 +29,10 @@ ShellView {
             if (root.currentPage === "sales") {
                 item.previewMode = root.previewMode;
                 item.sourceRows = root.pageData;
-            } else if (root.currentPage === "sales/new")
+            } else if (root.currentPage === "sales/new") {
                 item.previewMode = root.previewMode;
-            else if (root.currentPage === "payments") {
+                item.openDocument(root.documentAction, root.documentId);
+            } else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
                 item.previewMode = root.previewMode;
             }
@@ -41,10 +44,17 @@ ShellView {
                 root.showPage("dashboard");
             }
             function onActionRequested(action, records) {
-                if (action === "new")
+                if (action === "new") {
+                    root.documentAction = "new";
+                    root.documentId = 0;
                     root.showPage("sales/new");
-                else
+                } else if (["edit", "open", "duplicate"].indexOf(action) >= 0 && records.length === 1) {
+                    root.documentAction = action === "duplicate" ? "duplicate" : "edit";
+                    root.documentId = records[0].id;
+                    root.showPage("sales/new");
+                } else {
                     root.salesActionRequested(action, records);
+                }
             }
         }
         Connections {

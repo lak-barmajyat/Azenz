@@ -7,6 +7,11 @@ NouveauDocView {
     property bool previewMode: false
     property int editingLineId: -1
     property int editingPaymentId: -1
+    property string documentMode: "new"
+    property int sourceDocumentId: 0
+    property var loadedHeader: ({})
+    property bool initializingDocument: false
+    property bool opened: false
     // Installed by the Python launcher before loading the frame.
     // qmllint disable unqualified
     readonly property var backend: typeof nouveauDocModel !== "undefined" ? nouveauDocModel : null
@@ -21,9 +26,14 @@ NouveauDocView {
     onClientCodeChanged: {
         if (backend)
             clientPicker.currentIndex = backend.clientIndexForCode(clientCode);
+        trackDraft();
     }
 
     busy: backend ? backend.busy : false
+    canSave: documentMode !== "edit" || (backend ? backend.hasChanges : false)
+    pageTitle: documentMode === "edit" ? qsTr("Modifier le document")
+               : documentMode === "duplicate" ? qsTr("Dupliquer le document")
+               : qsTr("Nouveau document")
     articleSearchResults: backend ? backend.articleSearchResults : ({field: "", query: "", items: []})
     articleSearchBusy: backend ? backend.searchBusy : false
     articleRows: backend ? backend.lines : []
@@ -40,13 +50,65 @@ NouveauDocView {
     editingLine: editingLineId >= 0
     canAddLine: backend !== null && linesTable.selectedSuggestion !== null && backend.validLine(linesTable.draft)
 
-    Component.onCompleted: {
+    Component.onCompleted: Qt.callLater(function () {
+        if (!root.opened)
+            root.openDocument("new", 0);
+    })
+
+    function openDocument(action, documentId) {
+        opened = true;
+        documentMode = action === "duplicate" ? "duplicate" : action === "edit" ? "edit" : "new";
+        sourceDocumentId = documentId || 0;
+        loadedHeader = {};
+        initializingDocument = true;
+        clientCode = "";
+        clientPicker.currentIndex = -1;
+        documentCode = "";
+        documentType.currentIndex = -1;
         documentDate.value = new Date();
         documentDate.hasValue = true;
+        paymentsTab.discountText = "0,00";
         if (backend) {
             backend.reset();
             backend.loadLookups();
+            if (sourceDocumentId > 0)
+                backend.loadDocument(sourceDocumentId, documentMode === "duplicate");
         }
+        Qt.callLater(function () {
+            root.initializingDocument = false;
+            root.trackDraft();
+        });
+    }
+
+    function headerDraft() {
+        return {
+            client: clients[clientPicker.currentIndex] || null,
+            code: documentCode,
+            type: documentType.currentValue || "",
+            date: documentDate.hasValue ? Qt.formatDate(documentDate.value, "yyyy-MM-dd") : ""
+        };
+    }
+
+    function trackDraft() {
+        if (!initializingDocument && backend)
+            backend.updateDraftState(headerDraft());
+    }
+
+    function applyLoadedHeader() {
+        if (!loadedHeader.id)
+            return;
+        initializingDocument = true;
+        clientCode = loadedHeader.clientCode;
+        clientPicker.currentIndex = backend ? backend.clientIndexForCode(loadedHeader.clientCode) : -1;
+        documentType.currentIndex = backend ? backend.documentTypeIndexForCode(loadedHeader.type) : -1;
+        documentCode = documentMode === "duplicate" && backend ? backend.documentCode : loadedHeader.code;
+        documentDate.value = new Date(loadedHeader.date + "T00:00:00");
+        documentDate.hasValue = true;
+        paymentsTab.discountText = String(loadedHeader.discount || 0);
+        Qt.callLater(function () {
+            root.initializingDocument = false;
+            root.trackDraft();
+        });
     }
 
     function formatMoney(value) {
@@ -150,9 +212,19 @@ NouveauDocView {
         target: root.backend
         function onLookupsChanged() {
             root.errorMessage = "";
-            root.clientPicker.currentIndex = root.backend.clientIndexForCode(root.clientCode);
-            root.documentType.currentIndex = root.documentTypes.length > 0 ? 0 : -1;
-            root.backend.generateDocumentCode(root.documentType.currentValue || "");
+            if (root.loadedHeader.id) {
+                root.applyLoadedHeader();
+            } else {
+                root.documentType.currentIndex = root.documentTypes.length > 0 ? 0 : -1;
+                root.backend.generateDocumentCode(root.documentType.currentValue || "");
+            }
+        }
+        function onDocumentLoaded(header) {
+            root.loadedHeader = header;
+            root.applyLoadedHeader();
+        }
+        function onDocumentLoadFailed(code) {
+            root.errorMessage = qsTr("Impossible de charger ce document. Il a peut-être été supprimé.");
         }
         function onDocumentCodeChanged() {
             root.documentCode = root.backend.documentCode;
@@ -189,22 +261,38 @@ NouveauDocView {
         function onDocumentSaved(documentId, code) {
             root.errorMessage = "";
             root.documentCode = code;
-            saved.message = qsTr("Le document %1 et ses lignes ont été enregistrés en brouillon.").arg(code);
+            saved.message = root.documentMode === "edit"
+                    ? qsTr("Les modifications du document %1 ont été enregistrées.").arg(code)
+                    : qsTr("Le document %1 et ses lignes ont été enregistrés en brouillon.").arg(code);
             saved.open();
         }
     }
     Connections {
         target: root.documentType
         function onCurrentValueChanged() {
-            if (root.backend)
+            if (!root.initializingDocument && root.backend && root.documentMode !== "edit")
                 root.backend.generateDocumentCode(root.documentType.currentValue || "");
+            root.trackDraft();
         }
     }
     Connections {
         target: root.clientPicker
+        function onCurrentIndexChanged() {
+            root.trackDraft();
+        }
         function onActivated(index) {
             root.clientCode = index >= 0 && index < root.clients.length ? root.clients[index].code || "" : "";
+            root.trackDraft();
         }
+    }
+    Connections {
+        target: root.documentCodeField
+        function onTextChanged() { root.trackDraft(); }
+    }
+    Connections {
+        target: root.documentDate
+        function onDateEdited(value) { root.trackDraft(); }
+        function onDateCleared() { root.trackDraft(); }
     }
     Connections {
         target: root.linesTable
