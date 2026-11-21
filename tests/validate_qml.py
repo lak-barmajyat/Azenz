@@ -98,6 +98,8 @@ if preview.exists():
 failures.extend(messages)
 for failure in failures:
     print(failure)
-print(f"Validated {len(files)} component files and {len(feature_files)} feature frames; "
-      f"{len(failures)} errors/warnings.")
+print(
+    f"Validated {len(files)} component files and {len(feature_files)} feature frames; "
+    f"{len(failures)} errors/warnings."
+)
 sys.exit(bool(failures))
