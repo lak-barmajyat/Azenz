@@ -8,6 +8,7 @@ dependencies = [
     "pymysql[rsa]>=1.2.3",
     "pyside6>=6.11.2",
     "python-dotenv>=1.2.4",
+    "reportlab>=4.4.4",
     "sqlalchemy>=2.1.1",
 ]
 

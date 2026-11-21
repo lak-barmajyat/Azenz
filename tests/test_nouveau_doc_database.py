@@ -320,6 +320,17 @@ class NouveauDocDatabaseTests(unittest.TestCase):
             self.assertEqual(document.supprime, 1)
             self.assertEqual(session.scalar(select(func.count()).select_from(DDocuments)), 1)
 
+    def test_print_data_contains_document_header_and_active_lines(self):
+        self.add_line()
+        created = self.model._save(self.draft())
+        documents = ListeVentesModel()._load_print_documents([created["id"]])
+        self.assertEqual(len(documents), 1)
+        self.assertEqual(documents[0]["documentCode"], "CUSTOM009")
+        self.assertEqual(documents[0]["clientCode"], "CL001")
+        self.assertEqual(documents[0]["lines"][0]["reference"], "ART001")
+        self.assertEqual(documents[0]["lines"][0]["priceTTC"], Decimal("14.814814"))
+        self.assertEqual(documents[0]["lines"][0]["totalTTC"], Decimal("29.629628"))
+
 
 if __name__ == "__main__":
     unittest.main()

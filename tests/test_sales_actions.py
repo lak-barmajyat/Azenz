@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QCoreApplication
 
+from modules.ventes.document_printing import render_sales_documents
 from modules.ventes.liste_ventes.model import ListeVentesModel
 from modules.ventes.nouveau_doc import NouveauDocModel
 
@@ -87,6 +88,37 @@ class SalesActionTests(unittest.TestCase):
         self.document_model._discount = Decimal("0.000")
         self.document_model.updateDraftState(self.header)
         self.assertFalse(self.document_model.hasChanges)
+
+    def test_sales_document_pdf_is_created(self) -> None:
+        document = {
+            "documentCode": "FA001",
+            "documentType": "Facture",
+            "date": "2026-11-21",
+            "clientCode": "CL001",
+            "client": "Client test",
+            "totalHT": Decimal("100"),
+            "totalVAT": Decimal("20"),
+            "discount": Decimal("0"),
+            "totalNetTTC": Decimal("120"),
+            "lines": [
+                {
+                    "reference": f"ART{index:03d}",
+                    "description": "Article de démonstration avec une désignation longue",
+                    "quantity": 2,
+                    "priceHT": 10,
+                    "priceTTC": 12,
+                    "vat": 20,
+                    "totalHT": 20,
+                    "totalTTC": 24,
+                }
+                for index in range(70)
+            ],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = render_sales_documents(Path(directory) / "facture.pdf", [document])
+            content = path.read_bytes()
+        self.assertTrue(content.startswith(b"%PDF-"))
+        self.assertGreater(len(content), 1_000)
 
 
 if __name__ == "__main__":

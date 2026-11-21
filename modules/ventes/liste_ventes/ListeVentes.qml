@@ -68,6 +68,14 @@ ListeVentesView {
         function onExportFailed(code) {
             root.filterError = qsTr("Impossible d'enregistrer le fichier d'export.");
         }
+        function onPrintFailed(code) {
+            root.filterError = code === "open_failed"
+                    ? qsTr("Le PDF a été créé, mais son ouverture a échoué.")
+                    : qsTr("Impossible de créer le document à imprimer.");
+        }
+        function onPrintCompleted(path) {
+            root.filterError = "";
+        }
     }
     columns: [
         {
@@ -174,6 +182,16 @@ ListeVentesView {
         }
         if (action === "export") {
             exportDialog.open();
+            return;
+        }
+        if (action === "print") {
+            if (previewMode) {
+                actionRequested(action, selected);
+            } else if (backend) {
+                backend.printDocuments(selected.map(function (record) {
+                    return record.id;
+                }));
+            }
             return;
         }
         actionRequested(action, action === "export" ? records : selected);
