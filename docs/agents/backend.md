@@ -46,4 +46,8 @@ Applies to Python code in feature windows, especially `model.py`.
 - No canonical reference implementation exists yet.
 - Existing implementations are not assumed to follow these rules.
 - Once a compliant implementation is approved, document its exact file path here.
+<<<<<<< HEAD
 - Until then, follow this document as the source of truth.
+=======
+- Until then, follow this document as the source of truth.
+>>>>>>> main

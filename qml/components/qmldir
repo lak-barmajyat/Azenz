@@ -20,6 +20,7 @@ DocumentTypeBadge 1.0 DocumentTypeBadge.qml
 DropdownMenu 1.0 DropdownMenu.qml
 DropdownMenuItem 1.0 DropdownMenuItem.qml
 EmptyState 1.0 EmptyState.qml
+FinancialTotal 1.0 FinancialTotal.qml
 InlineBanner 1.0 InlineBanner.qml
 Logo 1.0 Logo.qml
 MenuSeparator 1.0 MenuSeparator.qml
@@ -31,6 +32,7 @@ Sidebar 1.0 Sidebar.qml
 SidebarGroup 1.0 SidebarGroup.qml
 SidebarItem 1.0 SidebarItem.qml
 SearchEntryField 1.0 SearchEntryField.qml
+SearchEntryInlineField 1.0 SearchEntryInlineField.qml
 SearchEntryTable 1.0 SearchEntryTable.qml
 Skeleton 1.0 Skeleton.qml
 StatusBar 1.0 StatusBar.qml

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import "../controls"
 import "../theme"
 
 ColumnLayout {
@@ -27,8 +26,8 @@ ColumnLayout {
         clip: true
         enabled: root.expanded || root.collapsed
         opacity: root.expanded || root.collapsed ? 1 : 0
-        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.InOutCubic } }
-        Behavior on opacity { NumberAnimation { duration: 160 } }
+        Behavior on implicitHeight { enabled: !Theme.reducedMotion; NumberAnimation { duration: 220; easing.type: Easing.InOutCubic } }
+        Behavior on opacity { enabled: !Theme.reducedMotion; NumberAnimation { duration: 160 } }
         ColumnLayout {
             id: entries
             width: parent.width
