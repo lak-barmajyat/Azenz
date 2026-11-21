@@ -3,12 +3,20 @@ import "../../qml/components"
 
 LoginView {
     id: root
-    signal loginRequested(string username, string password, string language)
     signal quitRequested
     signal minimizeRequested
     signal maximizeRequested
     signal passwordResetRequested
     signal authenticated(string username)
+    readonly property var backend: typeof loginModel !== "undefined" ? loginModel : null
+    busy: backend ? backend.busy : false
+
+    Connections {
+        target: root.backend
+        function onAuthenticationCompleted(success, message, username) {
+            root.completeAuthentication(success, message, username);
+        }
+    }
 
     function authenticationErrorMessage(code) {
         if (code === "invalid_credentials")
@@ -32,17 +40,19 @@ LoginView {
                 passwordField.forceActiveFocus();
             return;
         }
-        busy = true;
-        loginRequested(username.trim(), password, "fr");
+        if (previewMode)
+            completeAuthentication(true, "", username.trim());
+        else if (backend)
+            backend.authenticate(username, password);
+        else
+            completeAuthentication(false, "service_unavailable", "");
     }
-    // Authentication is supplied by the host. No credentials are persisted or logged.
-    function completeAuthentication(success, message) {
-        busy = false;
+    function completeAuthentication(success, message, authenticatedUsername) {
         password = "";
         passwordField.passwordVisible = false;
         if (success) {
             errorMessage = "";
-            authenticated(username.trim());
+            authenticated(authenticatedUsername);
         } else {
             errorMessage = authenticationErrorMessage(message);
             passwordField.forceActiveFocus();
@@ -77,18 +87,6 @@ LoginView {
         function onClicked() {
             root.passwordResetRequested();
             help.open();
-        }
-    }
-    Connections {
-        target: root.titleBar
-        function onCloseRequested() {
-            root.quitRequested();
-        }
-        function onMinimizeRequested() {
-            root.minimizeRequested();
-        }
-        function onMaximizeRequested() {
-            root.maximizeRequested();
         }
     }
     AzenzDialog {

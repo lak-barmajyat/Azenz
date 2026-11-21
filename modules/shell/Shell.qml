@@ -12,22 +12,22 @@ ShellView {
                                     ? pageLoader.item : null
     signal pageRequested(string page)
     signal salesActionRequested(string action, var records)
-    signal documentSaveRequested(var document)
     signal paymentActionRequested(string action, var records)
 
     Loader {
         id: pageLoader
         anchors.fill: root.contentFrame
         source: root.currentPage === "sales"
-                ? "../ventes/liste_ventes/Ventes.qml"
+                ? "../ventes/liste_ventes/ListeVentes.qml"
                 : root.currentPage === "sales/new"
-                ? "../ventes/nouveau_document/NouveauDocument.qml"
+                ? "../ventes/nouveau_doc/NouveauDoc.qml"
                 : root.currentPage === "payments"
                 ? "../reglements/Reglements.qml" : ""
         onLoaded: {
-            if (root.currentPage === "sales")
+            if (root.currentPage === "sales") {
+                item.previewMode = root.previewMode;
                 item.sourceRows = root.pageData;
-            else if (root.currentPage === "sales/new")
+            } else if (root.currentPage === "sales/new")
                 item.previewMode = root.previewMode;
             else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
@@ -51,7 +51,6 @@ ShellView {
             target: root.document
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("sales"); }
-            function onSaveRequested(document) { root.documentSaveRequested(document); }
         }
         Connections {
             target: root.payments

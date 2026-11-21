@@ -1,62 +1,88 @@
 import QtQuick
 import "../../../qml/components"
 
-VentesView {
+ListeVentesView {
     id: root
     property var sourceRows: []
-    property var appliedFilters: ({
-            code: "",
-            type: "",
-            from: null,
-            to: null
-        })
     property bool updatingFilters: false
     property var pendingDelete: []
     signal actionRequested(string action, var records)
-    signal filtersChanged(var filters)
     signal navigationRequested(string page)
     signal backRequested
     signal quitRequested
     signal minimizeRequested
     signal maximizeRequested
-    readonly property var selectedRecords: sourceRows.filter(function (row) {
+    readonly property var selectedRecords: records.filter(function (row) {
         return root.grid.selectedIds.indexOf(row.id) >= 0;
     })
-    records: sourceRows.filter(function (row) {
-        var f = root.appliedFilters;
-        var date = root.dateValue(row.date);
-        return (!f.code || String(row.documentCode).toLowerCase().indexOf(f.code) >= 0) && (!f.type || row.documentType === f.type) && (f.from === null || date >= f.from) && (f.to === null || date <= f.to);
-    })
-    totalHT: records.reduce(function (sum, row) {
-        return sum + Number(row.ht || 0);
-    }, 0)
-    totalVAT: records.reduce(function (sum, row) {
-        return sum + Number(row.vat || 0);
-    }, 0)
-    totalTTC: records.reduce(function (sum, row) {
-        return sum + Number(row.ttc || 0);
-    }, 0)
+    // Python installs this context property before loading the view.
+    // qmllint disable unqualified
+    readonly property var backend: typeof listeVentesModel !== "undefined" ? listeVentesModel : null
+    // qmllint enable unqualified
+    property bool loadError: false
+    records: backend ? backend.records : []
+    totalHT: backend ? backend.totals.ht : 0
+    totalVAT: backend ? backend.totals.vat : 0
+    totalTTC: backend ? backend.totals.ttc : 0
+    viewState: backend && backend.busy ? "loading" : loadError || !backend ? "error" : "default"
+    documentTypes: [
+        {
+            text: qsTr("Tous les types"),
+            value: ""
+        }
+    ].concat(backend ? backend.documentTypes.map(function (name) {
+        return {
+            text: name,
+            value: name
+        };
+    }) : [])
+    Component.onCompleted: {
+        if (backend) {
+            backend.applyFilters("", "", "", "");
+            if (previewMode)
+                backend.setPreviewRecords(sourceRows);
+            else
+                backend.refresh();
+        }
+    }
+    onSourceRowsChanged: {
+        if (previewMode && backend)
+            backend.setPreviewRecords(sourceRows);
+    }
+    Connections {
+        target: root.backend
+        function onDataChanged() {
+            root.loadError = false;
+            root.filterError = "";
+        }
+        function onLoadFailed(code) {
+            root.loadError = true;
+        }
+        function onValidationFailed(code) {
+            root.filterError = code === "invalid_range" ? qsTr("La date de début doit précéder la date de fin.") : qsTr("Veuillez saisir des dates valides (JJ/MM/AAAA).");
+        }
+    }
     columns: [
         {
             key: "clientCode",
-            title: "CODE CLIENT",
+            title: qsTr("CODE CLIENT"),
             type: "code",
             width: 110
         },
         {
             key: "client",
-            title: "CLIENT",
+            title: qsTr("CLIENT"),
             width: Math.max(260, grid.width - 838)
         },
         {
             key: "documentCode",
-            title: "CODE DOC",
+            title: qsTr("CODE DOC"),
             type: "code",
             width: 108
         },
         {
             key: "documentType",
-            title: "TYPE",
+            title: qsTr("TYPE"),
             type: "status",
             alignment: "center",
             width: 100,
@@ -64,42 +90,36 @@ VentesView {
         },
         {
             key: "date",
-            title: "DATE",
+            title: qsTr("DATE"),
             type: "date",
             alignment: "center",
             width: 104
         },
         {
             key: "ht",
-            title: "TOTAL HT",
+            title: qsTr("TOTAL HT"),
             type: "currency",
-            suffix: "MAD",
+            suffix: qsTr("MAD"),
             alignment: "right",
             width: 128
         },
         {
             key: "vat",
-            title: "TVA (20%)",
+            title: qsTr("TVA"),
             type: "currency",
-            suffix: "MAD",
+            suffix: qsTr("MAD"),
             alignment: "right",
             width: 120
         },
         {
             key: "ttc",
-            title: "TOTAL TTC",
+            title: qsTr("TOTAL TTC"),
             type: "currency",
-            suffix: "MAD",
+            suffix: qsTr("MAD"),
             alignment: "right",
             width: 132
         }
     ]
-    function dateValue(value) {
-        if (value instanceof Date)
-            return new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
-        var p = String(value).split("/");
-        return p.length === 3 ? new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0])).getTime() : new Date(value).getTime();
-    }
     function applyFilters() {
         if (updatingFilters)
             return;
@@ -108,23 +128,11 @@ VentesView {
         toDate.commit();
         updatingFilters = false;
         if (fromDate.validationState === "error" || toDate.validationState === "error") {
-            filterError = "Veuillez saisir des dates valides (JJ/MM/AAAA).";
+            filterError = qsTr("Veuillez saisir des dates valides (JJ/MM/AAAA).");
             return;
         }
-        var from = fromDate.hasValue ? dateValue(fromDate.value) : null;
-        var to = toDate.hasValue ? dateValue(toDate.value) : null;
-        if (from !== null && to !== null && from > to) {
-            filterError = "La date de début doit précéder la date de fin.";
-            return;
-        }
-        filterError = "";
-        appliedFilters = {
-            code: codeFilter.text.trim().toLowerCase(),
-            type: typeFilter.currentValue || "",
-            from: from,
-            to: to
-        };
-        filtersChanged(appliedFilters);
+        if (backend)
+            backend.applyFilters(codeFilter.text, typeFilter.currentValue || "", fromDate.hasValue ? Qt.formatDate(fromDate.value, "yyyy-MM-dd") : "", toDate.hasValue ? Qt.formatDate(toDate.value, "yyyy-MM-dd") : "");
     }
     function resetFilters() {
         updatingFilters = true;
@@ -140,6 +148,13 @@ VentesView {
         applyFilters();
     }
     function requestAction(action, target) {
+        if (backend && backend.busy)
+            return;
+        if (action === "refresh" && !previewMode) {
+            if (backend)
+                backend.refresh();
+            return;
+        }
         var selected = target || selectedRecords;
         if (["edit", "duplicate", "open"].indexOf(action) >= 0 && selected.length !== 1)
             return;
@@ -284,30 +299,30 @@ VentesView {
     ContextMenu {
         id: context
         ContextMenuItem {
-            text: "Ouvrir"
+            text: qsTr("Ouvrir")
             iconName: "open"
-            shortcutText: "Entrée"
+            shortcutText: qsTr("Entrée")
             onTriggered: root.requestAction("open", [context.targetRecord])
         }
         ContextMenuItem {
-            text: "Modifier"
+            text: qsTr("Modifier")
             iconName: "edit"
-            shortcutText: "F2"
+            shortcutText: qsTr("F2")
             onTriggered: root.requestAction("edit", [context.targetRecord])
         }
         ContextMenuItem {
-            text: "Dupliquer"
+            text: qsTr("Dupliquer")
             iconName: "copy"
             onTriggered: root.requestAction("duplicate", [context.targetRecord])
         }
         ContextMenuItem {
-            text: "Imprimer"
+            text: qsTr("Imprimer")
             iconName: "print"
             onTriggered: root.requestAction("print", [context.targetRecord])
         }
         MenuSeparator {}
         ContextMenuItem {
-            text: "Supprimer"
+            text: qsTr("Supprimer")
             iconName: "delete"
             destructive: true
             onTriggered: root.requestAction("delete", [context.targetRecord])
@@ -317,9 +332,9 @@ VentesView {
         id: confirmDelete
         objectName: "ventesDeleteDialog"
         dialogType: "destructive"
-        title: "Confirmer la suppression"
-        message: "Supprimer " + root.pendingDelete.length + " document(s) sélectionné(s) ?"
-        supportingMessage: "Vérifiez les documents sélectionnés avant de continuer."
+        title: qsTr("Confirmer la suppression")
+        message: qsTr("Supprimer %n document(s) sélectionné(s) ?", "", root.pendingDelete.length)
+        supportingMessage: qsTr("Vérifiez les documents sélectionnés avant de continuer.")
         onAccepted: {
             root.actionRequested("delete", root.pendingDelete);
             root.pendingDelete = [];

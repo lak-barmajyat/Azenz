@@ -1,23 +1,31 @@
 """Preview the two HTML-derived QML screens, without authentication or a database.
 
-python preview_screens.py          # Login, then demo navigation to ventes
-python preview_screens.py --ventes  # Ventes directly
+python -m scripts.preview_screens          # Login, then demo navigation to ventes
+python -m scripts.preview_screens --ventes  # Ventes directly
 """
 
 import os
 import sys
-from pathlib import Path
 
 os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
+from modules.ventes.liste_ventes.model import ListeVentesModel
+from modules.ventes.nouveau_doc import NouveauDocModel
+from services.paths import PROJECT_ROOT
+
 
 def main():
     app = QGuiApplication(sys.argv)
-    root = Path(__file__).resolve().parent
+    root = PROJECT_ROOT
     engine = QQmlApplicationEngine()
+    document_model = NouveauDocModel(engine, preview=True)
+    app.aboutToQuit.connect(document_model.shutdown)
+    engine.rootContext().setContextProperty("nouveauDocModel", document_model)
+    model = ListeVentesModel(engine, preview=True)
+    engine.rootContext().setContextProperty("listeVentesModel", model)
     engine.addImportPath(str(root / "qml"))
     engine.load(QUrl.fromLocalFile(str(root / "qml/screens/App.qml")))
     if not engine.rootObjects():

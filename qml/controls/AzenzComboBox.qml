@@ -23,7 +23,7 @@ C.Control {
     Accessible.role: Accessible.ComboBox
     Accessible.name: currentText || placeholderText
     function labelFor(entry) {
-        return typeof entry === "string" ? entry : entry.text || "";
+        return typeof entry === "string" ? entry : entry ? entry.text || "" : "";
     }
     function allowed(index) {
         return index >= 0 && index < model.length && model[index].enabled !== false;

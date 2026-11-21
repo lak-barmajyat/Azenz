@@ -6,10 +6,9 @@ import "../../qml/theme"
 
 Rectangle {
     id: root
-    width: 1280
-    height: 800
+    implicitWidth: 980
+    implicitHeight: 680
     color: "transparent"
-    readonly property string language: "fr"
     property bool busy: false
     property bool previewMode: false
     property string errorMessage: ""
@@ -20,16 +19,7 @@ Rectangle {
     property alias submitButton: submit
     property alias quitButton: quit
     property alias forgotButton: forgot
-    property alias titleBar: titleBar
 
-    WindowTitleBar {
-        id: titleBar
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        visible: false
-        height: 0
-    }
     Rectangle {
         id: shadow
         x: card.x - 7
@@ -42,11 +32,11 @@ Rectangle {
     Rectangle {
         id: card
         width: Math.min(860, parent.width - 64)
-        height: Math.min(560, parent.height - titleBar.height - 64)
+        height: Math.min(560, parent.height - 64)
         anchors.horizontalCenter: parent.horizontalCenter
-        y: titleBar.height + (parent.height - titleBar.height - height) / 2
+        anchors.verticalCenter: parent.verticalCenter
         radius: 16
-        color: "white"
+        color: Colors.surface
         border.color: Colors.border
         clip: true
         Rectangle {
@@ -128,9 +118,9 @@ Rectangle {
                     color: Colors.accent
                 }
                 Label {
-                    text: "ERP DESKTOP v2.4"
-                    color: "#CBD5E1"
-                    font.pixelSize: 12
+                    text: qsTr("ERP DESKTOP v2.4")
+                    color: Colors.borderStrong
+                    font.pixelSize: Typography.caption
                     font.weight: Font.Medium
                     font.letterSpacing: 1
                 }
@@ -149,15 +139,15 @@ Rectangle {
                     Layout.bottomMargin: 8
                 }
                 Label {
-                    text: "AZENZ ERP"
+                    text: qsTr("AZENZ ERP")
                     font.pixelSize: 24
                     font.weight: Font.Bold
-                    color: "white"
+                    color: Colors.surface
                 }
                 Label {
                     text: qsTr("Une solution de gestion intégrée, puissante, modulaire et intuitive.")
-                    color: "#CBD5E1"
-                    font.pixelSize: 14
+                    color: Colors.borderStrong
+                    font.pixelSize: Typography.subtitle
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                     lineHeight: 1.4
@@ -183,7 +173,7 @@ Rectangle {
                         Layout.fillWidth: true
                     }
                     Label {
-                        text: "© 2025 AZENZ"
+                        text: qsTr("© 2025 AZENZ")
                         color: "#94A3B8"
                         font.pixelSize: 10
                     }
@@ -200,7 +190,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.leftMargin: 40
                 anchors.rightMargin: 40
-                y: 90
+                anchors.verticalCenter: parent.verticalCenter
                 spacing: 14
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -215,7 +205,7 @@ Rectangle {
                     Label {
                         text: qsTr("Saisissez vos identifiants pour accéder à votre espace.")
                         color: Colors.textSecondary
-                        font.pixelSize: 12
+                        font.pixelSize: Typography.caption
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                         lineHeight: 1.4
@@ -227,7 +217,7 @@ Rectangle {
                     spacing: 6
                     Label {
                         text: qsTr("Nom d'utilisateur")
-                        font.pixelSize: 12
+                        font.pixelSize: Typography.caption
                         font.weight: Font.DemiBold
                         Layout.fillWidth: true
                     }
@@ -252,7 +242,7 @@ Rectangle {
                         Layout.fillWidth: true
                         Label {
                             text: qsTr("Mot de passe")
-                            font.pixelSize: 12
+                            font.pixelSize: Typography.caption
                             font.weight: Font.DemiBold
                             Layout.fillWidth: true
                         }
@@ -264,14 +254,14 @@ Rectangle {
                             leftPadding: 0
                             rightPadding: 0
                             implicitHeight: 18
-                            font.pixelSize: 11
+                            font.pixelSize: Typography.micro
                         }
                     }
                     AzenzTextField {
                         id: password
                         objectName: "loginPassword"
                         inputType: "password"
-                        placeholderText: "••••••••"
+                        placeholderText: qsTr("••••••••")
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         cornerRadius: 8
@@ -285,7 +275,7 @@ Rectangle {
                     text: root.errorMessage
                     visible: text !== ""
                     color: Colors.danger
-                    font.pixelSize: 11
+                    font.pixelSize: Typography.micro
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                 }
@@ -309,7 +299,7 @@ Rectangle {
                     Layout.preferredHeight: 40
                     background: Rectangle {
                         radius: 8
-                        color: quit.hovered ? Colors.canvas : "white"
+                        color: quit.hovered ? Colors.canvas : Colors.surface
                         border.color: quit.visualFocus ? Colors.accent : Colors.border
                     }
                 }
