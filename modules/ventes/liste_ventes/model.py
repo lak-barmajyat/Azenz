@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import csv
 from collections.abc import Callable
 from datetime import date, datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import Property, QObject, QThread, Signal, Slot
-from sqlalchemy import select
+from PySide6.QtCore import Property, QObject, QThread, QUrl, Signal, Slot
+from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -35,12 +37,17 @@ class ListeVentesModel(QObject):
     busyChanged = Signal()
     loadFailed = Signal(str)
     validationFailed = Signal(str)
+    deleteCompleted = Signal(int)
+    deleteFailed = Signal(str)
+    exportCompleted = Signal(str)
+    exportFailed = Signal(str)
 
     def __init__(self, parent: QObject | None = None, *, preview: bool = False) -> None:
         super().__init__(parent)
         self._logger = get_logger(__name__)
         self._preview = preview
         self._worker: _LoadThread | None = None
+        self._delete_worker: _LoadThread | None = None
         self._source: list[dict[str, Any]] = []
         self._records: list[dict[str, Any]] = []
         self._totals = {"ht": 0.0, "vat": 0.0, "ttc": 0.0}
@@ -52,7 +59,7 @@ class ListeVentesModel(QObject):
 
     @Property(bool, notify=busyChanged)
     def busy(self) -> bool:
-        return self._worker is not None
+        return self._worker is not None or self._delete_worker is not None
 
     @Property(list, notify=dataChanged)
     def records(self) -> list[dict[str, Any]]:
@@ -94,9 +101,99 @@ class ListeVentesModel(QObject):
 
     @Slot()
     def shutdown(self) -> None:
+        if self._delete_worker is not None:
+            self._delete_worker.wait()
+            self._complete_delete()
         if self._worker is not None:
             self._worker.wait()
             self._complete()
+
+    @Slot("QVariantList")
+    def deleteDocuments(self, document_ids: list[int]) -> None:
+        ids = sorted({int(document_id) for document_id in document_ids if int(document_id) > 0})
+        if not ids or self.busy:
+            return
+        self._delete_worker = _LoadThread(lambda: self._soft_delete(ids), self)
+        self._delete_worker.finished.connect(self._complete_delete)
+        self.busyChanged.emit()
+        self._delete_worker.start()
+
+    @Slot()
+    def _complete_delete(self) -> None:
+        worker = self._delete_worker
+        if worker is None:
+            return
+        self._delete_worker = None
+        self.busyChanged.emit()
+        result = worker.records
+        worker.deleteLater()
+        if result is None:
+            self.deleteFailed.emit("service_unavailable")
+            return
+        deleted = int(result[0]["count"]) if result else 0
+        self.deleteCompleted.emit(deleted)
+        self.refresh()
+
+    def _soft_delete(self, document_ids: list[int]) -> list[dict[str, Any]] | None:
+        try:
+            return [{"count": self._mark_deleted(document_ids)}]
+        except (SQLAlchemyError, RuntimeError):
+            self._logger.exception("Sales document soft-delete failed")
+            return None
+
+    @with_session()
+    def _mark_deleted(self, document_ids: list[int], *, session: Session) -> int:
+        existing_ids = list(
+            session.scalars(
+                select(DDocuments.id)
+                .join(DDocuments.type_document)
+                .where(
+                    DDocuments.id.in_(document_ids),
+                    DDocuments.supprime == 0,
+                    PTypesDocuments.domaine == "VENTE",
+                )
+            )
+        )
+        if not existing_ids:
+            return 0
+        session.execute(
+            update(DDocuments).where(DDocuments.id.in_(existing_ids)).values(supprime=1)
+        )
+        return len(existing_ids)
+
+    @Slot(QUrl, "QVariantList")
+    def exportCsv(self, destination: QUrl, records: list[dict[str, Any]]) -> None:
+        if destination.isEmpty() or not destination.isLocalFile():
+            self.exportFailed.emit("invalid_destination")
+            return
+        path = Path(destination.toLocalFile())
+        if path.suffix.casefold() != ".csv":
+            path = path.with_suffix(".csv")
+        try:
+            self._write_csv(path, records)
+        except (OSError, ValueError):
+            self._logger.exception("Sales list export failed")
+            self.exportFailed.emit("write_failed")
+            return
+        self.exportCompleted.emit(str(path))
+
+    @staticmethod
+    def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
+        columns = (
+            ("clientCode", "Code client"),
+            ("client", "Client"),
+            ("documentCode", "Code document"),
+            ("documentType", "Type document"),
+            ("date", "Date"),
+            ("ht", "Total HT"),
+            ("vat", "TVA"),
+            ("ttc", "Total TTC"),
+        )
+        with path.open("w", encoding="utf-8-sig", newline="") as output:
+            writer = csv.writer(output, delimiter=";")
+            writer.writerow([title for _, title in columns])
+            for record in records:
+                writer.writerow([record.get(key, "") for key, _ in columns])
 
     @Slot(str, str, str, str)
     def applyFilters(self, code: str, document_type: str, from_date: str, to_date: str) -> None:

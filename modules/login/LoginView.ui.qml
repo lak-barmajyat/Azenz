@@ -233,6 +233,8 @@ Rectangle {
                         placeholderText: qsTr("Saisissez votre nom d'utilisateur")
                         enabled: !root.busy
                         Accessible.name: qsTr("Nom d'utilisateur")
+                        KeyNavigation.tab: password
+                        KeyNavigation.backtab: forgot
                     }
                 }
                 ColumnLayout {
@@ -255,6 +257,8 @@ Rectangle {
                             rightPadding: 0
                             implicitHeight: 18
                             font.pixelSize: Typography.micro
+                            KeyNavigation.tab: username
+                            KeyNavigation.backtab: quit
                         }
                     }
                     AzenzTextField {
@@ -269,6 +273,8 @@ Rectangle {
                         LayoutMirroring.childrenInherit: true
                         enabled: !root.busy
                         Accessible.name: qsTr("Mot de passe")
+                        KeyNavigation.tab: submit
+                        KeyNavigation.backtab: username
                     }
                 }
                 Label {
@@ -288,6 +294,8 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
                     Layout.topMargin: 4
+                    KeyNavigation.tab: quit
+                    KeyNavigation.backtab: password
                 }
                 AzenzButton {
                     id: quit
@@ -297,6 +305,8 @@ Rectangle {
                     variant: "secondary"
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
+                    KeyNavigation.tab: forgot
+                    KeyNavigation.backtab: submit
                     background: Rectangle {
                         radius: 8
                         color: quit.hovered ? Colors.canvas : Colors.surface

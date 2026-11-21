@@ -23,6 +23,7 @@ from database.models import (
     PTvas,
     PTypesDocuments,
 )
+from modules.ventes.liste_ventes.model import ListeVentesModel
 from modules.ventes.nouveau_doc import NouveauDocModel
 
 SOCKET = os.environ.get("AZENZ_TEST_SOCKET", "")
@@ -256,6 +257,68 @@ class NouveauDocDatabaseTests(unittest.TestCase):
         self.model.saveDocument(self.header)
         self.assertEqual(errors, ["payments_not_supported"])
         self.assertEqual(self.counts(), (0, 0))
+
+    def test_load_and_update_existing_document_and_lines(self):
+        self.add_line()
+        self.add_line(2, 3)
+        created = self.model._save(self.draft())
+        loaded = self.model._query_document(created["id"])
+        self.assertIsNotNone(loaded)
+        removed_line_id = loaded["lines"][0]["lineId"]
+        edited_line = loaded["lines"][1]
+        edited_line["priceHT"] = 20
+        new_line = deepcopy(loaded["lines"][0])
+        new_line.pop("lineId")
+        new_line["id"] = 99
+        self.model._lines = [edited_line, new_line]
+        self.model._discount = Decimal(0)
+        updated = self.model._update_document(
+            {
+                **loaded["header"],
+                "editingDocumentId": created["id"],
+                "lines": self.model._lines,
+                "discount": Decimal(0),
+            }
+        )
+        self.assertEqual(updated, created)
+        self.assertEqual(self.counts(), (1, 3))
+        with Session(self.engine) as session:
+            document = session.get(DDocuments, created["id"])
+            lines = session.scalars(
+                select(DDocumentLignes)
+                .where(DDocumentLignes.document_id == created["id"])
+                .order_by(DDocumentLignes.id)
+            ).all()
+            self.assertEqual(sum(line.supprime == 0 for line in lines), 2)
+            self.assertEqual(session.get(DDocumentLignes, removed_line_id).supprime, 1)
+            self.assertEqual(lines[1].prix_unitaire_ht, Decimal("20.000000"))
+            self.assertEqual(document.montant_ht, Decimal("84.691356"))
+
+    def test_duplicate_creates_new_document_with_generated_code(self):
+        self.add_line()
+        created = self.model._save(self.draft(automatic=True))
+        loaded = self.model._query_document(created["id"])
+        duplicate = self.model._persist_document(
+            {
+                **loaded["header"],
+                "lines": loaded["lines"],
+                "discount": Decimal(loaded["discount"]),
+                "automaticCode": True,
+            }
+        )
+        self.assertEqual(created["code"], "FA001")
+        self.assertEqual(duplicate["code"], "FA002")
+        self.assertEqual(self.counts(), (2, 2))
+
+    def test_list_delete_is_soft_delete(self):
+        self.add_line()
+        created = self.model._save(self.draft())
+        list_model = ListeVentesModel()
+        self.assertEqual(list_model._mark_deleted([created["id"]]), 1)
+        with Session(self.engine) as session:
+            document = session.get(DDocuments, created["id"])
+            self.assertEqual(document.supprime, 1)
+            self.assertEqual(session.scalar(select(func.count()).select_from(DDocuments)), 1)
 
 
 if __name__ == "__main__":

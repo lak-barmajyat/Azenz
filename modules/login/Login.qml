@@ -11,6 +11,10 @@ LoginView {
     readonly property var backend: typeof loginModel !== "undefined" ? loginModel : null
     busy: backend ? backend.busy : false
 
+    Component.onCompleted: Qt.callLater(function () {
+        root.usernameField.forceActiveFocus();
+    })
+
     Connections {
         target: root.backend
         function onAuthenticationCompleted(success, message, username) {
