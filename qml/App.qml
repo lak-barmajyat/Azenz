@@ -23,6 +23,9 @@ ApplicationWindow {
     property var salesRecords: []
     property var purchaseRecords: []
     property var paymentRecords: []
+    property var stockRecords: []
+    property var stockDocumentLines: []
+    property var stockArticles: []
     property alias sales: shell.sales
     property alias purchases: shell.purchases
     property bool connected: false
@@ -30,6 +33,9 @@ ApplicationWindow {
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)
+    signal stockActionRequested(string action, var records)
+    signal stockDocumentRequested(string action, var document)
+    signal stockArticleSearchRequested(string key, string query)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
     function toggleMaximize() {
@@ -60,6 +66,9 @@ ApplicationWindow {
         pageData: app.salesRecords
         purchaseRows: app.purchaseRecords
         paymentRows: app.paymentRecords
+        stockRows: app.stockRecords
+        stockDocumentLines: app.stockDocumentLines
+        stockArticles: app.stockArticles
         onPageRequested: function (page) {
             app.currentPage = page;
         }
@@ -72,6 +81,9 @@ ApplicationWindow {
         onPaymentActionRequested: function (action, records) {
             app.paymentActionRequested(action, records);
         }
+        onStockActionRequested: function (action, records) { app.stockActionRequested(action, records); }
+        onStockDocumentRequested: function (action, document) { app.stockDocumentRequested(action, document); }
+        onStockArticleSearchRequested: function (key, query) { app.stockArticleSearchRequested(key, query); }
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()

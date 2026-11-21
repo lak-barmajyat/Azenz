@@ -7,6 +7,8 @@ import "../theme"
 Rectangle {
     id: root
     property string density: Theme.densityFor(parent)
+    property int rowHeight: Theme.rowHeight(density)
+    property int headerHeight: Theme.headerHeight(density)
     property color headerBackground: Colors.navy
     property color headerForeground: "white"
     property bool compactEmptyState: false
@@ -133,7 +135,7 @@ Rectangle {
         else if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && currentRow >= 0 && displayRows[currentRow].enabled !== false)
             rowActivated(displayRows[currentRow]);
         else if ((event.key === Qt.Key_Menu || event.key === Qt.Key_F10 && event.modifiers & Qt.ShiftModifier) && currentRow >= 0)
-            requestContext(currentRow, 40, Math.max(36, (currentRow + 1) * Theme.rowHeight(density) - list.contentY));
+            requestContext(currentRow, 40, Math.max(headerHeight, (currentRow + 1) * rowHeight - list.contentY));
         else
             return;
         event.accepted = true;
@@ -155,6 +157,7 @@ Rectangle {
             headerForeground: root.headerForeground
             columns: root.columns
             density: root.density
+            headerHeight: root.headerHeight
             selectable: root.selectable
             selectionState: root.selectionCount === 0 ? Qt.Unchecked : root.selectionCount === root.eligibleCount ? Qt.Checked : Qt.PartiallyChecked
             sortColumn: root.sortColumn
@@ -202,7 +205,7 @@ Rectangle {
                 required property var modelData
                 required property int index
                 width: list.width
-                height: Theme.rowHeight(root.density)
+                height: root.rowHeight
                 density: root.density
                 record: modelData
                 columns: root.columns
@@ -240,12 +243,13 @@ Rectangle {
                 onCellEdited: function (key, value) {
                     root.cellEdited(modelData, key, value);
                 }
+                onActivated: root.rowActivated(modelData)
             }
         }
     }
     Loader {
         anchors.fill: parent
-        anchors.topMargin: Theme.headerHeight(root.density)
+        anchors.topMargin: root.headerHeight
         anchors.bottomMargin: footer.height
         active: root.viewState !== "default" || root.rows.length === 0
         sourceComponent: root.viewState === "loading" ? loading : root.viewState === "error" ? error

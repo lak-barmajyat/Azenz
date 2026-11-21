@@ -15,6 +15,7 @@ Rectangle {
     signal pressed(int modifiers)
     signal contextRequested(real x, real y)
     signal cellEdited(string key, var value)
+    signal activated
     implicitHeight: Theme.rowHeight(density)
     color: !enabled ? Colors.disabled : selected ? Colors.rowSelected : hover.hovered ? Colors.rowHover : "white"
     border.width: focused ? 1 : 0
@@ -26,6 +27,7 @@ Rectangle {
         id: rowTap
         acceptedButtons: Qt.LeftButton
         onTapped: root.pressed(rowTap.point.modifiers)
+        onDoubleTapped: root.activated()
     }
     TapHandler {
         acceptedButtons: Qt.RightButton
@@ -52,7 +54,7 @@ Rectangle {
                 cellType: modelData.type || "text"
                 suffix: modelData.suffix || ""
                 alignment: modelData.alignment || (["currency", "int", "dec"].indexOf(cellType) >= 0 ? "right" : "left")
-                statusVariant: root.record.statusVariant || "neutral"
+                statusVariant: root.record[modelData.variantKey || "statusVariant"] || "neutral"
                 editable: modelData.editable === true
                 focused: root.focused && root.focusedColumn === index
                 onEditCommitted: function (value) {

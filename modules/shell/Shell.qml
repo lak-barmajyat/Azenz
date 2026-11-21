@@ -5,6 +5,9 @@ ShellView {
     property var pageData: []
     property var purchaseRows: []
     property var paymentRows: []
+    property var stockRows: []
+    property var stockDocumentLines: []
+    property var stockArticles: []
     property string documentAction: "new"
     property int documentId: 0
     documentPageTitle: documentAction === "edit" ? qsTr("Modifier le document")
@@ -19,10 +22,17 @@ ShellView {
                                     ? pageLoader.item : null
     readonly property var payments: root.currentPage === "payments" && pageLoader.status === Loader.Ready
                                     ? pageLoader.item : null
+    readonly property var stock: root.currentPage === "stock" && pageLoader.status === Loader.Ready
+                                 ? pageLoader.item : null
+    readonly property var stockDocument: root.currentPage === "stock/new" && pageLoader.status === Loader.Ready
+                                         ? pageLoader.item : null
     signal pageRequested(string page)
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)
+    signal stockActionRequested(string action, var records)
+    signal stockDocumentRequested(string action, var document)
+    signal stockArticleSearchRequested(string key, string query)
 
     Loader {
         id: pageLoader
@@ -34,7 +44,11 @@ ShellView {
                 : root.currentPage === "sales/new"
                 ? "../ventes/nouveau_doc/NouveauDoc.qml"
                 : root.currentPage === "payments"
-                ? "../reglements/Reglements.qml" : ""
+                ? "../reglements/Reglements.qml"
+                : root.currentPage === "stock"
+                ? "../stockage/liste_stock/ListeStock.qml"
+                : root.currentPage === "stock/new"
+                ? "../stockage/nouveau_document/NouveauDocument.qml" : ""
         onLoaded: {
             if (root.currentPage === "sales") {
                 item.previewMode = root.previewMode;
@@ -47,6 +61,13 @@ ShellView {
                 root.document.openDocument(root.documentAction, root.documentId);
             } else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
+                item.previewMode = root.previewMode;
+            } else if (root.currentPage === "stock") {
+                item.sourceRows = root.stockRows;
+                item.previewMode = root.previewMode;
+            } else if (root.currentPage === "stock/new") {
+                item.sourceRows = root.stockDocumentLines;
+                item.articles = root.stockArticles;
                 item.previewMode = root.previewMode;
             }
         }
@@ -91,6 +112,24 @@ ShellView {
             function onBackRequested() { root.showPage("dashboard"); }
             function onActionRequested(action, records) { root.paymentActionRequested(action, records); }
         }
+        Connections {
+            target: root.stock
+            ignoreUnknownSignals: true
+            function onBackRequested() { root.showPage("dashboard"); }
+            function onActionRequested(action, records) {
+                if (action === "new")
+                    root.showPage("stock/new");
+                else
+                    root.stockActionRequested(action, records);
+            }
+        }
+        Connections {
+            target: root.stockDocument
+            ignoreUnknownSignals: true
+            function onBackRequested() { root.showPage("stock"); }
+            function onDocumentRequested(action, document) { root.stockDocumentRequested(action, document); }
+            function onArticleSearchRequested(key, query) { root.stockArticleSearchRequested(key, query); }
+        }
     }
 
     function showPage(page) {
@@ -104,6 +143,12 @@ ShellView {
         root.purchases.sourceRows = purchaseRows;
     onPaymentRowsChanged: if (root.payments)
         root.payments.sourceRows = paymentRows;
+    onStockRowsChanged: if (root.stock)
+        root.stock.sourceRows = stockRows;
+    onStockDocumentLinesChanged: if (root.stockDocument)
+        root.stockDocument.sourceRows = stockDocumentLines;
+    onStockArticlesChanged: if (root.stockDocument)
+        root.stockDocument.articles = stockArticles;
 
     onNavigationRequested: function (page) {
         showPage(page);

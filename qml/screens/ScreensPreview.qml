@@ -2,6 +2,7 @@ import QtQuick
 import "../../modules/login" as LoginModule
 import "../../modules/shell" as ShellModule
 import "../../modules/ventes/liste_ventes/SalesSample.js" as Sample
+import "../../modules/stockage/StockSample.js" as StockSample
 import "../components"
 
 Item {
@@ -39,6 +40,9 @@ Item {
                      : root.screen === "new-document" ? "sales/new"
                      : root.screen === "login" ? "dashboard" : root.screen
         pageData: Sample.rows
+        stockRows: StockSample.documents
+        stockDocumentLines: StockSample.lines
+        stockArticles: StockSample.articles
         connected: false
         onQuitRequested: root.closeRequested()
         onMinimizeRequested: root.minimizeRequested()
@@ -46,7 +50,7 @@ Item {
         onPageRequested: function (page) {
             root.screen = page === "sales" ? "ventes"
                           : page === "sales/new" ? "new-document" : page;
-            if (page !== "sales" && page !== "sales/new" && page !== "payments" && page !== "dashboard")
+            if (page !== "sales" && page !== "sales/new" && page !== "payments" && page !== "dashboard" && page !== "stock" && page !== "stock/new")
                 notices.show(qsTr("Navigation : %1").arg(page),
                              qsTr("Ce module n'est pas inclus dans cet aperçu."), "info");
         }
@@ -69,6 +73,14 @@ Item {
         onPaymentActionRequested: function (action, records) {
             notices.show(qsTr("Action règlement : %1").arg(action),
                          qsTr("Aperçu local : aucun règlement réel n'a été modifié."), "info");
+        }
+        onStockActionRequested: function (action, records) {
+            notices.show(qsTr("Action stock : %1").arg(action),
+                         qsTr("Aperçu local : aucun document réel n'a été modifié."), "info");
+        }
+        onStockDocumentRequested: function (action, document) {
+            notices.show(qsTr("Document stock : %1").arg(action),
+                         qsTr("Aperçu local : document non enregistré."), "info");
         }
     }
     ToastHost {
