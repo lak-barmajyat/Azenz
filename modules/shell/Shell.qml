@@ -3,17 +3,22 @@ import QtQuick
 ShellView {
     id: root
     property var pageData: []
+    property var purchaseRows: []
     property var paymentRows: []
     property string documentAction: "new"
     property int documentId: 0
     readonly property var sales: root.currentPage === "sales" && pageLoader.status === Loader.Ready
                                  ? pageLoader.item : null
+    readonly property var purchases: root.currentPage === "purchases"
+                                     && pageLoader.status === Loader.Ready
+                                     ? pageLoader.item : null
     readonly property var document: root.currentPage === "sales/new" && pageLoader.status === Loader.Ready
                                     ? pageLoader.item : null
     readonly property var payments: root.currentPage === "payments" && pageLoader.status === Loader.Ready
                                     ? pageLoader.item : null
     signal pageRequested(string page)
     signal salesActionRequested(string action, var records)
+    signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)
 
     Loader {
@@ -21,6 +26,8 @@ ShellView {
         anchors.fill: root.contentFrame
         source: root.currentPage === "sales"
                 ? "../ventes/liste_ventes/ListeVentes.qml"
+                : root.currentPage === "purchases"
+                ? "../achats/liste_achats/ListeAchats.qml"
                 : root.currentPage === "sales/new"
                 ? "../ventes/nouveau_doc/NouveauDoc.qml"
                 : root.currentPage === "payments"
@@ -29,6 +36,9 @@ ShellView {
             if (root.currentPage === "sales") {
                 item.previewMode = root.previewMode;
                 item.sourceRows = root.pageData;
+            } else if (root.currentPage === "purchases") {
+                item.previewMode = root.previewMode;
+                item.sourceRows = root.purchaseRows;
             } else if (root.currentPage === "sales/new") {
                 item.previewMode = root.previewMode;
                 item.openDocument(root.documentAction, root.documentId);
@@ -58,6 +68,16 @@ ShellView {
             }
         }
         Connections {
+            target: root.purchases
+            ignoreUnknownSignals: true
+            function onBackRequested() {
+                root.showPage("dashboard");
+            }
+            function onActionRequested(action, records) {
+                root.purchaseActionRequested(action, records);
+            }
+        }
+        Connections {
             target: root.document
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("sales"); }
@@ -77,6 +97,8 @@ ShellView {
 
     onPageDataChanged: if (root.sales)
         root.sales.sourceRows = pageData;
+    onPurchaseRowsChanged: if (root.purchases)
+        root.purchases.sourceRows = purchaseRows;
     onPaymentRowsChanged: if (root.payments)
         root.payments.sourceRows = paymentRows;
 
