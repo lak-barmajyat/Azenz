@@ -13,6 +13,7 @@ Azenz is a desktop ERP application built with:
 - Keep code simple, readable, and maintainable.
 - Reuse existing components before creating new ones.
 - Avoid unrelated changes.
+- Run `make check` after any edit.
 - Never modify database schemas without following migration rules.
 - Never commit or push unless explicitly requested.
 
