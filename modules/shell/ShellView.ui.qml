@@ -42,6 +42,7 @@ Rectangle {
     signal quitRequested
     signal minimizeRequested
     signal maximizeRequested
+    signal fullScreenRequested
 
     color: Colors.canvas
     default property alias content: contentFrame.data
