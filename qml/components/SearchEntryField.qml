@@ -13,7 +13,9 @@ AzenzTextField {
     property var suggestions: []
     property bool searchBusy: false
     property int minimumSearchLength: 1
+    property int maxPopupHeight: 240
     property bool inlineMode: false
+    property bool preferPopupAbove: false
     signal searchRequested(string key, string query)
     signal valueEdited(string value)
     signal suggestionSelected(var suggestion)
@@ -92,9 +94,9 @@ AzenzTextField {
     C.Popup {
         id: results
         x: 0
-        y: root.height
+        y: root.preferPopupAbove ? -height : root.height
         width: Math.max(root.width, 280)
-        height: root.searchBusy ? 40 : Math.min(240, resultList.contentHeight + 8)
+        height: root.searchBusy ? 40 : Math.min(root.maxPopupHeight, resultList.contentHeight + 8)
         padding: 4
         modal: false
         focus: false

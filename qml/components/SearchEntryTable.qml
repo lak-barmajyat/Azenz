@@ -87,7 +87,7 @@ Rectangle {
     }
 
     function columnWidth(column) {
-        var extra = Math.max(0, scroll.contentWidth - tableWidth);
+        var extra = Math.max(0, horizontalScroll.contentWidth - tableWidth);
         return (column.width || 140) + (totalFill > 0 ? extra * (Number(column.fill) || 0) / totalFill : 0);
     }
 
@@ -167,29 +167,34 @@ Rectangle {
     }
 
     Flickable {
-        id: scroll
+        id: horizontalScroll
+        objectName: "articleHorizontalScroll"
         anchors.fill: parent
         anchors.margins: 1
         anchors.bottomMargin: 1 + root.horizontalBarHeight
         contentWidth: Math.max(width, root.tableWidth)
-        contentHeight: tableContent.height
-        flickableDirection: Flickable.AutoFlickDirection
+        contentHeight: height
+        flickableDirection: Flickable.HorizontalFlick
         boundsBehavior: Flickable.StopAtBounds
         C.ScrollBar.horizontal: AzenzScrollBar {
             parent: root
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            height: 8
+            anchors.leftMargin: 1
+            anchors.rightMargin: 1
+            anchors.bottomMargin: 1
+            height: root.horizontalBarHeight
         }
-        C.ScrollBar.vertical: AzenzScrollBar {}
 
         Column {
             id: tableContent
-            width: scroll.contentWidth
+            width: horizontalScroll.contentWidth
+            height: horizontalScroll.height
             spacing: 0
 
             Rectangle {
+                objectName: "articleHeader"
                 width: parent.width
                 height: root.headerHeight
                 color: root.headerBackground
@@ -259,167 +264,185 @@ Rectangle {
                 }
             }
 
-            Repeater {
-                model: root.rows
-                Rectangle {
-                    id: existingRow
-                    required property var modelData
-                    required property int index
-                    readonly property bool editing: root.editingRowId === modelData.id
-                    width: tableContent.width
-                    height: root.rowHeight
-                    color: rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
-                    HoverHandler { id: rowHover }
-                    Row {
-                        anchors.fill: parent
-                        Item {
-                            visible: root.showRowNumber
-                            width: visible ? root.rowNumberWidth : 0
+            Flickable {
+                id: bodyScroll
+                objectName: "articleBodyScroll"
+                width: parent.width
+                height: Math.max(0, tableContent.height - root.headerHeight - draftRow.height)
+                contentWidth: width
+                contentHeight: bodyRows.height
+                flickableDirection: Flickable.VerticalFlick
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+                C.ScrollBar.vertical: AzenzScrollBar {}
+
+                Column {
+                    id: bodyRows
+                    width: parent.width
+                    Repeater {
+                        model: root.rows
+                        Rectangle {
+                            id: existingRow
+                            required property var modelData
+                            required property int index
+                            readonly property bool editing: root.editingRowId === modelData.id
+                            width: tableContent.width
                             height: root.rowHeight
-                            Label {
-                                anchors.centerIn: parent
-                                text: existingRow.index + 1
-                                color: Colors.textSecondary
-                                font.pixelSize: 12
-                            }
-                        }
-                        Item {
-                            visible: root.showTypeIcon
-                            width: visible ? root.typeIconWidth : 0
-                            height: root.rowHeight
-                            Icon {
-                                anchors.centerIn: parent
-                                width: 18
-                                height: 18
-                                name: root.rowTypeIcon
-                                color: Colors.textSecondary
-                            }
-                        }
-                        Repeater {
-                            model: root.columns
-                            Item {
-                                id: existingCell
-                                required property var modelData
-                                width: root.columnWidth(modelData)
-                                height: root.rowHeight
-                                Loader {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 8
-                                    anchors.rightMargin: 8
-                                    sourceComponent: existingRow.editing && existingCell.modelData.searchable === true
-                                                     ? editSearchCell
-                                                     : existingRow.editing && existingCell.modelData.editable === true
-                                                       ? editInputCell : displayCell
-                                }
-                                Component {
-                                    id: displayCell
+                            color: rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
+                            HoverHandler { id: rowHover }
+                            Row {
+                                anchors.fill: parent
+                                Item {
+                                    visible: root.showRowNumber
+                                    width: visible ? root.rowNumberWidth : 0
+                                    height: root.rowHeight
                                     Label {
-                                        text: root.displayValue(existingCell.modelData,
-                                                existingRow.editing
-                                                ? root.editValue(existingCell.modelData.key, "")
-                                                : existingRow.modelData[existingCell.modelData.key])
-                                        color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
+                                        anchors.centerIn: parent
+                                        text: existingRow.index + 1
+                                        color: Colors.textSecondary
                                         font.pixelSize: 12
-                                        font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
-                                        verticalAlignment: Text.AlignVCenter
-                                        horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
-                                                           : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
-                                                           : Text.AlignLeft
-                                        elide: Text.ElideRight
                                     }
                                 }
-                                Component {
-                                    id: editSearchCell
-                                    SearchEntryField {
-                                        searchKey: existingCell.modelData.key
-                                        inlineMode: true
-                                        minimumSearchLength: root.minimumSearchLength
-                                        value: String(root.editDraft[searchKey] ?? "")
-                                        primaryKey: root.suggestionPrimaryKey
-                                        secondaryKey: root.suggestionSecondaryKey
-                                        suggestions: root.searchResults.field === searchKey &&
-                                                     root.searchResults.query === text
-                                                     ? root.searchResults.items || [] : []
-                                        searchBusy: root.searchBusy
-                                        onValueEdited: function(value) { root.setEditValue(searchKey, value); }
-                                        onSearchRequested: function(key, query) { root.searchRequested(key, query); }
-                                        onSuggestionSelected: function(suggestion) { root.selectEditSuggestion(suggestion); }
-                                        onSubmitRequested: root.requestUpdate(existingRow.modelData)
+                                Item {
+                                    visible: root.showTypeIcon
+                                    width: visible ? root.typeIconWidth : 0
+                                    height: root.rowHeight
+                                    Icon {
+                                        anchors.centerIn: parent
+                                        width: 18
+                                        height: 18
+                                        name: root.rowTypeIcon
+                                        color: Colors.textSecondary
                                     }
                                 }
-                                Component {
-                                    id: editInputCell
-                                    SearchEntryInlineField {
-                                        text: String(root.editDraft[existingCell.modelData.key] ?? "")
-                                        inputType: existingCell.modelData.inputType || "text"
-                                        suffix: existingCell.modelData.suffix || ""
-                                        horizontalAlignment: existingCell.modelData.alignment === "right"
-                                                             ? TextInput.AlignRight : TextInput.AlignLeft
-                                        onTextEdited: root.setEditValue(existingCell.modelData.key, text)
-                                        onAccepted: root.requestUpdate(existingRow.modelData)
+                                Repeater {
+                                    model: root.columns
+                                    Item {
+                                        id: existingCell
+                                        required property var modelData
+                                        width: root.columnWidth(modelData)
+                                        height: root.rowHeight
+                                        Loader {
+                                            anchors.fill: parent
+                                            anchors.leftMargin: 8
+                                            anchors.rightMargin: 8
+                                            sourceComponent: existingRow.editing && existingCell.modelData.searchable === true
+                                                             ? editSearchCell
+                                                             : existingRow.editing && existingCell.modelData.editable === true
+                                                               ? editInputCell : displayCell
+                                        }
+                                        Component {
+                                            id: displayCell
+                                            Label {
+                                                text: root.displayValue(existingCell.modelData,
+                                                        existingRow.editing
+                                                        ? root.editValue(existingCell.modelData.key, "")
+                                                        : existingRow.modelData[existingCell.modelData.key])
+                                                color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
+                                                font.pixelSize: 12
+                                                font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
+                                                verticalAlignment: Text.AlignVCenter
+                                                horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
+                                                                   : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
+                                                                   : Text.AlignLeft
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+                                        Component {
+                                            id: editSearchCell
+                                            SearchEntryField {
+                                                searchKey: existingCell.modelData.key
+                                                inlineMode: true
+                                                minimumSearchLength: root.minimumSearchLength
+                                                value: String(root.editDraft[searchKey] ?? "")
+                                                primaryKey: root.suggestionPrimaryKey
+                                                secondaryKey: root.suggestionSecondaryKey
+                                                suggestions: root.searchResults.field === searchKey &&
+                                                             root.searchResults.query === text
+                                                             ? root.searchResults.items || [] : []
+                                                searchBusy: root.searchBusy
+                                                onValueEdited: function(value) { root.setEditValue(searchKey, value); }
+                                                onSearchRequested: function(key, query) { root.searchRequested(key, query); }
+                                                onSuggestionSelected: function(suggestion) { root.selectEditSuggestion(suggestion); }
+                                                onSubmitRequested: root.requestUpdate(existingRow.modelData)
+                                            }
+                                        }
+                                        Component {
+                                            id: editInputCell
+                                            SearchEntryInlineField {
+                                                text: String(root.editDraft[existingCell.modelData.key] ?? "")
+                                                inputType: existingCell.modelData.inputType || "text"
+                                                suffix: existingCell.modelData.suffix || ""
+                                                horizontalAlignment: existingCell.modelData.alignment === "right"
+                                                                     ? TextInput.AlignRight : TextInput.AlignLeft
+                                                onTextEdited: root.setEditValue(existingCell.modelData.key, text)
+                                                onAccepted: root.requestUpdate(existingRow.modelData)
+                                            }
+                                        }
                                     }
                                 }
+                                Row {
+                                    visible: root.showActions
+                                    width: visible ? root.actionWidth : 0
+                                    height: root.rowHeight
+                                    spacing: 2
+                                    opacity: existingRow.editing || rowHover.hovered ? 1 : 0
+                                    IconButton {
+                                        visible: root.allowEdit && !root.readOnly && !existingRow.editing
+                                        iconName: "edit"
+                                        tooltip: qsTr("Modifier")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: {
+                                            root.beginEdit(existingRow.modelData);
+                                            root.editRequested(existingRow.modelData);
+                                        }
+                                    }
+                                    IconButton {
+                                        visible: existingRow.editing && !root.readOnly
+                                        iconName: "check"
+                                        tooltip: qsTr("Enregistrer la ligne")
+                                        enabled: root.editEnabled
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.requestUpdate(existingRow.modelData)
+                                    }
+                                    IconButton {
+                                        visible: existingRow.editing && !root.readOnly
+                                        iconName: "close"
+                                        tooltip: qsTr("Annuler la modification")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.finishEdit()
+                                    }
+                                    IconButton {
+                                        visible: root.allowRemove && !root.readOnly && !existingRow.editing
+                                        iconName: "delete"
+                                        tooltip: qsTr("Supprimer")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.removeRequested(existingRow.modelData)
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 1
+                                color: Colors.border
                             }
                         }
-                        Row {
-                            visible: root.showActions
-                            width: visible ? root.actionWidth : 0
-                            height: root.rowHeight
-                            spacing: 2
-                            opacity: existingRow.editing || rowHover.hovered ? 1 : 0
-                            IconButton {
-                                visible: root.allowEdit && !root.readOnly && !existingRow.editing
-                                iconName: "edit"
-                                tooltip: qsTr("Modifier")
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: {
-                                    root.beginEdit(existingRow.modelData);
-                                    root.editRequested(existingRow.modelData);
-                                }
-                            }
-                            IconButton {
-                                visible: existingRow.editing && !root.readOnly
-                                iconName: "check"
-                                tooltip: qsTr("Enregistrer la ligne")
-                                enabled: root.editEnabled
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.requestUpdate(existingRow.modelData)
-                            }
-                            IconButton {
-                                visible: existingRow.editing && !root.readOnly
-                                iconName: "close"
-                                tooltip: qsTr("Annuler la modification")
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.finishEdit()
-                            }
-                            IconButton {
-                                visible: root.allowRemove && !root.readOnly && !existingRow.editing
-                                iconName: "delete"
-                                tooltip: qsTr("Supprimer")
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.removeRequested(existingRow.modelData)
-                            }
-                        }
-                    }
-                    Rectangle {
-                        anchors.bottom: parent.bottom
-                        width: parent.width
-                        height: 1
-                        color: Colors.border
                     }
                 }
             }
 
             Rectangle {
                 id: draftRow
+                objectName: "articleEntryRow"
                 visible: !root.readOnly
                 width: tableContent.width
                 height: visible ? root.rowHeight : 0
@@ -472,6 +495,8 @@ Rectangle {
                                     objectName: "searchEntry_" + searchKey
                                     searchKey: draftCell.modelData.key
                                     inlineMode: true
+                                    preferPopupAbove: true
+                                    maxPopupHeight: Math.max(80, Math.min(240, bodyScroll.height))
                                     Component.onCompleted: root.registerSearchField(searchKey, this)
                                     Component.onDestruction: root.unregisterSearchField(searchKey, this)
                                     minimumSearchLength: root.minimumSearchLength

@@ -360,7 +360,10 @@ Rectangle {
                         SearchEntryTable {
                             id: lines
                             objectName: "nouveauDocAchatLines"
-                            anchors.fill: parent
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: Math.min(parent.height, implicitHeight)
                             columns: root.lineColumns
                             rows: root.articleRows
                             searchResults: root.articleSearchResults
