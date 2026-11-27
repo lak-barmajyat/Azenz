@@ -64,6 +64,7 @@ for file in files:
 feature_files = [
     ROOT / "modules/shell/Shell.qml",
     ROOT / "modules/ventes/liste_ventes/ListeVentes.qml",
+    ROOT / "modules/achats/liste_achats/ListeAchats.qml",
     ROOT / "modules/ventes/nouveau_doc/NouveauDoc.qml",
     ROOT / "modules/reglements/Reglements.qml",
 ]

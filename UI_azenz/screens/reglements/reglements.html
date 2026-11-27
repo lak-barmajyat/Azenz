@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="fr"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>AZENZ ERP Desktop v4.2.1 Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "azenz-orange": "#F17D24",
+            "azenz-orange-hover": "#D96812",
+            "azenz-navy": "#113657",
+            "azenz-navy-dark": "#0A243C",
+            "azenz-navy-hover": "#17466E",
+            "surface-bg": "#F4F6F9",
+            "border-ui": "#E5E7EB",
+            "primary": "#00203b",
+            "surface-card": "#FFFFFF"
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Inter', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        user-select: none;
+        background-color: #F4F6F9;
+      }
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3f5;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c5cbd2;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9fa6b2;
+    }
+  </style>
+</head>
+<body class="font-sans text-[#151c27] flex flex-col h-screen w-screen overflow-hidden antialiased">
+<!-- ================= WINDOW TITLE BAR (Windows 11 Enterprise Style) ================= -->
+<header class="h-8 bg-[#0a243c] flex items-center justify-between px-3 select-none flex-shrink-0 border-b border-[#113657] text-[#c9d3df]">
+<div class="flex items-center gap-2">
+<!-- App Brand Icon -->
+<div class="w-4 h-4 rounded bg-[#F17D24] flex items-center justify-center font-bold text-[10px] text-white tracking-tighter">A</div>
+<span class="text-[12px] font-medium tracking-wide text-slate-200">AZENZ ERP Desktop v4.2.1 Pro</span>
+</div>
+<div class="flex items-center -mr-3">
+<button class="h-8 w-11 flex items-center justify-center hover:bg-[#113657] text-slate-300 hover:text-white transition-colors" title="Réduire">
+<span class="material-symbols-outlined text-[13px]">minimize</span>
+</button>
+<button class="h-8 w-11 flex items-center justify-center hover:bg-[#113657] text-slate-300 hover:text-white transition-colors" title="Agrandir">
+<span class="material-symbols-outlined text-[12px]">crop_square</span>
+</button>
+<button class="h-8 w-11 flex items-center justify-center hover:bg-[#C42B1C] text-slate-300 hover:text-white transition-colors" title="Fermer">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+</header>
+<!-- ================= APPLICATION MENU BAR ================= -->
+<div class="h-7 bg-[#113657] flex items-center justify-between px-2 select-none flex-shrink-0 border-b border-[#0d2a45]">
+<nav class="flex items-center text-[12px] text-slate-200">
+<button class="px-2.5 py-0.5 rounded hover:bg-[#1a4a75] transition-colors">Fichier</button>
+<button class="px-2.5 py-0.5 rounded hover:bg-[#1a4a75] transition-colors">Édition</button>
+<button class="px-2.5 py-0.5 rounded hover:bg-[#1a4a75] transition-colors">Affichage</button>
+<button class="px-2.5 py-0.5 rounded hover:bg-[#1a4a75] transition-colors">Outils</button>
+<button class="px-2.5 py-0.5 rounded hover:bg-[#1a4a75] transition-colors">Aide</button>
+</nav>
+<div class="flex items-center gap-3 pr-2 text-slate-300 text-[11px]">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+<span class="font-medium text-slate-200">Synchronisé</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-[#1a4a75] flex items-center justify-center text-slate-200">
+<span class="material-symbols-outlined text-[13px]">person</span>
+</div>
+</div>
+</div>
+<!-- ================= WORKSPACE BODY (SIDEBAR + MAIN VIEW) ================= -->
+<div class="flex-1 flex overflow-hidden min-h-0">
+<!-- SIDEBAR PERSISTENTE (Width 224px, Dark Navy #113657) -->
+<aside class="w-[224px] bg-[#113657] text-slate-200 flex flex-col justify-between flex-shrink-0 border-r border-[#0d2a45] select-none">
+<div class="p-3 flex flex-col gap-3">
+<!-- Company Badge -->
+<div class="p-2.5 rounded bg-[#0a243c]/60 border border-[#1b4b77] flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-[#F17D24] text-white flex items-center justify-center font-bold text-[12px] shadow-sm flex-shrink-0">
+            AD
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[12px] font-semibold text-white truncate">Atlas Distribution</span>
+<span class="text-[10px] text-slate-300 truncate">Siège Casablanca</span>
+</div>
+</div>
+<!-- Navigation items -->
+<nav class="flex flex-col gap-3 mt-1 text-[12px]">
+<div>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">dashboard</span>
+<span class="">Tableau de bord</span>
+</a>
+</div>
+<!-- GROUP DOCUMENTS -->
+<div class="flex flex-col gap-0.5">
+<span class="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">DOCUMENTS</span>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#"><span class="material-symbols-outlined text-[16px]">receipt_long</span><span class="flex-1">Ventes</span></a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">shopping_cart</span>
+<span class="">Achats</span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+<span class="">Stockage</span>
+</a>
+</div>
+<!-- GROUP TIERS -->
+<div class="flex flex-col gap-0.5">
+<span class="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">TIERS</span>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">group</span>
+<span class="">Clients</span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+<span class="">Fournisseurs</span>
+</a>
+</div>
+<!-- GROUP CATALOGUE / STOCK -->
+<div class="flex flex-col gap-0.5">
+<span class="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">CATALOGUE / STOCK</span>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">category</span>
+<span class="">Articles</span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded text-slate-300 hover:bg-[#17466E] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]">account_tree</span>
+<span class="">Familles</span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 rounded bg-[#F17D24] text-white font-medium shadow-sm transition-colors" href="#"><span class="material-symbols-outlined text-[16px]">payments</span><span class="flex-1">Règlements</span></a>
+</div>
+</nav>
+</div>
+<!-- Watermark logo bottom -->
+<div class="p-3 border-t border-[#0d2a45] flex items-center justify-between opacity-50">
+<span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">AZENZ ERP</span>
+<span class="text-[10px] text-slate-400">PRO</span>
+</div>
+</aside>
+<!-- MAIN VIEW AREA -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#F4F6F9] overflow-hidden p-3 gap-2.5">
+<!-- 1. BREADCRUMBS & TITLE -->
+<div class="flex items-center justify-between flex-shrink-0"><div class="flex items-baseline gap-2"><h1 class="text-[16px] font-bold text-[#113657] tracking-tight">Règlements</h1><span class="text-[12px] text-slate-500 font-medium">Finances &gt; Règlements</span></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#113657]/10 text-[#113657]">Gestion Trésorerie</span></div></div>
+<!-- 2. DOCUMENT INFORMATION FORM (Single clean balanced row, 32px height) -->
+<div class="bg-white rounded border border-[#E5E7EB] p-2 shadow-sm flex items-center justify-between flex-shrink-0"><div class="flex items-center gap-2"><button class="h-8 px-3 bg-[#F17D24] hover:bg-[#D96812] text-white font-semibold text-[12px] rounded flex items-center gap-1.5 shadow-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">add</span><span class="">Nouveau</span></button><button class="h-8 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-medium text-[12px] rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">edit</span><span class="">Modifier</span></button><button class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-red-600 font-medium text-[12px] rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">delete</span><span class="">Supprimer</span></button><button class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium text-[12px] rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">content_copy</span><span class="">Dupliquer</span></button><button class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium text-[12px] rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">print</span><span class="">Imprimer</span></button></div><div class="flex items-center gap-2"><button class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium text-[12px] rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[16px] text-emerald-700">table_view</span><span class="">Exporter Excel</span></button></div></div>
+<!-- 3. TAB HEADER NAVIGATION (Exactly 2 Tabs: Lignes & Paiement) -->
+<div class="flex items-center gap-1 border-b border-[#E5E7EB] px-1 flex-shrink-0"><button class="relative flex items-center gap-2 px-5 py-2 text-[13px] font-semibold border-b-2 border-[#F17D24] text-[#113657] transition-all bg-white rounded-t shadow-sm" id="tab-btn-clients" onclick="(function(){const bc=document.getElementById('tab-btn-clients');const bf=document.getElementById('tab-btn-fournisseurs');bc.className='relative flex items-center gap-2 px-5 py-2 text-[13px] font-semibold border-b-2 border-[#F17D24] text-[#113657] transition-all bg-white rounded-t shadow-sm';bf.className='relative flex items-center gap-2 px-5 py-2 text-[13px] font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60 rounded-t transition-all';document.getElementById('tbody-clients').style.display='';document.getElementById('tbody-fournisseurs').style.display='none';document.getElementById('filter-lbl-code-tier').textContent='Code Client';document.getElementById('filter-input-code-tier').placeholder='CL-00...';document.getElementById('filter-lbl-nom-tier').textContent='Client (Raison Sociale)';document.getElementById('filter-input-nom-tier').placeholder='Rechercher par raison sociale...';document.getElementById('th-tier-label').textContent='Client';document.getElementById('tab-summary-text').textContent='5 règlements clients affichés • 4 validés / 1 en attente';document.getElementById('stat-total-reglements').textContent='109 600,00 MAD';document.getElementById('stat-montant-affecte').textContent='97 150,00 MAD';document.getElementById('stat-montant-restant').textContent='12 450,00 MAD';})()"><span class="material-symbols-outlined text-[17px] text-[#F17D24]">group</span><span class="">Clients</span><span class="ml-1 px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 text-[11px] font-mono">5</span></button><button class="relative flex items-center gap-2 px-5 py-2 text-[13px] font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60 rounded-t transition-all" id="tab-btn-fournisseurs" onclick="(function(){const bc=document.getElementById('tab-btn-clients');const bf=document.getElementById('tab-btn-fournisseurs');bf.className='relative flex items-center gap-2 px-5 py-2 text-[13px] font-semibold border-b-2 border-[#F17D24] text-[#113657] transition-all bg-white rounded-t shadow-sm';bc.className='relative flex items-center gap-2 px-5 py-2 text-[13px] font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60 rounded-t transition-all';document.getElementById('tbody-clients').style.display='none';document.getElementById('tbody-fournisseurs').style.display='';document.getElementById('filter-lbl-code-tier').textContent='Code Fournisseur';document.getElementById('filter-input-code-tier').placeholder='FR-00...';document.getElementById('filter-lbl-nom-tier').textContent='Fournisseur';document.getElementById('filter-input-nom-tier').placeholder='Rechercher fournisseur / raison sociale...';document.getElementById('th-tier-label').textContent='Fournisseur';document.getElementById('tab-summary-text').textContent='3 règlements fournisseurs affichés • 2 validés / 1 en attente';document.getElementById('stat-total-reglements').textContent='68 950,00 MAD';document.getElementById('stat-montant-affecte').textContent='50 450,00 MAD';document.getElementById('stat-montant-restant').textContent='18 500,00 MAD';})()"><span class="material-symbols-outlined text-[17px] text-slate-400">local_shipping</span><span class="">Fournisseurs</span><span class="ml-1 px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-500 text-[11px] font-mono">3</span></button></div>
+<!-- 4. TAB CONTENT CONTAINER (Fills available space) -->
+<div class="flex-1 flex flex-col min-h-0 relative"><div class="flex flex-col h-full gap-2 min-h-0"><div class="bg-white rounded border border-[#E5E7EB] p-2.5 shadow-sm flex flex-col gap-2 flex-shrink-0 text-[12px]"><div class="grid grid-cols-12 gap-2 items-end"><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Code règlement</span><input class="h-8 px-2 bg-slate-50 border border-[#E5E7EB] rounded font-mono text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" placeholder="Ex: REG-2025..." type="text"></div><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase" id="filter-lbl-code-tier">Code Client</span><input class="h-8 px-2 bg-slate-50 border border-[#E5E7EB] rounded font-mono text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" id="filter-input-code-tier" placeholder="CL-00..." type="text"></div><div class="col-span-4 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase" id="filter-lbl-nom-tier">Client (Raison Sociale)</span><div class="relative flex items-center"><input class="w-full h-8 pl-2 pr-7 bg-slate-50 border border-[#E5E7EB] rounded text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" id="filter-input-nom-tier" placeholder="Rechercher par raison sociale..." type="text"><span class="material-symbols-outlined absolute right-2 text-slate-400 text-[16px] pointer-events-none">search</span></div></div><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Mode de règlement</span><div class="relative flex items-center"><select class="w-full h-8 pl-2 pr-7 bg-slate-50 border border-[#E5E7EB] rounded text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657] appearance-none cursor-pointer"><option selected="">Tous les modes</option><option>Virement Bancaire</option><option>Chèque</option><option>Traite</option><option>Espèces</option><option>Carte Bancaire</option></select><span class="material-symbols-outlined absolute right-1.5 text-slate-400 text-[16px] pointer-events-none">expand_more</span></div></div><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Statut</span><div class="relative flex items-center"><select class="w-full h-8 pl-2 pr-7 bg-slate-50 border border-[#E5E7EB] rounded text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657] appearance-none cursor-pointer"><option selected="">Tous les statuts</option><option>Validé</option><option>En attente</option><option>Brouillon</option></select><span class="material-symbols-outlined absolute right-1.5 text-slate-400 text-[16px] pointer-events-none">expand_more</span></div></div></div><div class="grid grid-cols-12 gap-2 items-end"><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Du</span><div class="relative flex items-center"><input class="w-full h-8 pl-2 pr-7 bg-slate-50 border border-[#E5E7EB] rounded font-mono text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" type="text" value="01/08/2025"><span class="material-symbols-outlined absolute right-1.5 text-slate-400 text-[15px] pointer-events-none">calendar_today</span></div></div><div class="col-span-2 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Au</span><div class="relative flex items-center"><input class="w-full h-8 pl-2 pr-7 bg-slate-50 border border-[#E5E7EB] rounded font-mono text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" type="text" value="31/08/2025"><span class="material-symbols-outlined absolute right-1.5 text-slate-400 text-[15px] pointer-events-none">calendar_today</span></div></div><div class="col-span-6 flex flex-col gap-0.5"><span class="text-[10px] font-semibold text-slate-500 uppercase">Commentaire / Note</span><input class="w-full h-8 px-2 bg-slate-50 border border-[#E5E7EB] rounded text-[12px] text-slate-800 focus:bg-white focus:outline-none focus:border-[#113657]" placeholder="Filtrer par référence bancaire, motif ou libellé..." type="text"></div><div class="col-span-2 flex items-center gap-1.5 justify-end"><button class="h-8 px-3 bg-[#113657] hover:bg-[#1a4a75] text-white font-medium text-[12px] rounded flex items-center gap-1 shadow-sm transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">filter_alt</span><span class="">Appliquer</span></button><button class="h-8 px-2.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-600 rounded transition-colors" title="Réinitialiser les filtres" type="button"><span class="material-symbols-outlined text-[16px]">restart_alt</span></button></div></div></div><div class="flex-1 bg-white rounded border border-[#E5E7EB] shadow-sm overflow-hidden flex flex-col min-h-0"><div class="overflow-y-auto flex-1 h-full"><table class="w-full border-collapse text-left"><thead class="sticky top-0 z-10 bg-[#eef2f6] border-b border-[#E5E7EB]"><tr class="h-8 text-[11px] font-bold text-slate-600 uppercase tracking-wider select-none"><th class="w-8 px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></th><th class="w-36 px-3 font-semibold">Code règlement</th><th class="px-3 font-semibold" id="th-tier-label">Client</th><th class="w-40 px-3 font-semibold">Mode de règlement</th><th class="w-28 px-3 text-center font-semibold">Statut</th><th class="w-28 px-3 text-center font-semibold">Date</th><th class="w-36 px-3 text-right font-semibold">Montant (MAD)</th><th class="w-64 px-3 font-semibold">Commentaire</th></tr></thead><tbody class="text-[12px] divide-y divide-[#F1F3F5]" id="tbody-clients"><tr class="h-[28px] hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0192</td><td class="px-3 truncate text-slate-800 font-medium">SARL Atlas Distribution (CL-00101)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Virement Bancaire</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-700">Validé</span></td><td class="px-3 font-mono text-center text-slate-600">14/08/2025</td><td class="px-3 font-mono text-right font-semibold text-emerald-700">35 500,00 MAD</td><td class="px-3 truncate text-slate-600">Acompte à la commande par virement (Attestation #V-8941)</td></tr><tr class="h-[28px] bg-slate-50/60 hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0193</td><td class="px-3 truncate text-slate-800 font-medium">Electro Maroc Tech SARL (CL-00142)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Traite</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-700">En attente</span></td><td class="px-3 font-mono text-center text-slate-600">14/09/2025</td><td class="px-3 font-mono text-right font-semibold text-[#113657]">28 200,00 MAD</td><td class="px-3 truncate text-slate-600">Solde convenu à livraison / Échéance 30j</td></tr><tr class="h-[28px] hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0194</td><td class="px-3 truncate text-slate-800 font-medium">Comptoir Marocain d'Équipement (CL-00088)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Chèque</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-700">Validé</span></td><td class="px-3 font-mono text-center text-slate-600">12/08/2025</td><td class="px-3 font-mono text-right font-semibold text-emerald-700">18 450,00 MAD</td><td class="px-3 truncate text-slate-600">Chèque n° 884012 encaissé - Facture FA-2025-0792</td></tr><tr class="h-[28px] bg-slate-50/60 hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0195</td><td class="px-3 truncate text-slate-800 font-medium">Société Générale de Bâtiment (CL-00204)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Virement Bancaire</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-700">Validé</span></td><td class="px-3 font-mono text-center text-slate-600">10/08/2025</td><td class="px-3 font-mono text-right font-semibold text-emerald-700">15 000,00 MAD</td><td class="px-3 truncate text-slate-600">Règlement partiel commande gros œuvre #COM-441</td></tr><tr class="h-[28px] hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0196</td><td class="px-3 truncate text-slate-800 font-medium">Batipro Casablanca (CL-00055)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Espèces</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-slate-100 text-slate-600">Brouillon</span></td><td class="px-3 font-mono text-center text-slate-600">08/08/2025</td><td class="px-3 font-mono text-right font-semibold text-slate-700">12 450,00 MAD</td><td class="px-3 truncate text-slate-600">Reçu de caisse temporaire en attente de validation comptable</td></tr></tbody><tbody class="text-[12px] divide-y divide-[#F1F3F5]" id="tbody-fournisseurs" style="display: none;"><tr class="h-[28px] hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0210</td><td class="px-3 truncate text-slate-800 font-medium">Câbleries du Maroc SA (FR-00102)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Virement Bancaire</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-700">Validé</span></td><td class="px-3 font-mono text-center text-slate-600">18/08/2025</td><td class="px-3 font-mono text-right font-semibold text-emerald-700">42 800,00 MAD</td><td class="px-3 truncate text-slate-600">Acompte commande composants cuivre - Facture FA-FR-889</td></tr><tr class="h-[28px] bg-slate-50/60 hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0211</td><td class="px-3 truncate text-slate-800 font-medium">Maghreb Outillage Industriel (FR-00045)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Traite</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-700">En attente</span></td><td class="px-3 font-mono text-center text-slate-600">25/08/2025</td><td class="px-3 font-mono text-right font-semibold text-[#113657]">18 500,00 MAD</td><td class="px-3 truncate text-slate-600">Traite à échéance 60j - Remplacement outillage atelier</td></tr><tr class="h-[28px] hover:bg-orange-50/40 transition-colors"><td class="px-2 text-center"><input class="rounded border-slate-300 text-[#113657] focus:ring-[#113657]" type="checkbox"></td><td class="px-3 font-mono font-medium text-[#113657]">REG-2025-0212</td><td class="px-3 truncate text-slate-800 font-medium">Société Marocaine d'Emballage (FR-00078)</td><td class="px-3"><span class="inline-flex items-center gap-1.5 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Chèque</span></td><td class="px-3 text-center"><span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-700">Validé</span></td><td class="px-3 font-mono text-center text-slate-600">10/08/2025</td><td class="px-3 font-mono text-right font-semibold text-emerald-700">7 650,00 MAD</td><td class="px-3 truncate text-slate-600">Chèque n° 458921 encaissé - Fourniture cartons &amp; palettes</td></tr></tbody></table></div><div class="px-3 py-1 bg-slate-50 border-t border-[#E5E7EB] text-[11px] text-slate-500 flex justify-between items-center"><span id="tab-summary-text" class="">5 règlements clients affichés • 4 validés / 1 en attente</span><span class="italic text-[10px]">Clic droit sur une ligne pour les options contextuelles</span></div></div></div></div>
+<!-- ================= SHARED TOTALS & BOTTOM ACTIONS ================= -->
+<!-- (Consistently anchored at bottom, identical in both tabs) -->
+<footer class="bg-white rounded border border-[#E5E7EB] p-2.5 shadow-sm flex items-center justify-between gap-4 flex-shrink-0 select-none"><div class="flex items-center gap-3"><div class="px-3 py-1 rounded bg-slate-50 border border-slate-200 flex flex-col"><span class="text-[10px] font-semibold text-slate-500 uppercase">Total règlements</span><span class="font-mono text-[13px] font-semibold text-slate-800" id="stat-total-reglements">109 600,00 MAD</span></div><div class="px-3 py-1 rounded bg-slate-50 border border-slate-200 flex flex-col"><span class="text-[10px] font-semibold text-slate-500 uppercase">Montant affecté</span><span class="font-mono text-[13px] font-semibold text-slate-700" id="stat-montant-affecte">97 150,00 MAD</span></div><div class="px-4 py-1 rounded bg-[#113657] border border-[#0d2a45] text-white flex flex-col shadow-sm"><span class="text-[10px] font-semibold text-slate-300 uppercase tracking-wide">Montant restant</span><span class="font-mono text-[16px] font-bold text-emerald-300 leading-tight" id="stat-montant-restant">12 450,00 MAD</span></div></div><div class="flex items-center gap-2"><button class="h-8 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-[12px] font-semibold rounded flex items-center gap-1.5 transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">arrow_back</span><span class="">Retour</span></button></div></footer>
+</main>
+</div>
+<!-- ================= BOTTOM WINDOW STATUS BAR ================= -->
+<!-- Left: Société : Atlas Distribution | Right: ● Connecté (Clean, no technical diagnostics) -->
+<footer class="h-6 bg-[#0a243c] border-t border-[#113657] px-3 flex items-center justify-between text-[11px] text-slate-300 select-none flex-shrink-0">
+<div class="flex items-center gap-2">
+<span class="font-medium text-slate-200">Société : Atlas Distribution</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+<span class="text-emerald-300 font-medium">Connecté</span>
+</div>
+</footer>
+<!-- ================= TAB SWITCHING JAVASCRIPT ================= -->
+<script>
+    function switchTab(tabName) {
+      const contentLignes = document.getElementById('tab-content-lignes');
+      const contentPaiement = document.getElementById('tab-content-paiement');
+      const btnLignes = document.getElementById('tab-btn-lignes');
+      const btnPaiement = document.getElementById('tab-btn-paiement');
+
+      if (tabName === 'lignes') {
+        // Show Lignes content
+        contentLignes.classList.remove('hidden');
+        contentPaiement.classList.add('hidden');
+
+        // Style Tab 1 as Active
+        btnLignes.className = "relative flex items-center gap-2 px-5 py-2 text-[13px] font-semibold border-b-2 border-[#F17D24] text-[#113657] transition-all bg-white rounded-t shadow-sm";
+        btnLignes.querySelector('.material-symbols-outlined').className = "material-symbols-outlined text-[17px] text-[#F17D24]";
+
+        // Style Tab 2 as Inactive
+        btnPaiement.className = "relative flex items-center gap-2 px-5 py-2 text-[13px] font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60 rounded-t transition-all";
+        btnPaiement.querySelector('.material-symbols-outlined').className = "material-symbols-outlined text-[17px] text-slate-400";
+
+      } else if (tabName === 'paiement') {
+        // Show Paiement content
+        contentPaiement.classList.remove('hidden');
+        contentLignes.classList.add('hidden');
+
+        // Style Tab 2 as Active
+        btnPaiement.className = "relative flex items-center gap-2 px-5 py-2 text-[13px] font-semibold border-b-2 border-[#F17D24] text-[#113657] transition-all bg-white rounded-t shadow-sm";
+        btnPaiement.querySelector('.material-symbols-outlined').className = "material-symbols-outlined text-[17px] text-[#F17D24]";
+
+        // Style Tab 1 as Inactive
+        btnLignes.className = "relative flex items-center gap-2 px-5 py-2 text-[13px] font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60 rounded-t transition-all";
+        btnLignes.querySelector('.material-symbols-outlined').className = "material-symbols-outlined text-[17px] text-slate-400";
+      }
+    }
+  </script>
+
+
+</body></html>
