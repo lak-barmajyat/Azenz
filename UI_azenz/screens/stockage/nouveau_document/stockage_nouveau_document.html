@@ -1,0 +1,190 @@
+<!DOCTYPE html><html class="h-full select-none" lang="fr"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>AZENZ ERP Desktop - Ventes</title>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#113657',
+              'navy-dark': '#0b243a',
+              'navy-deep': '#091c2e',
+              'navy-light': '#1b4a75',
+              'navy-border': '#1d4263',
+              orange: '#F17D24',
+              'orange-hover': '#dc6e1b',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+    .tnum {
+      font-feature-settings: 'tnum' on, 'lnum' on;
+    }
+    /* Compact ERP scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Dense table styling */
+    .erp-dense-table th, .erp-dense-table td {
+      white-space: nowrap;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="w-full h-screen min-w-[1400px] overflow-hidden flex flex-col bg-[#F8FAFC] text-slate-800 antialiased">
+<!-- BEGIN: Windows Desktop Titlebar -->
+<header class="h-8 bg-[#091c2e] border-b border-[#071928] flex items-center justify-between px-3 text-slate-300 select-none text-xs shrink-0" data-purpose="window-titlebar"><div class="flex items-center gap-2"><img alt="AZENZ" class="w-4 h-4 object-contain brightness-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwLsR0GYZdkYMGT63Tmg3IZBB_StN57Vf_7Fwa_pzyEKsQBBf77L0Ybajfx2wPNAX8rpoMqkc0uhzBJfHvPCUESPpFXBvVqC0o3xyi-_-WN15TuwqF9OUQSkmaAHV-ZKdHSp85jr5BaQLM6aKChjmc9lb6unobs_xoT3LxylMhBgg7h2IHuBRk4em7Bicp0bEQxXFzjq01vFxS1LNAmNQXxxfK3d6sqMo17y6d0KK5kHLXp5-qpYTmvQn3gKwRYGJJCQ"><span class="font-medium text-white tracking-wide text-xs">AZENZ ERP Desktop v4.2.1 Pro</span><span class="text-slate-400 text-[11px] hidden sm:inline-block">| Poste de travail: PROD-SRV01 (Maghreb / Casablanca)</span></div><div class="flex items-center space-x-1 -mr-2"><button class="w-8 h-6 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white rounded transition" title="Réduire"><i class="fa-solid fa-minus text-[10px]"></i></button><button class="w-8 h-6 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white rounded transition" title="Agrandir"><i class="fa-regular fa-square text-[10px]"></i></button><button class="w-9 h-6 flex items-center justify-center text-slate-400 hover:bg-red-600 hover:text-white rounded transition" title="Fermer"><i class="fa-solid fa-xmark text-xs"></i></button></div></header><div class="h-7 bg-[#0b243a] border-b border-[#071928] flex items-center px-2 text-slate-300 select-none text-xs shrink-0" data-purpose="desktop-menu-bar"><nav aria-label="Desktop Menu Bar" class="flex items-center space-x-1 text-slate-300 text-xs"><button class="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white text-slate-200 transition" type="button">Fichier</button><button class="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white text-slate-200 transition" type="button">Édition</button><button class="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white text-slate-200 transition" type="button">Affichage</button><button class="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white text-slate-200 transition" type="button">Outils</button><button class="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white text-slate-200 transition" type="button">Aide</button></nav></div>
+<!-- END: Windows Titlebar -->
+<!-- BEGIN: Main Layout (Sidebar + Content Workspace) -->
+<div class="flex-1 flex overflow-hidden">
+<!-- BEGIN: Left Sidebar -->
+<aside class="w-64 bg-[#113657] border-r border-[#0d2a45] flex flex-col shrink-0 text-slate-200 select-none justify-between" data-purpose="erp-navigation-sidebar" id="app-sidebar">
+<!-- Upper Section: Brand + User Card + Navigation -->
+<div class="flex flex-col flex-1 overflow-hidden">
+<!-- Prominent Brand Header -->
+<div class="client-header-container px-4 pt-3.5 pb-3 border-b border-white/10 bg-[#0d2a45]/90 flex flex-col gap-2.5 shrink-0"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#F17D24] to-[#984700] p-0.5 shadow-sm shrink-0 flex items-center justify-center"><div class="w-full h-full rounded bg-[#0b243a]/40 backdrop-blur-xs flex items-center justify-center border border-white/20"><span class="text-white font-extrabold text-sm tracking-wider font-mono">AD</span></div></div><div class="flex-1 min-w-0 sidebar-text"><div class="flex items-center justify-between gap-1"><h2 class="text-white font-bold text-sm tracking-tight truncate leading-tight">Atlas Distribution</h2><span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#F17D24]/20 text-[#F17D24] border border-[#F17D24]/30">SARL</span></div><div class="flex items-center gap-1.5 text-[10px] text-slate-300 mt-0.5"><i class="fa-solid fa-building text-[8px] text-slate-400"></i><span class="truncate">Casablanca • Négoce</span></div></div></div><div class="sidebar-text pt-2 border-t border-white/5 flex items-center justify-between text-[10px]"><div class="flex items-center gap-1.5 min-w-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span><span class="text-slate-200 font-medium truncate">Mohammed</span><span class="text-slate-400 text-[9px]">• Admin</span></div><span class="px-1.5 py-0.2 rounded font-mono text-[9px] bg-white/10 text-slate-300">CL-ATLAS</span></div></div>
+<!-- Navigation Groups (Collapsible Accordion) -->
+<nav aria-label="Main Navigation" class="flex-1 overflow-y-auto px-2 py-2 space-y-1 text-xs"><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition font-medium" href="#" title="Dashboard"><i class="fa-solid fa-chart-pie w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Dashboard</span></a><div class="mt-3.5"><button class="w-full accordion-btn group-header flex items-center justify-between px-2.5 py-1.5 rounded text-[11px] font-bold uppercase tracking-wider text-[#F17D24] bg-white/5 hover:bg-white/10 transition" data-target="group-documents" title="Documents" type="button"><span class="flex items-center gap-2"><i class="fa-solid fa-folder-open text-xs shrink-0"></i><span class="sidebar-text">Documents</span></span><i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200 accordion-arrow sidebar-text" style="transform: rotate(0deg);"></i></button><div class="mt-1.5 space-y-1 pl-1 group-container" id="group-documents"><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Ventes"><i class="fa-solid fa-receipt w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Ventes</span></a><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Achats"><i class="fa-solid fa-cart-shopping w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Achats</span></a><a class="nav-item flex items-center justify-between px-3 h-8 rounded font-semibold text-white bg-[#F17D24] shadow-sm" href="#" title="Stockage"><div class="flex items-center gap-2.5"><i class="fa-solid fa-boxes-stacked w-4 text-center shrink-0"></i><span class="sidebar-text">Stockage</span></div><span class="w-1.5 h-1.5 rounded-full bg-white sidebar-text"></span></a></div></div><div class="mt-4"><button class="w-full accordion-btn group-header flex items-center justify-between px-2.5 py-1.5 rounded text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 hover:bg-white/5 transition" data-target="group-tiers" title="Tiers" type="button"><span class="flex items-center gap-2"><i class="fa-solid fa-address-book text-xs shrink-0"></i><span class="sidebar-text">Tiers</span></span><i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200 accordion-arrow sidebar-text" style="transform: rotate(0deg);"></i></button><div class="mt-1.5 space-y-1 pl-1 group-container" id="group-tiers"><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Clients"><i class="fa-solid fa-users w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Clients</span></a><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Fournisseurs"><i class="fa-solid fa-truck w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Fournisseurs</span></a></div></div><div class="mt-4"><button class="w-full accordion-btn group-header flex items-center justify-between px-2.5 py-1.5 rounded text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 hover:bg-white/5 transition" data-target="group-catalogue" title="Catalogue" type="button"><span class="flex items-center gap-2"><i class="fa-solid fa-box-open text-xs shrink-0"></i><span class="sidebar-text">Catalogue</span></span><i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200 accordion-arrow sidebar-text" style="transform: rotate(0deg);"></i></button><div class="mt-1.5 space-y-1 pl-1 group-container" id="group-catalogue"><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Articles"><i class="fa-solid fa-tags w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Articles</span></a><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Familles"><i class="fa-solid fa-folder-tree w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Familles</span></a></div></div><div class="mt-4"><a class="nav-item flex items-center gap-2.5 px-3 h-8 rounded text-slate-300 hover:bg-white/10 hover:text-white transition" href="#" title="Règlements"><i class="fa-solid fa-money-check-dollar w-4 text-center text-slate-400 shrink-0"></i><span class="sidebar-text">Règlements</span></a></div></nav><div class="p-3 border-t border-white/5 flex flex-col items-center justify-center shrink-0"><div class="azenz-watermark-expanded w-full flex flex-col items-center justify-center py-2 px-3"><img alt="AZENZ Powered" class="h-9 w-auto max-w-[150px] object-contain opacity-20 hover:opacity-35 transition duration-200 pointer-events-none select-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRBZJv5fiCeTzT8gpz_K3NKoOcnUm-ttpHftI_hWYOsGeETK6pn1j1e3iUmuZp3gx_JJgkXqEa-kKIi1CvfUL1adb7a2vOuodZRc2_lQ6p24BI5I8A2gpfvCPWM_gRZVtb80YtukJYxz0eQZ9kbGh5AZ1XTw38ymdPu4APhrksJSLQq2zrOcz61umU2ivjbNMBum2M9--bO9zrs0IzUq5QmGyBlBHM27JV9y7P05nxPucU2zllEJwgmiVl45ehobT7bQ"><span class="text-[9px] font-medium tracking-widest uppercase text-slate-400 opacity-40 mt-1 font-mono">Propulsé par AZENZ</span></div><div class="azenz-watermark-collapsed hidden w-full items-center justify-center py-1.5"><img alt="AZENZ Symbol" class="w-6 h-6 object-contain opacity-25 hover:opacity-40 transition duration-200 pointer-events-none select-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_U8mKQZvJi3jBmcqWBlKXy-fyAFSiiIfTkK7QLsL3E8kH91M7ybqoEafWeQEqtWUH1gOD2APxZ-MY2uPVbZgOv4ZfIpPsLXivCOgF2Ug2AhKjOl-o5BrEQCbGGNNQbVdS9F2CCQRMbW58qNNlEI4RHpcQ6tkP8iTzPnE7_Mpt7in-GZuMywtorJk09jIHNVxioqAppCXB05U70nTaaQHssMqfYbTk8g2fXupmeXb26O33UOKzUhCLaD8d7ZydBnZaVA"></div></div>
+</div>
+<!-- Bottom Sidebar Status & Collapse Action -->
+<div class="bottom-status-container p-2 border-t border-white/10 bg-[#0b243a] flex items-center justify-between text-slate-400 text-[11px] px-3 shrink-0"><div class="bottom-status-text flex items-center gap-1.5 overflow-hidden"><i class="fa-solid fa-server text-xs text-[#F17D24] shrink-0"></i><span class="truncate text-[10px] text-slate-300 font-mono">Azenz Cloud Sync</span></div><button class="hover:text-white p-1 rounded hover:bg-white/10 transition shrink-0" id="sidebar-toggle" title="Réduire / Agrandir le volet latéral" type="button"><i class="fa-solid fa-angles-left text-xs text-slate-300 hover:text-white"></i></button></div>
+<script>(function(){const toggleBtn = document.getElementById('sidebar-toggle'); const sidebar = document.getElementById('app-sidebar'); if(toggleBtn && sidebar){ toggleBtn.onclick = function(e){ e.preventDefault(); e.stopPropagation(); const isCollapsed = sidebar.classList.toggle('sidebar-collapsed'); const icon = toggleBtn.querySelector('i'); if(icon){ if(isCollapsed){ icon.classList.remove('fa-angles-left'); icon.classList.add('fa-angles-right'); toggleBtn.setAttribute('title', 'Agrandir le volet latéral'); } else { icon.classList.remove('fa-angles-right'); icon.classList.add('fa-angles-left'); toggleBtn.setAttribute('title', 'Réduire le volet latéral'); } } }; }})();</script></aside>
+<!-- END: Left Sidebar -->
+<!-- BEGIN: Main Workspace Area -->
+<main class="flex-1 flex flex-col overflow-hidden bg-[#F8FAFC]"><div class="flex-1 flex flex-col h-full overflow-hidden p-3 gap-2.5"><div class="flex items-center justify-between shrink-0"><div class="flex items-center gap-2"><div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium"><span>Documents</span><i class="fa-solid fa-chevron-down -rotate-90 text-[9px] text-slate-400"></i><span class="text-[#F17D24] font-semibold">Stockage</span><i class="fa-solid fa-chevron-down -rotate-90 text-[9px] text-slate-400"></i><span class="text-slate-800 font-semibold">Nouveau document</span></div><span class="text-slate-300">|</span><span class="text-xs text-slate-500">Mouvement de stock</span></div><div class="flex items-center gap-2 shrink-0"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100 text-[#984700] text-xs font-semibold border border-orange-200"><span class="w-1.5 h-1.5 rounded-full bg-[#F17D24]"></span><span>Brouillon</span></span></div></div><div class="bg-white rounded border border-slate-200 shadow-sm p-2.5 shrink-0 flex flex-col gap-2"><div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><span>En-tête du document</span><span class="font-mono text-slate-400 normal-case">Exercice 2025 • Dépôt Principal</span></div><div class="grid grid-cols-12 gap-2 items-end"><div class="col-span-2 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="doc-code">Code Doc</label><input class="h-8 px-2.5 rounded border border-slate-300 bg-slate-50 text-slate-800 font-mono text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="doc-code" type="text" value="STK-2025-001"></div><div class="col-span-2 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="doc-type">Type document</label><select class="h-8 px-2 rounded border border-slate-300 bg-slate-50 text-slate-800 text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="doc-type"><option selected="" value="entree">Entrée de stock</option><option value="sortie">Sortie de stock</option><option value="ajustement">Ajustement</option><option value="inventaire">Inventaire</option></select></div><div class="col-span-2 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="doc-date">Date</label><input class="h-8 px-2 rounded border border-slate-300 bg-slate-50 text-slate-800 font-mono text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="doc-date" type="date" value="2025-01-10"></div><div class="col-span-1 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="doc-status">Statut</label><input class="h-8 px-2 rounded border border-slate-200 bg-slate-100 text-slate-500 font-medium text-xs focus:outline-none cursor-not-allowed" id="doc-status" readonly="" type="text" value="Brouillon"></div><div class="col-span-4 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="doc-comment">Commentaire</label><input class="h-8 px-2.5 rounded border border-slate-300 bg-slate-50 text-slate-800 text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="doc-comment" placeholder="Motif ou référence du mouvement..." type="text"></div><div class="col-span-1 flex justify-end"><button class="w-full h-8 px-2.5 rounded bg-[#113657] text-white text-xs font-semibold hover:bg-[#0b243a] transition flex items-center justify-center gap-1.5 shadow-sm" id="btn-validate-doc" type="button"><i class="fa-solid fa-check text-xs"></i><span>Valider</span></button></div></div></div><div class="bg-white rounded border border-slate-200 shadow-sm p-2.5 shrink-0 flex flex-col gap-2"><div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><span>Saisie de ligne article</span><span class="text-[11px] text-slate-400 font-normal normal-case">Appuyez sur Entrée pour ajouter rapidement</span></div><div class="grid grid-cols-12 gap-2 items-end"><div class="col-span-2 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="line-ref">Réf</label><div class="relative flex items-center"><i class="fa-solid fa-search absolute left-2.5 text-slate-400 text-xs pointer-events-none"></i><input class="w-full h-8 pl-8 pr-2 rounded border border-slate-300 bg-slate-50 text-slate-800 font-mono text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="line-ref" placeholder="ART-0001" type="text"></div></div><div class="col-span-4 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="line-designation">Désignation</label><input class="h-8 px-2.5 rounded border border-slate-300 bg-slate-50 text-slate-800 text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="line-designation" placeholder="Désignation de l'article..." type="text"></div><div class="col-span-2 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="line-qty">Qté</label><input class="h-8 px-2.5 rounded border border-slate-300 bg-slate-50 text-slate-800 font-mono text-xs text-right focus:outline-none focus:border-[#113657] focus:bg-white" id="line-qty" placeholder="0,00" step="0.01" type="text"></div><div class="col-span-4 flex flex-col gap-1"><label class="text-[11px] font-medium text-slate-600" for="line-comment">Commentaire</label><input class="h-8 px-2.5 rounded border border-slate-300 bg-slate-50 text-slate-800 text-xs focus:outline-none focus:border-[#113657] focus:bg-white" id="line-comment" placeholder="Note sur la ligne (lot, emplacement...)" type="text"></div></div><div class="flex items-center justify-end gap-2 pt-0.5"><button class="h-8 px-3 rounded border border-slate-300 bg-white text-slate-700 text-xs font-medium hover:bg-slate-50 transition" id="btn-line-cancel" type="button">Annuler</button><button class="h-8 px-3 rounded border border-red-200 bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100 transition flex items-center gap-1.5" id="btn-line-delete" type="button"><i class="fa-regular fa-trash-can text-xs"></i><span>Supprimer</span></button><button class="h-8 px-3.5 rounded bg-[#F17D24] text-white text-xs font-semibold hover:bg-[#dc6e1b] transition flex items-center gap-1.5 shadow-sm" id="btn-line-save" type="button"><i class="fa-regular fa-floppy-disk text-xs"></i><span>Enregistrer</span></button></div></div><div class="flex-1 flex flex-col min-h-0 bg-white rounded border border-slate-200 shadow-sm overflow-hidden"><div class="flex-1 overflow-y-auto overflow-x-auto"><table class="w-full text-left border-collapse erp-dense-table"><thead class="sticky top-0 z-10"><tr class="h-8 bg-[#113657] text-white text-xs font-semibold tracking-wide select-none"><th class="w-10 px-3 text-center border-r border-[#1a4163]"><input class="rounded border-slate-400 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" id="select-all-lines" type="checkbox"></th><th class="w-32 px-3 border-r border-[#1a4163]">Réf</th><th class="px-3 border-r border-[#1a4163]">Désignation</th><th class="w-28 px-3 text-right border-r border-[#1a4163]">Qté</th><th class="w-1/3 px-3">Commentaire</th></tr></thead><tbody class="text-xs text-slate-700 divide-y divide-slate-200" id="stock-lines-tbody"><tr class="h-8 bg-blue-50/60 hover:bg-blue-50 transition cursor-pointer"><td class="w-10 px-3 text-center"><input checked="" class="row-checkbox rounded border-slate-300 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"></td><td class="px-3 font-mono font-semibold text-[#113657]">ART-1042</td><td class="px-3 font-medium text-slate-800">Câble réseau Cat6A blindé 305m</td><td class="px-3 font-mono text-right font-semibold text-slate-900 tnum">25,00</td><td class="px-3 text-slate-500">Lot #2025-A • Allée B2</td></tr><tr class="h-8 hover:bg-slate-50 transition cursor-pointer"><td class="w-10 px-3 text-center"><input class="row-checkbox rounded border-slate-300 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"></td><td class="px-3 font-mono font-semibold text-[#113657]">ART-2089</td><td class="px-3 font-medium text-slate-800">Switch Gigabit Manageable 24 ports PoE+</td><td class="px-3 font-mono text-right font-semibold text-slate-900 tnum">8,00</td><td class="px-3 text-slate-500">Réception fournisseur Atlas Tech</td></tr><tr class="h-8 hover:bg-slate-50 transition cursor-pointer"><td class="w-10 px-3 text-center"><input class="row-checkbox rounded border-slate-300 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"></td><td class="px-3 font-mono font-semibold text-[#113657]">ART-3310</td><td class="px-3 font-medium text-slate-800">Panneau de brassage 24 ports RJ45</td><td class="px-3 font-mono text-right font-semibold text-slate-900 tnum">12,00</td><td class="px-3 text-slate-500">Contrôle qualité validé</td></tr><tr class="h-8 hover:bg-slate-50 transition cursor-pointer"><td class="w-10 px-3 text-center"><input class="row-checkbox rounded border-slate-300 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"></td><td class="px-3 font-mono font-semibold text-[#113657]">ART-4105</td><td class="px-3 font-medium text-slate-800">Onduleur Rack 1500VA / 1050W</td><td class="px-3 font-mono text-right font-semibold text-slate-900 tnum">4,00</td><td class="px-3 text-slate-500">Zone sécurisée Z1</td></tr><tr class="h-8 hover:bg-slate-50 transition cursor-pointer"><td class="w-10 px-3 text-center"><input class="row-checkbox rounded border-slate-300 text-[#F17D24] focus:ring-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"></td><td class="px-3 font-mono font-semibold text-[#113657]">ART-5021</td><td class="px-3 font-medium text-slate-800">Connecteurs RJ45 Blindés (Boîte de 100)</td><td class="px-3 font-mono text-right font-semibold text-slate-900 tnum">50,00</td><td class="px-3 text-slate-500">Stock tampon</td></tr></tbody></table></div><div class="bg-slate-100 border-t border-slate-200 px-3 h-7 flex items-center justify-between text-xs font-mono text-slate-600 shrink-0 select-none"><div class="flex items-center gap-4"><span>Lignes: <strong class="text-slate-800">5</strong></span><span>Sélectionné: <strong class="text-[#F17D24]" id="selection-count">1</strong></span></div><span class="text-[11px] font-sans text-slate-400">Double-cliquez sur une ligne pour modifier</span></div></div><div class="flex items-center justify-end gap-2 shrink-0 pt-0.5"><button class="h-8 px-4 rounded border border-slate-300 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-1.5" id="btn-back" type="button"><i class="fa-solid fa-arrow-left text-xs"></i><span>Retour</span></button><button class="h-8 px-4 rounded bg-[#F17D24] text-white text-xs font-semibold hover:bg-[#dc6e1b] transition flex items-center gap-1.5 shadow-sm" id="btn-new-doc" type="button"><i class="fa-solid fa-plus text-xs"></i><span>Nouveau</span></button></div></div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const refInput = document.getElementById('line-ref');
+    const desInput = document.getElementById('line-designation');
+    const qtyInput = document.getElementById('line-qty');
+    const comInput = document.getElementById('line-comment');
+    const tbody = document.getElementById('stock-lines-tbody');
+
+    const clearLineInputs = () => {
+      if (refInput) refInput.value = '';
+      if (desInput) desInput.value = '';
+      if (qtyInput) qtyInput.value = '';
+      if (comInput) comInput.value = '';
+      if (refInput) refInput.focus();
+    };
+
+    const btnCancel = document.getElementById('btn-line-cancel');
+    if (btnCancel) {
+      btnCancel.addEventListener('click', clearLineInputs);
+    }
+
+    const btnSave = document.getElementById('btn-line-save');
+    if (btnSave && tbody) {
+      btnSave.addEventListener('click', () => {
+        const refVal = refInput?.value.trim() || 'ART-0000';
+        const desVal = desInput?.value.trim() || 'Nouvel article';
+        const qtyVal = parseFloat(qtyInput?.value || '1').toFixed(2);
+        const comVal = comInput?.value.trim() || '-';
+
+        const tr = document.createElement('tr');
+        tr.className = 'h-9 hover:bg-surface-container-low transition cursor-pointer';
+        tr.innerHTML = `
+          <td class="px-3 font-data-mono text-data-mono text-primary font-semibold">${refVal}</td>
+          <td class="px-3">${desVal}</td>
+          <td class="px-3 font-data-mono text-data-mono text-right font-semibold">${qtyVal}</td>
+          <td class="px-3 text-on-surface-variant">${comVal}</td>
+        `;
+        tbody.prepend(tr);
+        clearLineInputs();
+      });
+    }
+  });
+</script></main>
+<!-- END: Main Workspace Area -->
+</div>
+<!-- END: Main Layout -->
+<!-- BEGIN: Windows Desktop Thin Status Bar -->
+<footer class="h-6 bg-[#0c263e] border-t border-[#1a4163] text-slate-400 px-3 flex items-center justify-between text-[11px] shrink-0 select-none" data-purpose="desktop-status-bar">
+<!-- Left info -->
+<div class="flex items-center space-x-3"><span class="flex items-center gap-1 text-slate-300 font-medium"><i class="fa-solid fa-building text-[10px] text-slate-400"></i><span>Société: <strong class="text-white">Atlas Distribution</strong></span></span></div>
+<!-- Right info -->
+<div class="flex items-center space-x-3"><div class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span><span>Connecté (18ms)</span></div></div>
+</footer>
+<!-- END: Thin Status Bar -->
+<!-- Accordion and Checkbox Interactive JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sidebar Accordion Logic
+      const accordionBtns = document.querySelectorAll('.accordion-btn');
+      accordionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          const targetEl = document.getElementById(targetId);
+          const arrow = btn.querySelector('.accordion-arrow');
+
+          if (targetEl.classList.contains('hidden')) {
+            targetEl.classList.remove('hidden');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+          } else {
+            targetEl.classList.add('hidden');
+            if (arrow) arrow.style.transform = 'rotate(-90deg)';
+          }
+        });
+      });
+
+      // Sidebar Collapse Toggle
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('app-sidebar');
+      if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('w-64');
+          sidebar.classList.toggle('w-16');
+          // Update icon rotation
+          const icon = sidebarToggle.querySelector('i');
+          if (icon) {
+            icon.classList.toggle('fa-angles-left');
+            icon.classList.toggle('fa-angles-right');
+          }
+        });
+      }
+
+      // Checkbox count tracker
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      const counter = document.getElementById('selection-count');
+      checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+          if (counter) counter.textContent = checkedCount;
+        });
+      });
+    });
+  </script>
+
+
+</body></html>

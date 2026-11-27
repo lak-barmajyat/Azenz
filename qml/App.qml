@@ -21,11 +21,14 @@ ApplicationWindow {
     flags: Qt.Window | Qt.FramelessWindowHint
     property bool signedIn: false
     property var salesRecords: []
+    property var purchaseRecords: []
     property var paymentRecords: []
     property alias sales: shell.sales
+    property alias purchases: shell.purchases
     property bool connected: false
     property string currentPage: "dashboard"
     signal salesActionRequested(string action, var records)
+    signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
@@ -55,12 +58,16 @@ ApplicationWindow {
         userName: "Mohammed"
         connected: app.connected
         pageData: app.salesRecords
+        purchaseRows: app.purchaseRecords
         paymentRows: app.paymentRecords
         onPageRequested: function (page) {
             app.currentPage = page;
         }
         onSalesActionRequested: function (action, records) {
             app.salesActionRequested(action, records);
+        }
+        onPurchaseActionRequested: function (action, records) {
+            app.purchaseActionRequested(action, records);
         }
         onPaymentActionRequested: function (action, records) {
             app.paymentActionRequested(action, records);

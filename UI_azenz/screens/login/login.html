@@ -1,0 +1,183 @@
+<!DOCTYPE html><html class="h-full" lang="fr"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="desktop_app" name="shell-type">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased h-screen w-screen overflow-hidden flex flex-col justify-between">
+<!-- Windows 11 Native Title Bar -->
+<header class="h-9 w-full bg-white/90 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-3 select-none flex-shrink-0 z-50">
+<div class="flex items-center gap-2">
+<img alt="AZENZ" class="w-4 h-4 rounded-sm object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYm16gY5C6rQCBQUANxr9BJ1Bl_dFu4B4uJ0OhXrCLTYoHjegT1Rnldp0TBlNThz9_hpFDwef0D_31gTsjqUJdkpBCkxRdhye3Z1kQ39yL51_g2SfdhMOuMRIAVHkNEmBNaaatfBGAevkwfwZtjVPR_wTYO4w4YYX6FMn1cOPh-RPirm2cEvjXucl_GYqvmBVMbTekB3MOMb8WdgCS3sBv8821jFOON26RkCvvrAutiSG0aMgvMjeJ3gYR6VwhQiMAqw">
+<span class="text-xs font-normal text-slate-600 tracking-tight">AZENZ ERP Desktop</span>
+</div>
+<div class="flex items-center h-full -mr-3">
+<button aria-label="Minimize" class="w-11 h-9 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">remove</span>
+</button>
+<button aria-label="Maximize" class="w-11 h-9 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">crop_square</span>
+</button>
+<button aria-label="Close" class="w-11 h-9 flex items-center justify-center text-slate-500 hover:bg-red-500 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">close</span>
+</button>
+</div>
+</header>
+<!-- Main Viewport Canvas (16:9 desktop workspace centered) -->
+<main class="flex-1 flex flex-col items-center justify-center p-4">
+<!-- Single Compact Centered Login Panel -->
+<div class="w-full max-w-[860px] min-h-[520px] bg-white border border-slate-200/80 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden grid grid-cols-1 md:grid-cols-2 relative">
+  <!-- Left side: Branded visual panel -->
+  <div class="relative bg-gradient-to-br from-[#0d2840] via-[#113657] to-[#16446c] p-10 flex flex-col justify-between overflow-hidden text-white select-none">
+    <!-- Abstract geometric background shapes inspired by AZENZ logo -->
+    <div class="absolute -right-16 -top-16 w-64 h-64 rounded-3xl bg-[#F17D24]/10 transform rotate-45 pointer-events-none blur-sm"></div>
+    <div class="absolute -right-8 top-28 w-44 h-44 rounded-2xl bg-white/5 transform rotate-45 pointer-events-none border border-white/10"></div>
+    <div class="absolute -left-12 -bottom-12 w-56 h-56 rounded-3xl bg-[#F17D24]/15 transform rotate-12 pointer-events-none blur-lg"></div>
+    <div class="absolute right-12 bottom-10 w-24 h-24 rounded-xl bg-gradient-to-tr from-[#F17D24]/20 to-transparent transform rotate-45 pointer-events-none"></div>
+
+    <!-- Brand Top Badge -->
+    <div class="relative z-10 flex items-center gap-2">
+      <div class="w-2.5 h-2.5 rounded-full bg-[#F17D24] shadow-[0_0_10px_#F17D24]"></div>
+      <span class="text-xs font-medium tracking-wider uppercase text-slate-300/90">ERP Desktop v2.4</span>
+    </div>
+
+    <!-- Central Brand Showcase -->
+    <div class="relative z-10 py-8 my-auto flex flex-col items-start">
+      <div class="w-32 h-auto mb-6 drop-shadow-md">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmbZAYGPicqCVZptxpe5fsua1GZKzbyfyUhY-MlKhaDaQhwsmX4GDo5xl5tM7AqusJEzm4X_tAEMfd8OlzeRuzey1XcJm88QbdIJveWZ9HNSiIWaQdofwTPgKVuvQM9mqVe6nDZPPxN40u6Llh5ZnvPOoggzbRkLXjFeUqcMgX4-a1CIqTwInUNQd02ZGPWgd_kwYDiZPMdbQdBb_3F2F8ZWau5SoXJsckpEjxkA7NDjXdmWrtUlarphJptdca905KlQ" alt="AZENZ Logo" class="w-full h-auto object-contain">
+      </div>
+      <h2 class="text-2xl font-bold tracking-tight text-white mb-2">
+        AZENZ ERP
+      </h2>
+      <p class="text-sm text-slate-300/85 leading-relaxed max-w-[300px]">
+        Solutions de gestion intégrée d'entreprise performantes, modulaires et intuitives.
+      </p>
+    </div>
+
+    <!-- Brand Footer Note -->
+    <div class="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+      <span class="">Système certifié &amp; sécurisé</span>
+      <span class="">© 2025 AZENZ</span>
+    </div>
+  </div>
+
+  <!-- Right side: Pure clean login form panel -->
+  <div class="bg-white p-8 md:p-10 flex flex-col justify-between relative">
+    <!-- Top Row: Language switcher -->
+    <div class="flex items-center justify-end w-full">
+      <div class="relative">
+        <button id="langBtn" type="button" class="h-7 px-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded text-xs font-medium flex items-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-[15px] text-slate-500">language</span>
+          <span id="currentLang" class="">Français</span>
+          <span class="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+        </button>
+        <div id="langMenu" class="hidden absolute right-0 mt-1 w-28 bg-white border border-slate-200 rounded-lg shadow-md py-1 z-30">
+          <button type="button" data-lang="Français" class="lang-option w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 font-medium">Français</button>
+          <button type="button" data-lang="العربية" class="lang-option w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 font-medium">العربية</button>
+          <button type="button" data-lang="English" class="lang-option w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 font-medium">English</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Header & Inputs Container -->
+    <div class="my-auto py-2">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-[#113657] tracking-tight mb-1.5">Connexion</h1>
+        <p class="text-xs text-slate-500 leading-relaxed">Veuillez saisir vos identifiants pour accéder à votre espace de travail.</p>
+      </div>
+
+      <form id="loginForm" class="flex flex-col gap-4" onsubmit="event.preventDefault(); return false;">
+        <!-- Username Field -->
+        <div>
+          <label for="usernameInput" class="text-xs font-semibold text-slate-700 mb-1.5 block">Nom d'utilisateur</label>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3 text-[17px] text-slate-400 pointer-events-none">person</span>
+            <input type="text" id="usernameInput" name="username" required="" placeholder="Entrez votre identifiant" class="h-10 pl-9 pr-3.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#F17D24] focus:ring-2 focus:ring-[#F17D24]/20 transition-all w-full">
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="passwordInput" class="text-xs font-semibold text-slate-700">Mot de passe</label>
+            <a href="#" class="text-xs text-slate-500 hover:text-[#113657] font-medium transition-colors">Mot de passe oublié ?</a>
+          </div>
+          <div class="relative flex items-center w-full">
+            <span class="material-symbols-outlined absolute left-3 text-[17px] text-slate-400 pointer-events-none">lock</span>
+            <input type="password" id="passwordInput" name="password" required="" placeholder="••••••••" class="h-10 pl-9 pr-10 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#F17D24] focus:ring-2 focus:ring-[#F17D24]/20 transition-all w-full">
+            <button type="button" id="togglePasswordBtn" aria-label="Afficher ou masquer le mot de passe" class="absolute right-1 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors rounded">
+              <span id="eyeIcon" class="material-symbols-outlined text-[18px]">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 flex flex-col gap-2.5">
+          <button type="submit" id="submitBtn" class="w-full h-10 bg-[#F17D24] hover:bg-[#d96a1a] active:bg-[#c95f10] text-white font-medium text-sm rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            <span class="">Se connecter</span>
+            <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
+          </button>
+
+          <button type="button" class="w-full h-10 border border-slate-200 hover:bg-slate-50 active:bg-slate-100 text-slate-600 font-medium text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-slate-500">logout</span>
+            <span class="">Quitter l'application</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Bottom Subtle Info -->
+    <div class="pt-2 text-center">
+      <span class="text-[11px] text-slate-400">Poste de travail sécurisé • Session locale</span>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+    // Password mask toggle
+    var toggleBtn = document.getElementById('togglePasswordBtn');
+    var pwdInput = document.getElementById('passwordInput');
+    var eyeIcon = document.getElementById('eyeIcon');
+
+    if (toggleBtn && pwdInput && eyeIcon) {
+      toggleBtn.addEventListener('click', function () {
+        var isPassword = pwdInput.type === 'password';
+        pwdInput.type = isPassword ? 'text' : 'password';
+        eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+      });
+    }
+
+    // Language dropdown toggle
+    var langBtn = document.getElementById('langBtn');
+    var langMenu = document.getElementById('langMenu');
+    var currentLang = document.getElementById('currentLang');
+
+    if (langBtn && langMenu) {
+      langBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        langMenu.classList.toggle('hidden');
+      });
+
+      document.querySelectorAll('.lang-option').forEach(function (option) {
+        option.addEventListener('click', function () {
+          currentLang.textContent = this.dataset.lang;
+          langMenu.classList.add('hidden');
+        });
+      });
+
+      document.addEventListener('click', function () {
+        langMenu.classList.add('hidden');
+      });
+    }
+  </script>
+
+
+</body></html>
