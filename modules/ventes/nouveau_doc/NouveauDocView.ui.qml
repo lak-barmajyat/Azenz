@@ -375,7 +375,7 @@ Rectangle {
                             property var payments: root.paymentRows
                             objectName: "nouveauDocPayments"
                             width: paymentScroll.width
-                            height: Math.max(paymentScroll.height, implicitHeight)
+                            height: implicitHeight
                             property var paymentMethods: [qsTr("Virement Bancaire"), qsTr("Chèque"), qsTr("Traite"), qsTr("Espèces"), qsTr("Carte Bancaire")]
                             property bool editingPayment: false
                             property alias discountText: discount.text
