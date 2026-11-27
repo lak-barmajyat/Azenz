@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import csv
 from collections.abc import Callable
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import Property, QObject, QThread, Signal, Slot
+from PySide6.QtCore import Property, QObject, QThread, QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices
 from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -16,7 +19,9 @@ from database.models.d_mouvements_stock import DMouvementsStock
 from database.models.d_stock import DStock
 from database.models.p_types_documents import PTypesDocuments
 from database.session import with_session
+from modules.stockage.document_printing import render_stock_documents
 from services.logger import get_logger
+from services.paths import app_data_dir
 
 
 class _Worker(QThread):
@@ -35,6 +40,10 @@ class ListeStockModel(QObject):
     loadFailed = Signal(str)
     deleteCompleted = Signal(int)
     deleteFailed = Signal(str)
+    exportCompleted = Signal(str)
+    exportFailed = Signal(str)
+    printCompleted = Signal(str)
+    printFailed = Signal(str)
 
     def __init__(self, parent: QObject | None = None, *, preview: bool = False) -> None:
         super().__init__(parent)
@@ -96,9 +105,18 @@ class ListeStockModel(QObject):
                 self.dataChanged.emit()
             else:
                 self.loadFailed.emit("service_unavailable")
-        elif isinstance(result, int):
+        elif operation == "delete" and isinstance(result, int):
             self.deleteCompleted.emit(result)
             self.refresh()
+        elif operation == "print":
+            if result in {"not_found", "service_unavailable"}:
+                self.printFailed.emit(str(result))
+            elif not isinstance(result, str):
+                self.printFailed.emit(str(result or "service_unavailable"))
+            elif not QDesktopServices.openUrl(QUrl.fromLocalFile(result)):
+                self.printFailed.emit("open_failed")
+            else:
+                self.printCompleted.emit(result)
         else:
             self.deleteFailed.emit(str(result or "service_unavailable"))
 
@@ -115,6 +133,129 @@ class ListeStockModel(QObject):
         except (SQLAlchemyError, RuntimeError):
             self._logger.exception("Stock document loading failed")
             return None
+
+    @Slot(QUrl, "QVariantList")
+    def exportCsv(self, destination: QUrl, records: list[dict[str, Any]]) -> None:
+        if destination.isEmpty() or not destination.isLocalFile():
+            self.exportFailed.emit("invalid_destination")
+            return
+        path = Path(destination.toLocalFile())
+        if path.suffix.casefold() != ".csv":
+            path = path.with_suffix(".csv")
+        try:
+            self._write_csv(path, records)
+        except (OSError, ValueError):
+            self._logger.exception("Stock list export failed")
+            self.exportFailed.emit("write_failed")
+            return
+        self.exportCompleted.emit(str(path))
+
+    @staticmethod
+    def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
+        columns = (
+            ("code", "Code document"),
+            ("type", "Type document"),
+            ("date", "Date"),
+            ("status", "Statut"),
+            ("comment", "Commentaire"),
+        )
+        with path.open("w", encoding="utf-8-sig", newline="") as output:
+            writer = csv.writer(output, delimiter=";")
+            writer.writerow([title for _, title in columns])
+            for record in records:
+                writer.writerow([record.get(key, "") for key, _ in columns])
+
+    @Slot("QVariantList")
+    def printDocuments(self, document_ids: list[int]) -> None:
+        ids = sorted({int(value) for value in document_ids if int(value) > 0})
+        if not ids or self.busy or self._closing:
+            return
+        if self._preview:
+            self.printFailed.emit("preview_only")
+            return
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+        destination = app_data_dir() / "prints" / f"stockage-{timestamp}.pdf"
+        self._start("print", lambda: self._create_printout(ids, destination))
+
+    def _create_printout(self, document_ids: list[int], destination: Path) -> str:
+        try:
+            documents = self._load_print_documents(document_ids)
+            if not documents:
+                return "not_found"
+            render_stock_documents(destination, documents)
+            return str(destination)
+        except (
+            ArithmeticError,
+            KeyError,
+            OSError,
+            RuntimeError,
+            SQLAlchemyError,
+            TypeError,
+            ValueError,
+        ):
+            destination.unlink(missing_ok=True)
+            self._logger.exception("Stock document PDF generation failed")
+            return "service_unavailable"
+
+    @with_session()
+    def _load_print_documents(
+        self, document_ids: list[int], *, session: Session
+    ) -> list[dict[str, Any]]:
+        headers = session.execute(
+            select(
+                DDocuments.id,
+                DDocuments.code_document,
+                DDocuments.date_document,
+                DDocuments.status,
+                DDocuments.commentaire,
+                PTypesDocuments.nom_type_document,
+            )
+            .join(PTypesDocuments, DDocuments.type_document_id == PTypesDocuments.id)
+            .where(
+                DDocuments.id.in_(document_ids),
+                DDocuments.supprime == 0,
+                PTypesDocuments.domaine == "STOCK",
+            )
+            .order_by(DDocuments.date_document, DDocuments.id)
+        ).all()
+        lines_by_document: dict[int, list[dict[str, Any]]] = {
+            int(header.id): [] for header in headers
+        }
+        if lines_by_document:
+            lines = session.execute(
+                select(
+                    DDocumentLignes.document_id,
+                    DDocumentLignes.code_article,
+                    DDocumentLignes.designation,
+                    DDocumentLignes.quantite,
+                    DDocumentLignes.commentaire,
+                )
+                .where(
+                    DDocumentLignes.document_id.in_(list(lines_by_document)),
+                    DDocumentLignes.supprime == 0,
+                )
+                .order_by(DDocumentLignes.document_id, DDocumentLignes.numero_ligne)
+            ).all()
+            for line in lines:
+                lines_by_document[int(line.document_id)].append(
+                    {
+                        "reference": line.code_article or "",
+                        "description": line.designation or "",
+                        "quantity": line.quantite,
+                        "comment": line.commentaire or "",
+                    }
+                )
+        return [
+            {
+                "documentCode": header.code_document,
+                "documentType": header.nom_type_document,
+                "date": header.date_document,
+                "status": header.status,
+                "comment": header.commentaire or "",
+                "lines": lines_by_document[int(header.id)],
+            }
+            for header in headers
+        ]
 
     @with_session()
     def _query_records(self, *, session: Session) -> list[dict[str, Any]]:

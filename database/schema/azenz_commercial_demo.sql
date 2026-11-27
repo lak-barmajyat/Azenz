@@ -5,23 +5,31 @@
 -- Do NOT run twice. No table creation or deletion included.
 -- All document and stock/payment totals precomputed consistently.
 
--- p_types_documents: 6 rows
+-- p_types_documents: 10 rows
 INSERT INTO `p_types_documents` (`id`, `code_type_document`, `nom_type_document`, `domaine`, `sens_stock`, `impacte_stock`, `impacte_reglement`, `actif`) VALUES
 (1, 'DV', 'Devis de vente', 'VENTE', 'AUCUN', 0, 0, 1),
 (2, 'BC', 'Bon de commande achat', 'ACHAT', 'AUCUN', 0, 0, 1),
 (3, 'BL', 'Bon de livraison', 'VENTE', 'SORTIE', 1, 0, 1),
 (4, 'BR', 'Bon de réception', 'ACHAT', 'ENTREE', 1, 0, 1),
 (5, 'FA', 'Facture de vente', 'VENTE', 'AUCUN', 0, 1, 1),
-(6, 'FR', 'Facture fournisseur', 'ACHAT', 'AUCUN', 0, 1, 1);
+(6, 'FR', 'Facture fournisseur', 'ACHAT', 'AUCUN', 0, 1, 1),
+(7, 'ENT', 'Entrée de stock', 'STOCK', 'ENTREE', 1, 0, 1),
+(8, 'SOR', 'Sortie de stock', 'STOCK', 'SORTIE', 1, 0, 1),
+(9, 'AJS', 'Ajustement de stock', 'STOCK', 'AUCUN', 1, 0, 1),
+(10, 'INV', 'Inventaire de stock', 'STOCK', 'AUCUN', 1, 0, 1);
 
--- p_numerotation_documents: 6 rows
+-- p_numerotation_documents: 10 rows
 INSERT INTO `p_numerotation_documents` (`id`, `type_document_id`, `prefixe`, `annee`, `dernier_numero`, `longueur_numero`) VALUES
 (1, 1, 'DV-2026-', 2026, '0040', 4),
 (2, 2, 'BC-2026-', 2026, '0030', 4),
 (3, 3, 'BL-2026-', 2026, '0040', 4),
 (4, 4, 'BR-2026-', 2026, '0025', 4),
 (5, 5, 'FA-2026-', 2026, '0040', 4),
-(6, 6, 'FR-2026-', 2026, '0025', 4);
+(6, 6, 'FR-2026-', 2026, '0025', 4),
+(7, 7, 'ENT-2026-', 2026, '0003', 4),
+(8, 8, 'SOR-2026-', 2026, '0003', 4),
+(9, 9, 'AJS-2026-', 2026, '0003', 4),
+(10, 10, 'INV-2026-', 2026, '0003', 4);
 
 -- p_utilisateurs: 5 rows
 INSERT INTO `p_utilisateurs` (`id`, `nom_utilisateur`, `email`, `telephone`, `mot_de_passe_hash`, `role`, `date_derniere_connexion`, `actif`) VALUES
@@ -275,7 +283,7 @@ INSERT INTO `d_articles` (`id`, `code_article`, `designation`, `description`, `f
 (149, 'LOG-0149', 'Maintenance logicielle / 1 mois', NULL, 12, 'NUMERIQUE', 'PRESTATION', 0, 0.000000, 845.000000, 1014.000000, 5, 0, 0, NULL, 5, '2026-01-18 12:15:00'),
 (150, 'LOG-0150', 'Assistance logicielle / 1 an', NULL, 12, 'NUMERIQUE', 'PRESTATION', 0, 0.000000, 180.000000, 216.000000, 5, 0, 0, NULL, 3, '2026-01-11 11:00:00');
 
--- d_documents: 200 rows
+-- d_documents: 212 rows
 INSERT INTO `d_documents` (`id`, `type_document_id`, `code_document`, `tier_id`, `utilisateur_id`, `montant_ht`, `montant_remise`, `montant_net_ht`, `montant_tva`, `montant_ttc`, `montant_net_ttc`, `montant_paye`, `montant_restant`, `status`, `date_document`, `commentaire`, `supprime`) VALUES
 (1, 1, 'DV-2026-0001', 20, 2, 4265.400000, 0, 4265.400000, 853.080000, 5118.480000, 5118.480000, 0, 5118.480000, 'VALIDÉ', '2026-08-12 09:00:00', NULL, 0),
 (2, 1, 'DV-2026-0002', 11, 5, 56486.900000, 0, 56486.900000, 11297.380000, 67784.280000, 67784.280000, 0, 67784.280000, 'VALIDÉ', '2026-07-12 16:50:00', NULL, 0),
@@ -478,6 +486,19 @@ INSERT INTO `d_documents` (`id`, `type_document_id`, `code_document`, `tier_id`,
 (198, 6, 'FR-2026-0023', 54, 3, 16835.856000, 0, 16835.856000, 3367.171200, 20203.027200, 20203.027200, 14546.179584, 5656.847616, 'VALIDÉ', '2026-03-01 09:50:00', NULL, 0),
 (199, 6, 'FR-2026-0024', 51, 4, 28275.769000, 0, 28275.769000, 5655.153800, 33930.922800, 33930.922800, 33930.922800, 0.000000, 'VALIDÉ', '2026-04-26 14:00:00', NULL, 0),
 (200, 6, 'FR-2026-0025', 41, 4, 22320.724500, 0, 22320.724500, 4464.144900, 26784.869400, 26784.869400, 26784.869400, 0.000000, 'VALIDÉ', '2026-04-30 17:45:00', NULL, 0);
+INSERT INTO `d_documents` (`id`, `type_document_id`, `code_document`, `tier_id`, `utilisateur_id`, `montant_ht`, `montant_remise`, `montant_net_ht`, `montant_tva`, `montant_ttc`, `montant_net_ttc`, `montant_paye`, `montant_restant`, `status`, `date_document`, `commentaire`, `supprime`) VALUES
+(201, 7, 'ENT-2026-0001', NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-01 09:00:00', 'Réception exceptionnelle après contrôle magasin', 0),
+(202, 7, 'ENT-2026-0002', NULL, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-02 09:15:00', 'Retour interne de matériel informatique', 0),
+(203, 7, 'ENT-2026-0003', NULL, 3, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-03 10:00:00', 'Entrée manuelle de régularisation', 0),
+(204, 8, 'SOR-2026-0001', NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-05 14:00:00', 'Sortie pour matériel de démonstration', 0),
+(205, 8, 'SOR-2026-0002', NULL, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-06 14:20:00', 'Sortie interne atelier technique', 0),
+(206, 8, 'SOR-2026-0003', NULL, 3, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-07 15:00:00', 'Sortie de matériel pour contrôle qualité', 0),
+(207, 9, 'AJS-2026-0001', NULL, 4, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-10 11:00:00', 'Ajustement après rapprochement des emplacements', 0),
+(208, 9, 'AJS-2026-0002', NULL, 4, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-11 11:30:00', 'Ajustement après vérification des étiquettes', 0),
+(209, 9, 'AJS-2026-0003', NULL, 5, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-12 13:00:00', 'Ajustement manuel du stock constaté', 0),
+(210, 10, 'INV-2026-0001', NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-15 08:30:00', 'Inventaire tournant zone ordinateurs A', 0),
+(211, 10, 'INV-2026-0002', NULL, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-16 08:45:00', 'Inventaire tournant zone ordinateurs B', 0),
+(212, 10, 'INV-2026-0003', NULL, 3, 0, 0, 0, 0, 0, 0, 0, 0, 'VALIDE', '2026-11-17 09:00:00', 'Inventaire tournant zone ordinateurs C', 0);
 
 -- d_reglements: 100 rows
 INSERT INTO `d_reglements` (`id`, `code_reglement`, `utilisateur_id`, `tier_id`, `date_reglement`, `description`, `sens_reglement`, `mode_reglement`, `montant_total`, `montant_affecte`, `montant_restant`, `reference_piece`, `statut_reglement`, `cree_par`, `date_creation`) VALUES
@@ -584,15 +605,15 @@ INSERT INTO `d_reglements` (`id`, `code_reglement`, `utilisateur_id`, `tier_id`,
 
 -- d_stock: 120 rows
 INSERT INTO `d_stock` (`id`, `article_id`, `quantite_stock`, `date_dernier_mouvement`) VALUES
-(1, 1, 53, '2026-01-10 09:00:00'),
-(2, 2, 67, '2026-09-06 12:50:00'),
-(3, 3, 80, '2026-05-03 08:10:00'),
-(4, 4, 83, '2026-01-10 09:00:00'),
-(5, 5, 116, '2026-09-27 12:00:00'),
-(6, 6, 68, '2026-01-10 09:00:00'),
-(7, 7, 100, '2026-01-10 09:00:00'),
-(8, 8, 98, '2026-08-23 15:10:00'),
-(9, 9, 106, '2026-06-08 12:30:00'),
+(1, 1, 53, '2026-11-15 08:30:00'),
+(2, 2, 67, '2026-11-15 08:30:00'),
+(3, 3, 80, '2026-11-15 08:30:00'),
+(4, 4, 83, '2026-11-16 08:45:00'),
+(5, 5, 116, '2026-11-16 08:45:00'),
+(6, 6, 68, '2026-11-16 08:45:00'),
+(7, 7, 100, '2026-11-17 09:00:00'),
+(8, 8, 98, '2026-11-17 09:00:00'),
+(9, 9, 106, '2026-11-17 09:00:00'),
 (10, 10, 44, '2026-01-10 09:00:00'),
 (11, 11, 138, '2026-07-04 10:10:00'),
 (12, 12, 62, '2026-09-27 12:00:00'),
@@ -706,7 +727,7 @@ INSERT INTO `d_stock` (`id`, `article_id`, `quantite_stock`, `date_dernier_mouve
 (119, 119, 121, '2026-08-23 08:30:00'),
 (120, 120, 104, '2026-01-10 09:00:00');
 
--- d_document_lignes: 600 rows
+-- d_document_lignes: 636 rows
 INSERT INTO `d_document_lignes` (`id`, `document_id`, `numero_ligne`, `article_id`, `code_article`, `designation`, `quantite`, `tva_id`, `code_tva`, `tva_percentage`, `prix_unitaire_ht`, `impact_stock`, `commentaire`, `cree_par`, `date_creation`, `supprime`) VALUES
 (1, 1, 1, 50, 'PER-0050', 'Logitech M330 souris', 6, 5, 'TVA20', 20, 192.150000, 0, NULL, 5, '2026-08-12 09:00:00', 0),
 (2, 1, 2, 141, 'LOG-0141', 'Licence antivirus 1 poste / 1 an', 6, 5, 'TVA20', 20, 370.000000, 0, NULL, 5, '2026-08-12 09:00:00', 0),
@@ -1313,6 +1334,43 @@ INSERT INTO `d_document_lignes` (`id`, `document_id`, `numero_ligne`, `article_i
 (598, 200, 1, 10, 'ORD-0010', 'Acer Aspire 5 Core i5 / 16 Go / 512 Go SSD', 6, 5, 'TVA20', 20, 3451.000000, 0, NULL, 5, '2026-04-30 17:45:00', 0),
 (599, 200, 2, 90, 'CAB-0090', 'Câble USB-C 1 m', 6, 5, 'TVA20', 20, 72.556250, 0, NULL, 3, '2026-04-30 17:45:00', 0),
 (600, 200, 3, 100, 'BUR-0100', 'Agrafeuse métal 24/6', 9, 5, 'TVA20', 20, 131.043000, 0, NULL, 5, '2026-04-30 17:45:00', 0);
+INSERT INTO `d_document_lignes` (`id`, `document_id`, `numero_ligne`, `article_id`, `code_article`, `designation`, `quantite`, `tva_id`, `code_tva`, `tva_percentage`, `prix_unitaire_ht`, `impact_stock`, `commentaire`, `cree_par`, `date_creation`, `supprime`) VALUES
+(601, 201, 1, 1, 'ORD-0001', 'Lenovo ThinkPad E14 Core i5 / 8 Go / 256 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 1, '2026-11-01 09:00:00', 0),
+(602, 201, 2, 2, 'ORD-0002', 'Lenovo ThinkPad E14 Core i5 / 16 Go / 512 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 1, '2026-11-01 09:00:00', 0),
+(603, 201, 3, 3, 'ORD-0003', 'HP ProBook 450 Core i5 / 8 Go / 256 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 1, '2026-11-01 09:00:00', 0),
+(604, 202, 1, 4, 'ORD-0004', 'HP ProBook 450 Core i5 / 16 Go / 512 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 2, '2026-11-02 09:15:00', 0),
+(605, 202, 2, 5, 'ORD-0005', 'Dell Latitude 3540 Core i5 / 8 Go / 256 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 2, '2026-11-02 09:15:00', 0),
+(606, 202, 3, 6, 'ORD-0006', 'Dell Latitude 3540 Core i5 / 16 Go / 512 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 2, '2026-11-02 09:15:00', 0),
+(607, 203, 1, 7, 'ORD-0007', 'ASUS Vivobook 15 Core i5 / 8 Go / 256 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 3, '2026-11-03 10:00:00', 0),
+(608, 203, 2, 8, 'ORD-0008', 'ASUS Vivobook 15 Core i5 / 16 Go / 512 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 3, '2026-11-03 10:00:00', 0),
+(609, 203, 3, 9, 'ORD-0009', 'Acer Aspire 5 Core i5 / 8 Go / 256 Go SSD', 10, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité entrée', 3, '2026-11-03 10:00:00', 0),
+(610, 204, 1, 1, 'ORD-0001', 'Lenovo ThinkPad E14 Core i5 / 8 Go / 256 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 1, '2026-11-05 14:00:00', 0),
+(611, 204, 2, 2, 'ORD-0002', 'Lenovo ThinkPad E14 Core i5 / 16 Go / 512 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 1, '2026-11-05 14:00:00', 0),
+(612, 204, 3, 3, 'ORD-0003', 'HP ProBook 450 Core i5 / 8 Go / 256 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 1, '2026-11-05 14:00:00', 0),
+(613, 205, 1, 4, 'ORD-0004', 'HP ProBook 450 Core i5 / 16 Go / 512 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 2, '2026-11-06 14:20:00', 0),
+(614, 205, 2, 5, 'ORD-0005', 'Dell Latitude 3540 Core i5 / 8 Go / 256 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 2, '2026-11-06 14:20:00', 0),
+(615, 205, 3, 6, 'ORD-0006', 'Dell Latitude 3540 Core i5 / 16 Go / 512 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 2, '2026-11-06 14:20:00', 0),
+(616, 206, 1, 7, 'ORD-0007', 'ASUS Vivobook 15 Core i5 / 8 Go / 256 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 3, '2026-11-07 15:00:00', 0),
+(617, 206, 2, 8, 'ORD-0008', 'ASUS Vivobook 15 Core i5 / 16 Go / 512 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 3, '2026-11-07 15:00:00', 0),
+(618, 206, 3, 9, 'ORD-0009', 'Acer Aspire 5 Core i5 / 8 Go / 256 Go SSD', 4, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité sortie', 3, '2026-11-07 15:00:00', 0),
+(619, 207, 1, 1, 'ORD-0001', 'Lenovo ThinkPad E14 Core i5 / 8 Go / 256 Go SSD', 56, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-10 11:00:00', 0),
+(620, 207, 2, 2, 'ORD-0002', 'Lenovo ThinkPad E14 Core i5 / 16 Go / 512 Go SSD', 70, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-10 11:00:00', 0),
+(621, 207, 3, 3, 'ORD-0003', 'HP ProBook 450 Core i5 / 8 Go / 256 Go SSD', 83, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-10 11:00:00', 0),
+(622, 208, 1, 4, 'ORD-0004', 'HP ProBook 450 Core i5 / 16 Go / 512 Go SSD', 86, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-11 11:30:00', 0),
+(623, 208, 2, 5, 'ORD-0005', 'Dell Latitude 3540 Core i5 / 8 Go / 256 Go SSD', 119, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-11 11:30:00', 0),
+(624, 208, 3, 6, 'ORD-0006', 'Dell Latitude 3540 Core i5 / 16 Go / 512 Go SSD', 71, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 4, '2026-11-11 11:30:00', 0),
+(625, 209, 1, 7, 'ORD-0007', 'ASUS Vivobook 15 Core i5 / 8 Go / 256 Go SSD', 103, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 5, '2026-11-12 13:00:00', 0),
+(626, 209, 2, 8, 'ORD-0008', 'ASUS Vivobook 15 Core i5 / 16 Go / 512 Go SSD', 101, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 5, '2026-11-12 13:00:00', 0),
+(627, 209, 3, 9, 'ORD-0009', 'Acer Aspire 5 Core i5 / 8 Go / 256 Go SSD', 109, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale comptée', 5, '2026-11-12 13:00:00', 0),
+(628, 210, 1, 1, 'ORD-0001', 'Lenovo ThinkPad E14 Core i5 / 8 Go / 256 Go SSD', 53, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 1, '2026-11-15 08:30:00', 0),
+(629, 210, 2, 2, 'ORD-0002', 'Lenovo ThinkPad E14 Core i5 / 16 Go / 512 Go SSD', 67, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 1, '2026-11-15 08:30:00', 0),
+(630, 210, 3, 3, 'ORD-0003', 'HP ProBook 450 Core i5 / 8 Go / 256 Go SSD', 80, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 1, '2026-11-15 08:30:00', 0),
+(631, 211, 1, 4, 'ORD-0004', 'HP ProBook 450 Core i5 / 16 Go / 512 Go SSD', 83, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 2, '2026-11-16 08:45:00', 0),
+(632, 211, 2, 5, 'ORD-0005', 'Dell Latitude 3540 Core i5 / 8 Go / 256 Go SSD', 116, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 2, '2026-11-16 08:45:00', 0),
+(633, 211, 3, 6, 'ORD-0006', 'Dell Latitude 3540 Core i5 / 16 Go / 512 Go SSD', 68, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 2, '2026-11-16 08:45:00', 0),
+(634, 212, 1, 7, 'ORD-0007', 'ASUS Vivobook 15 Core i5 / 8 Go / 256 Go SSD', 100, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 3, '2026-11-17 09:00:00', 0),
+(635, 212, 2, 8, 'ORD-0008', 'ASUS Vivobook 15 Core i5 / 16 Go / 512 Go SSD', 98, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 3, '2026-11-17 09:00:00', 0),
+(636, 212, 3, 9, 'ORD-0009', 'Acer Aspire 5 Core i5 / 8 Go / 256 Go SSD', 106, NULL, 'SANS_TVA', 0, 0, 1, 'Quantité finale inventoriée', 3, '2026-11-17 09:00:00', 0);
 
 -- d_document_reglements: 90 rows
 INSERT INTO `d_document_reglements` (`id`, `document_id`, `reglement_id`, `date_liaison`, `montant_affecte`, `type_affectation`, `cree_par`, `date_creation`) VALUES
@@ -1407,7 +1465,7 @@ INSERT INTO `d_document_reglements` (`id`, `document_id`, `reglement_id`, `date_
 (89, 153, 89, '2026-09-08 17:00:00', 14511.436500, 'REGLEMENT', 2, '2026-09-08 17:00:00'),
 (90, 183, 90, '2026-08-16 13:00:00', 29779.045560, 'REGLEMENT', 1, '2026-08-16 13:00:00');
 
--- d_mouvements_stock: 250 rows
+-- d_mouvements_stock: 286 rows
 INSERT INTO `d_mouvements_stock` (`id`, `article_id`, `document_id`, `document_ligne_id`, `type_mouvement`, `sens_mouvement`, `quantite`, `date_mouvement`, `description`, `cree_par`, `date_creation`) VALUES
 (1, 1, NULL, NULL, 'INVENTAIRE', 'IN', 53, '2026-01-10 09:00:00', 'Stock initial constaté à l’inventaire', 3, '2026-01-10 09:00:00'),
 (2, 2, NULL, NULL, 'INVENTAIRE', 'IN', 58, '2026-01-10 09:00:00', 'Stock initial constaté à l’inventaire', 2, '2026-01-10 09:00:00'),
@@ -1661,3 +1719,40 @@ INSERT INTO `d_mouvements_stock` (`id`, `article_id`, `document_id`, `document_l
 (248, 84, 81, 242, 'SORTIE', 'OUT', 8, '2026-06-10 11:40:00', 'Mouvement lié au BL 81', 3, '2026-06-10 11:40:00'),
 (249, 108, 89, 265, 'SORTIE', 'OUT', 4, '2026-07-16 12:45:00', 'Mouvement lié au BL 89', 3, '2026-07-16 12:45:00'),
 (250, 33, 91, 271, 'SORTIE', 'OUT', 7, '2026-02-11 16:10:00', 'Mouvement lié au BL 91', 3, '2026-02-11 16:10:00');
+INSERT INTO `d_mouvements_stock` (`id`, `article_id`, `document_id`, `document_ligne_id`, `type_mouvement`, `sens_mouvement`, `quantite`, `date_mouvement`, `description`, `cree_par`, `date_creation`) VALUES
+(251, 1, 201, 601, 'ENTREE', 'IN', 10, '2026-11-01 09:00:00', 'Entrée ENT-2026-0001', 1, '2026-11-01 09:00:00'),
+(252, 2, 201, 602, 'ENTREE', 'IN', 10, '2026-11-01 09:00:00', 'Entrée ENT-2026-0001', 1, '2026-11-01 09:00:00'),
+(253, 3, 201, 603, 'ENTREE', 'IN', 10, '2026-11-01 09:00:00', 'Entrée ENT-2026-0001', 1, '2026-11-01 09:00:00'),
+(254, 4, 202, 604, 'ENTREE', 'IN', 10, '2026-11-02 09:15:00', 'Entrée ENT-2026-0002', 2, '2026-11-02 09:15:00'),
+(255, 5, 202, 605, 'ENTREE', 'IN', 10, '2026-11-02 09:15:00', 'Entrée ENT-2026-0002', 2, '2026-11-02 09:15:00'),
+(256, 6, 202, 606, 'ENTREE', 'IN', 10, '2026-11-02 09:15:00', 'Entrée ENT-2026-0002', 2, '2026-11-02 09:15:00'),
+(257, 7, 203, 607, 'ENTREE', 'IN', 10, '2026-11-03 10:00:00', 'Entrée ENT-2026-0003', 3, '2026-11-03 10:00:00'),
+(258, 8, 203, 608, 'ENTREE', 'IN', 10, '2026-11-03 10:00:00', 'Entrée ENT-2026-0003', 3, '2026-11-03 10:00:00'),
+(259, 9, 203, 609, 'ENTREE', 'IN', 10, '2026-11-03 10:00:00', 'Entrée ENT-2026-0003', 3, '2026-11-03 10:00:00'),
+(260, 1, 204, 610, 'SORTIE', 'OUT', 4, '2026-11-05 14:00:00', 'Sortie SOR-2026-0001', 1, '2026-11-05 14:00:00'),
+(261, 2, 204, 611, 'SORTIE', 'OUT', 4, '2026-11-05 14:00:00', 'Sortie SOR-2026-0001', 1, '2026-11-05 14:00:00'),
+(262, 3, 204, 612, 'SORTIE', 'OUT', 4, '2026-11-05 14:00:00', 'Sortie SOR-2026-0001', 1, '2026-11-05 14:00:00'),
+(263, 4, 205, 613, 'SORTIE', 'OUT', 4, '2026-11-06 14:20:00', 'Sortie SOR-2026-0002', 2, '2026-11-06 14:20:00'),
+(264, 5, 205, 614, 'SORTIE', 'OUT', 4, '2026-11-06 14:20:00', 'Sortie SOR-2026-0002', 2, '2026-11-06 14:20:00'),
+(265, 6, 205, 615, 'SORTIE', 'OUT', 4, '2026-11-06 14:20:00', 'Sortie SOR-2026-0002', 2, '2026-11-06 14:20:00'),
+(266, 7, 206, 616, 'SORTIE', 'OUT', 4, '2026-11-07 15:00:00', 'Sortie SOR-2026-0003', 3, '2026-11-07 15:00:00'),
+(267, 8, 206, 617, 'SORTIE', 'OUT', 4, '2026-11-07 15:00:00', 'Sortie SOR-2026-0003', 3, '2026-11-07 15:00:00'),
+(268, 9, 206, 618, 'SORTIE', 'OUT', 4, '2026-11-07 15:00:00', 'Sortie SOR-2026-0003', 3, '2026-11-07 15:00:00'),
+(269, 1, 207, 619, 'AJUSTEMENT', 'OUT', 3, '2026-11-10 11:00:00', 'Ajustement AJS-2026-0001', 4, '2026-11-10 11:00:00'),
+(270, 2, 207, 620, 'AJUSTEMENT', 'OUT', 3, '2026-11-10 11:00:00', 'Ajustement AJS-2026-0001', 4, '2026-11-10 11:00:00'),
+(271, 3, 207, 621, 'AJUSTEMENT', 'OUT', 3, '2026-11-10 11:00:00', 'Ajustement AJS-2026-0001', 4, '2026-11-10 11:00:00'),
+(272, 4, 208, 622, 'AJUSTEMENT', 'OUT', 3, '2026-11-11 11:30:00', 'Ajustement AJS-2026-0002', 4, '2026-11-11 11:30:00'),
+(273, 5, 208, 623, 'AJUSTEMENT', 'OUT', 3, '2026-11-11 11:30:00', 'Ajustement AJS-2026-0002', 4, '2026-11-11 11:30:00'),
+(274, 6, 208, 624, 'AJUSTEMENT', 'OUT', 3, '2026-11-11 11:30:00', 'Ajustement AJS-2026-0002', 4, '2026-11-11 11:30:00'),
+(275, 7, 209, 625, 'AJUSTEMENT', 'OUT', 3, '2026-11-12 13:00:00', 'Ajustement AJS-2026-0003', 5, '2026-11-12 13:00:00'),
+(276, 8, 209, 626, 'AJUSTEMENT', 'OUT', 3, '2026-11-12 13:00:00', 'Ajustement AJS-2026-0003', 5, '2026-11-12 13:00:00'),
+(277, 9, 209, 627, 'AJUSTEMENT', 'OUT', 3, '2026-11-12 13:00:00', 'Ajustement AJS-2026-0003', 5, '2026-11-12 13:00:00'),
+(278, 1, 210, 628, 'INVENTAIRE', 'OUT', 3, '2026-11-15 08:30:00', 'Inventaire INV-2026-0001', 1, '2026-11-15 08:30:00'),
+(279, 2, 210, 629, 'INVENTAIRE', 'OUT', 3, '2026-11-15 08:30:00', 'Inventaire INV-2026-0001', 1, '2026-11-15 08:30:00'),
+(280, 3, 210, 630, 'INVENTAIRE', 'OUT', 3, '2026-11-15 08:30:00', 'Inventaire INV-2026-0001', 1, '2026-11-15 08:30:00'),
+(281, 4, 211, 631, 'INVENTAIRE', 'OUT', 3, '2026-11-16 08:45:00', 'Inventaire INV-2026-0002', 2, '2026-11-16 08:45:00'),
+(282, 5, 211, 632, 'INVENTAIRE', 'OUT', 3, '2026-11-16 08:45:00', 'Inventaire INV-2026-0002', 2, '2026-11-16 08:45:00'),
+(283, 6, 211, 633, 'INVENTAIRE', 'OUT', 3, '2026-11-16 08:45:00', 'Inventaire INV-2026-0002', 2, '2026-11-16 08:45:00'),
+(284, 7, 212, 634, 'INVENTAIRE', 'OUT', 3, '2026-11-17 09:00:00', 'Inventaire INV-2026-0003', 3, '2026-11-17 09:00:00'),
+(285, 8, 212, 635, 'INVENTAIRE', 'OUT', 3, '2026-11-17 09:00:00', 'Inventaire INV-2026-0003', 3, '2026-11-17 09:00:00'),
+(286, 9, 212, 636, 'INVENTAIRE', 'OUT', 3, '2026-11-17 09:00:00', 'Inventaire INV-2026-0003', 3, '2026-11-17 09:00:00');
