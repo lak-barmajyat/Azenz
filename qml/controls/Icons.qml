@@ -8,6 +8,7 @@ QtObject {
             "check": '<path d="m5 12 4 4L19 6"/>',
             "minus": '<path d="M5 12h14"/>',
             "maximize": '<rect x="5" y="5" width="14" height="14" rx="1"/>',
+            "fullscreen": '<path d="M9 4H4v5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
             "search": '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
             "filter": '<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
             "edit": '<path d="m15 4 5 5M4 20l5-1L20 8a3 3 0 0 0-4-4L5 15z"/>',

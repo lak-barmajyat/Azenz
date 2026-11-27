@@ -179,6 +179,7 @@ ShellView {
         function onCloseRequested() { root.quitRequested(); }
         function onMinimizeRequested() { root.minimizeRequested(); }
         function onMaximizeRequested() { root.maximizeRequested(); }
+        function onFullScreenRequested() { root.fullScreenRequested(); }
     }
     Connections {
         target: root.menuBar

@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
@@ -11,15 +12,20 @@ Rectangle {
     property string subtitle: ""
     signal minimizeRequested
     signal maximizeRequested
+    signal fullScreenRequested
     signal closeRequested
     implicitHeight: dark ? 32 : 36
     color: dark ? "#091C2E" : "white"
     border.color: dark ? "#071928" : Colors.border
-    MouseArea {
+    Item {
         anchors.fill: parent
-        onPressed: if (root.Window.window)
-            root.Window.window.startSystemMove()
-        onDoubleClicked: root.maximizeRequested()
+        DragHandler {
+            target: null
+            onActiveChanged: if (active && root.Window.window
+                                 && root.Window.window.visibility !== Window.FullScreen)
+                root.Window.window.startSystemMove()
+        }
+        TapHandler { onDoubleTapped: root.maximizeRequested() }
     }
     RowLayout {
         anchors.fill: parent
@@ -48,7 +54,7 @@ Rectangle {
             visible: root.subtitle === ""
         }
         Repeater {
-            model: ["minus", "maximize", "close"]
+            model: ["minus", "maximize", "fullscreen", "close"]
             Rectangle {
                 id: windowButton
                 required property string modelData
@@ -71,17 +77,26 @@ Rectangle {
                             root.minimizeRequested();
                         else if (windowButton.modelData === "maximize")
                             root.maximizeRequested();
+                        else if (windowButton.modelData === "fullscreen")
+                            root.fullScreenRequested();
                         else
                             root.closeRequested();
                     }
                 }
                 Accessible.role: Accessible.Button
-                Accessible.name: modelData === "minus" ? qsTr("Réduire") : modelData === "maximize" ? qsTr("Agrandir / restaurer") : qsTr("Fermer")
+                Accessible.name: modelData === "minus" ? qsTr("Réduire")
+                                 : modelData === "maximize" ? qsTr("Agrandir / restaurer")
+                                 : modelData === "fullscreen"
+                                   ? (root.Window.window && root.Window.window.visibility === Window.FullScreen
+                                      ? qsTr("Quitter le plein écran") : qsTr("Plein écran"))
+                                 : qsTr("Fermer")
                 Accessible.onPressAction: {
                     if (modelData === "minus")
                         root.minimizeRequested();
                     else if (modelData === "maximize")
                         root.maximizeRequested();
+                    else if (modelData === "fullscreen")
+                        root.fullScreenRequested();
                     else
                         root.closeRequested();
                 }

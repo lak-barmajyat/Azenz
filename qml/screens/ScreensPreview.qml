@@ -16,6 +16,7 @@ Item {
     signal closeRequested
     signal minimizeRequested
     signal maximizeRequested
+    signal fullScreenRequested
     LoginModule.Login {
         id: login
         objectName: "loginScreen"
@@ -47,6 +48,7 @@ Item {
         onQuitRequested: root.closeRequested()
         onMinimizeRequested: root.minimizeRequested()
         onMaximizeRequested: root.maximizeRequested()
+        onFullScreenRequested: root.fullScreenRequested()
         onPageRequested: function (page) {
             root.screen = page === "sales" ? "ventes"
                           : page === "sales/new" ? "new-document" : page;

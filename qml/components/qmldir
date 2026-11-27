@@ -21,6 +21,7 @@ DropdownMenu 1.0 DropdownMenu.qml
 DropdownMenuItem 1.0 DropdownMenuItem.qml
 EmptyState 1.0 EmptyState.qml
 FinancialTotal 1.0 FinancialTotal.qml
+WindowResizeHandles 1.0 WindowResizeHandles.qml
 InlineBanner 1.0 InlineBanner.qml
 Logo 1.0 Logo.qml
 MenuSeparator 1.0 MenuSeparator.qml

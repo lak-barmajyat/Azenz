@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls.Basic
+import "../components"
 
 ApplicationWindow {
     id: window
@@ -11,12 +12,52 @@ ApplicationWindow {
     visible: true
     title: "AZENZ • Aperçu Connexion & Ventes"
     flags: Qt.Window | Qt.FramelessWindowHint
-    function toggleMaximize() {
-        if (visibility === Window.Maximized)
-            showNormal();
-        else
-            showMaximized();
+    Component.onCompleted: Qt.callLater(function () {
+        if (window.visibility === Window.Windowed) {
+            window.x = Screen.virtualX + (Screen.width - window.width) / 2;
+            window.y = Screen.virtualY + (Screen.height - window.height) / 2;
+        }
+    })
+    property int visibilityBeforeFullScreen: Window.Windowed
+    property var normalBounds: Qt.rect(0, 0, width, height)
+    function rememberNormalBounds() {
+        if (visibility === Window.Windowed)
+            normalBounds = Qt.rect(x, y, width, height);
     }
+    function restoreNormal() {
+        var bounds = normalBounds;
+        showNormal();
+        Qt.callLater(function () {
+            if (window.visibility === Window.Windowed) {
+                window.x = bounds.x;
+                window.y = bounds.y;
+                window.width = bounds.width;
+                window.height = bounds.height;
+            }
+        });
+    }
+    function toggleMaximize() {
+        if (visibility === Window.Maximized || visibility === Window.FullScreen)
+            restoreNormal();
+        else {
+            rememberNormalBounds();
+            showMaximized();
+        }
+    }
+    function toggleFullScreen() {
+        if (visibility === Window.FullScreen) {
+            if (visibilityBeforeFullScreen === Window.Maximized)
+                showMaximized();
+            else
+                restoreNormal();
+        } else {
+            rememberNormalBounds();
+            visibilityBeforeFullScreen = visibility;
+            showFullScreen();
+        }
+    }
+    Shortcut { sequence: "F11"; onActivated: window.toggleFullScreen() }
+    Shortcut { sequence: "Escape"; enabled: window.visibility === Window.FullScreen; onActivated: window.toggleFullScreen() }
     ScreensPreview {
         anchors.fill: parent
         screen: Qt.application.arguments.indexOf("--reglements") >= 0 ? "payments"
@@ -25,13 +66,7 @@ ApplicationWindow {
         onCloseRequested: window.close()
         onMinimizeRequested: window.showMinimized()
         onMaximizeRequested: window.toggleMaximize()
+        onFullScreenRequested: window.toggleFullScreen()
     }
-    MouseArea {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        width: 8
-        height: 8
-        cursorShape: Qt.SizeFDiagCursor
-        onPressed: window.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
-    }
+    WindowResizeHandles { anchors.fill: parent; targetWindow: window }
 }

@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls.Basic
 import "../modules/login" as LoginModule
 import "../modules/shell" as ShellModule
+import "components"
 
 ApplicationWindow {
     id: app
@@ -11,14 +12,18 @@ ApplicationWindow {
     height: 680
     minimumWidth: 980
     minimumHeight: 680
-    x: (Screen.width - width) / 2
-    y: (Screen.height - height) / 2
 
     visible: true
     title: "Azenz"
     color: "transparent"
 
     flags: Qt.Window | Qt.FramelessWindowHint
+    Component.onCompleted: Qt.callLater(function () {
+        if (app.visibility === Window.Windowed) {
+            app.x = Screen.virtualX + (Screen.width - app.width) / 2;
+            app.y = Screen.virtualY + (Screen.height - app.height) / 2;
+        }
+    })
     property bool signedIn: false
     property var salesRecords: []
     property var purchaseRecords: []
@@ -30,6 +35,8 @@ ApplicationWindow {
     property alias purchases: shell.purchases
     property bool connected: false
     property string currentPage: "dashboard"
+    property int visibilityBeforeFullScreen: Window.Windowed
+    property var normalBounds: Qt.rect(0, 0, width, height)
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)
@@ -38,12 +45,44 @@ ApplicationWindow {
     signal stockArticleSearchRequested(string key, string query)
     signal navigationRequested(string page)
     onCurrentPageChanged: shell.currentPage = currentPage
-    function toggleMaximize() {
-        if (visibility === Window.Maximized)
-            showNormal();
-        else
-            showMaximized();
+    function rememberNormalBounds() {
+        if (visibility === Window.Windowed)
+            normalBounds = Qt.rect(x, y, width, height);
     }
+    function restoreNormal() {
+        var bounds = normalBounds;
+        showNormal();
+        Qt.callLater(function () {
+            if (app.visibility === Window.Windowed) {
+                app.x = bounds.x;
+                app.y = bounds.y;
+                app.width = bounds.width;
+                app.height = bounds.height;
+            }
+        });
+    }
+    function toggleMaximize() {
+        if (visibility === Window.Maximized || visibility === Window.FullScreen)
+            restoreNormal();
+        else {
+            rememberNormalBounds();
+            showMaximized();
+        }
+    }
+    function toggleFullScreen() {
+        if (visibility === Window.FullScreen) {
+            if (visibilityBeforeFullScreen === Window.Maximized)
+                showMaximized();
+            else
+                restoreNormal();
+        } else {
+            rememberNormalBounds();
+            visibilityBeforeFullScreen = visibility;
+            showFullScreen();
+        }
+    }
+    Shortcut { sequence: "F11"; enabled: app.signedIn; onActivated: app.toggleFullScreen() }
+    Shortcut { sequence: "Escape"; enabled: app.visibility === Window.FullScreen; onActivated: app.toggleFullScreen() }
     LoginModule.Login {
         id: login
         anchors.fill: parent
@@ -87,13 +126,7 @@ ApplicationWindow {
         onQuitRequested: app.close()
         onMinimizeRequested: app.showMinimized()
         onMaximizeRequested: app.toggleMaximize()
+        onFullScreenRequested: app.toggleFullScreen()
     }
-    MouseArea {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        width: 8
-        height: 8
-        cursorShape: Qt.SizeFDiagCursor
-        onPressed: app.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
-    }
+    WindowResizeHandles { anchors.fill: parent; targetWindow: app }
 }
