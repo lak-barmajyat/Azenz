@@ -67,6 +67,8 @@ feature_files = [
     ROOT / "modules/achats/liste_achats/ListeAchats.qml",
     ROOT / "modules/ventes/nouveau_doc/NouveauDoc.qml",
     ROOT / "modules/reglements/Reglements.qml",
+    ROOT / "modules/stockage/liste_stock/ListeStock.qml",
+    ROOT / "modules/stockage/nouveau_document/NouveauDocument.qml",
 ]
 for file in feature_files:
     component = QQmlComponent(engine, QUrl.fromLocalFile(str(file)))

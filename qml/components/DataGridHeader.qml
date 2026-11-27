@@ -10,13 +10,14 @@ Row {
     property int sortColumn: -1
     property string sortDirection: "asc"
     property string density: Theme.densityFor(parent)
+    property int headerHeight: Theme.headerHeight(density)
     property color headerBackground: Colors.navy
     property color headerForeground: "white"
     signal selectAllRequested(bool checked)
     signal sortRequested(int column)
     signal resizeStarted(int column)
     signal resizeRequested(int column, real delta)
-    height: Theme.headerHeight(density)
+    height: headerHeight
     DataGridSelectionCell {
         Rectangle { anchors.fill: parent; color: root.headerBackground; z: -1 }
         width: 36

@@ -19,6 +19,7 @@ Rectangle {
                                         "payments": qsTr("Règlements"),
                                         "purchases": qsTr("Achats"),
                                         "stock": qsTr("Stockage"),
+                                        "stock/new": qsTr("Nouveau document"),
                                         "clients": qsTr("Clients"),
                                         "suppliers": qsTr("Fournisseurs"),
                                         "articles": qsTr("Articles"),
@@ -26,6 +27,7 @@ Rectangle {
     readonly property string pageTitle: currentPage === "sales/new" ? documentPageTitle
                                         : pageTitles[currentPage] || currentPage
     readonly property string pagePath: currentPage === "sales/new" ? qsTr("Documents  >  Ventes  >  %1").arg(pageTitle)
+                                     : currentPage === "stock/new" ? qsTr("Documents  >  Stockage  >  %1").arg(pageTitle)
                                      : currentPage === "sales" || currentPage === "purchases" || currentPage === "stock"
                                      ? qsTr("Documents  >  ") + pageTitle
                                      : currentPage === "payments" ? qsTr("Finances  >  ") + pageTitle
