@@ -39,15 +39,12 @@ Applies to Python code in feature windows, especially `model.py`.
 
 ## Logging
 - Use the existing logger for technical errors and approved operational events.
-- **Ask the project owner before adding logs for new business actions**, such as invoice creation.
+- Application log files are for technical diagnostics, not for recording business actions.
+- Do not add business-action logs, such as invoice or stock-document creation, to application log files.
 - Never log credentials or sensitive data.
 
 ## Reference Implementation
 - No canonical reference implementation exists yet.
 - Existing implementations are not assumed to follow these rules.
 - Once a compliant implementation is approved, document its exact file path here.
-<<<<<<< HEAD
 - Until then, follow this document as the source of truth.
-=======
-- Until then, follow this document as the source of truth.
->>>>>>> main
