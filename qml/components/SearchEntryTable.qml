@@ -10,6 +10,7 @@ Rectangle {
     property var rows: []
     property var defaultValues: ({})
     property var draftComputed: ({})
+    property var editComputed: ({})
     property var searchResults: ({field: "", query: "", items: []})
     property bool searchBusy: false
     property bool readOnly: false
@@ -36,6 +37,10 @@ Rectangle {
     property var selectedSuggestion: null
     property var searchFields: ({})
     property bool addEnabled: !requireSelection || selectedSuggestion !== null
+    property bool editEnabled: true
+    property var editingRowId: null
+    property var editDraft: ({})
+    property var editSuggestion: null
     readonly property int tableWidth: columns.reduce(function(total, column) {
         return total + (column.width || 140);
     }, (showActions ? actionWidth : 0) +
@@ -49,6 +54,7 @@ Rectangle {
     signal searchRequested(string field, string query)
     signal addRequested(var values, var suggestion)
     signal editRequested(var row)
+    signal updateRequested(var row, var values, var suggestion)
     signal removeRequested(var row)
 
     implicitWidth: 900
@@ -125,6 +131,39 @@ Rectangle {
             return;
         addRequested(Object.assign({}, draft, draftComputed), selectedSuggestion);
         clearDraft();
+    }
+
+    function beginEdit(row) {
+        editingRowId = row.id;
+        editDraft = Object.assign({}, row);
+        editSuggestion = row;
+    }
+
+    function finishEdit() {
+        editingRowId = null;
+        editDraft = ({});
+        editSuggestion = null;
+    }
+
+    function setEditValue(key, value) {
+        var next = Object.assign({}, editDraft);
+        next[key] = value;
+        editDraft = next;
+    }
+
+    function editValue(key, fallback) {
+        return editComputed[key] !== undefined ? editComputed[key]
+             : editDraft[key] !== undefined ? editDraft[key] : fallback;
+    }
+
+    function selectEditSuggestion(suggestion) {
+        editDraft = Object.assign({}, editDraft, suggestion);
+        editSuggestion = suggestion;
+    }
+
+    function requestUpdate(row) {
+        if (editEnabled && editSuggestion)
+            updateRequested(row, Object.assign({}, editDraft), editSuggestion);
     }
 
     Flickable {
@@ -226,6 +265,7 @@ Rectangle {
                     id: existingRow
                     required property var modelData
                     required property int index
+                    readonly property bool editing: root.editingRowId === modelData.id
                     width: tableContent.width
                     height: root.rowHeight
                     color: rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
@@ -262,20 +302,62 @@ Rectangle {
                                 required property var modelData
                                 width: root.columnWidth(modelData)
                                 height: root.rowHeight
-                                Label {
+                                Loader {
                                     anchors.fill: parent
                                     anchors.leftMargin: 8
                                     anchors.rightMargin: 8
-                                    text: root.displayValue(existingCell.modelData,
-                                                            existingRow.modelData[existingCell.modelData.key])
-                                    color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
-                                    font.pixelSize: 12
-                                    font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
-                                    verticalAlignment: Text.AlignVCenter
-                                    horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
-                                                       : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
-                                                       : Text.AlignLeft
-                                    elide: Text.ElideRight
+                                    sourceComponent: existingRow.editing && existingCell.modelData.searchable === true
+                                                     ? editSearchCell
+                                                     : existingRow.editing && existingCell.modelData.editable === true
+                                                       ? editInputCell : displayCell
+                                }
+                                Component {
+                                    id: displayCell
+                                    Label {
+                                        text: root.displayValue(existingCell.modelData,
+                                                existingRow.editing
+                                                ? root.editValue(existingCell.modelData.key, "")
+                                                : existingRow.modelData[existingCell.modelData.key])
+                                        color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
+                                        font.pixelSize: 12
+                                        font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
+                                        verticalAlignment: Text.AlignVCenter
+                                        horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
+                                                           : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
+                                                           : Text.AlignLeft
+                                        elide: Text.ElideRight
+                                    }
+                                }
+                                Component {
+                                    id: editSearchCell
+                                    SearchEntryField {
+                                        searchKey: existingCell.modelData.key
+                                        inlineMode: true
+                                        minimumSearchLength: root.minimumSearchLength
+                                        value: String(root.editDraft[searchKey] ?? "")
+                                        primaryKey: root.suggestionPrimaryKey
+                                        secondaryKey: root.suggestionSecondaryKey
+                                        suggestions: root.searchResults.field === searchKey &&
+                                                     root.searchResults.query === text
+                                                     ? root.searchResults.items || [] : []
+                                        searchBusy: root.searchBusy
+                                        onValueEdited: function(value) { root.setEditValue(searchKey, value); }
+                                        onSearchRequested: function(key, query) { root.searchRequested(key, query); }
+                                        onSuggestionSelected: function(suggestion) { root.selectEditSuggestion(suggestion); }
+                                        onSubmitRequested: root.requestUpdate(existingRow.modelData)
+                                    }
+                                }
+                                Component {
+                                    id: editInputCell
+                                    SearchEntryInlineField {
+                                        text: String(root.editDraft[existingCell.modelData.key] ?? "")
+                                        inputType: existingCell.modelData.inputType || "text"
+                                        suffix: existingCell.modelData.suffix || ""
+                                        horizontalAlignment: existingCell.modelData.alignment === "right"
+                                                             ? TextInput.AlignRight : TextInput.AlignLeft
+                                        onTextEdited: root.setEditValue(existingCell.modelData.key, text)
+                                        onAccepted: root.requestUpdate(existingRow.modelData)
+                                    }
                                 }
                             }
                         }
@@ -284,18 +366,40 @@ Rectangle {
                             width: visible ? root.actionWidth : 0
                             height: root.rowHeight
                             spacing: 2
-                            opacity: rowHover.hovered ? 1 : 0
+                            opacity: existingRow.editing || rowHover.hovered ? 1 : 0
                             IconButton {
-                                visible: root.allowEdit && !root.readOnly
+                                visible: root.allowEdit && !root.readOnly && !existingRow.editing
                                 iconName: "edit"
                                 tooltip: qsTr("Modifier")
                                 width: 32
                                 height: 32
                                 anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.editRequested(existingRow.modelData)
+                                onClicked: {
+                                    root.beginEdit(existingRow.modelData);
+                                    root.editRequested(existingRow.modelData);
+                                }
                             }
                             IconButton {
-                                visible: root.allowRemove && !root.readOnly
+                                visible: existingRow.editing && !root.readOnly
+                                iconName: "check"
+                                tooltip: qsTr("Enregistrer la ligne")
+                                enabled: root.editEnabled
+                                width: 32
+                                height: 32
+                                anchors.verticalCenter: parent.verticalCenter
+                                onClicked: root.requestUpdate(existingRow.modelData)
+                            }
+                            IconButton {
+                                visible: existingRow.editing && !root.readOnly
+                                iconName: "close"
+                                tooltip: qsTr("Annuler la modification")
+                                width: 32
+                                height: 32
+                                anchors.verticalCenter: parent.verticalCenter
+                                onClicked: root.finishEdit()
+                            }
+                            IconButton {
+                                visible: root.allowRemove && !root.readOnly && !existingRow.editing
                                 iconName: "delete"
                                 tooltip: qsTr("Supprimer")
                                 width: 32
