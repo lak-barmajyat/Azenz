@@ -495,8 +495,9 @@ Rectangle {
                                     objectName: "searchEntry_" + searchKey
                                     searchKey: draftCell.modelData.key
                                     inlineMode: true
-                                    preferPopupAbove: true
-                                    maxPopupHeight: Math.max(80, Math.min(240, bodyScroll.height))
+                                    preferPopupAbove: bodyScroll.contentHeight > bodyScroll.height
+                                    maxPopupHeight: preferPopupAbove
+                                                    ? Math.max(80, Math.min(240, bodyScroll.height)) : 240
                                     Component.onCompleted: root.registerSearchField(searchKey, this)
                                     Component.onDestruction: root.unregisterSearchField(searchKey, this)
                                     minimumSearchLength: root.minimumSearchLength
