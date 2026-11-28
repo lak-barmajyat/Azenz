@@ -33,6 +33,8 @@ class _Worker(QThread):
 
 class NouveauDocumentModel(QObject):
     lookupsChanged = Signal()
+    documentCodeChanged = Signal()
+    codeGenerationFailed = Signal()
     articleSearchChanged = Signal()
     busyChanged = Signal()
     loadFailed = Signal(str)
@@ -47,6 +49,10 @@ class NouveauDocumentModel(QObject):
         self._logger = get_logger(__name__)
         self._preview = preview
         self._types: list[dict[str, Any]] = []
+        self._document_code = ""
+        self._requested_type = ""
+        self._loading_type = ""
+        self._code_pending = False
         self._search_results: list[dict[str, Any]] = []
         self._worker: _Worker | None = None
         self._operation = ""
@@ -55,6 +61,10 @@ class NouveauDocumentModel(QObject):
     @Property(list, notify=lookupsChanged)
     def documentTypes(self) -> list[dict[str, Any]]:
         return self._types
+
+    @Property(str, notify=documentCodeChanged)
+    def documentCode(self) -> str:
+        return self._document_code
 
     @Property(list, notify=articleSearchChanged)
     def articleSearchResults(self) -> list[dict[str, Any]]:
@@ -94,7 +104,32 @@ class NouveauDocumentModel(QObject):
         snapshot = dict(draft)
         snapshot["lines"] = [dict(line) for line in draft["lines"]]
         snapshot["editingDocumentId"] = editing_document_id if editing_document_id > 0 else None
+        snapshot["automaticCode"] = (
+            editing_document_id <= 0 and str(draft.get("code") or "").strip() == self._document_code
+        )
         self._start("save", lambda: self._save(snapshot))
+
+    @Slot(str)
+    def generateDocumentCode(self, type_code: str) -> None:
+        if self._closing:
+            return
+        self._requested_type = type_code
+        self._code_pending = True
+        self._document_code = ""
+        self.documentCodeChanged.emit()
+        self._start_pending_code()
+
+    def _start_pending_code(self) -> None:
+        if self.busy or not self._code_pending or self._closing:
+            return
+        document_type = next(
+            (item for item in self._types if item["value"] == self._requested_type), None
+        )
+        self._code_pending = False
+        if self._preview or document_type is None:
+            return
+        self._loading_type = self._requested_type
+        self._start("code", lambda: self._load_code(document_type))
 
     def _start(self, operation: str, callback: Callable[[], Any]) -> None:
         self._operation = operation
@@ -131,10 +166,17 @@ class NouveauDocumentModel(QObject):
                 self.documentLoaded.emit(result)
             else:
                 self.loadFailed.emit(str((result or {}).get("error", "service_unavailable")))
+        elif operation == "code":
+            if self._loading_type == self._requested_type and isinstance(result, dict):
+                self._document_code = str(result["code"])
+                self.documentCodeChanged.emit()
+            elif self._loading_type == self._requested_type:
+                self.codeGenerationFailed.emit()
         elif isinstance(result, dict) and "id" in result:
             self.documentSaved.emit(result["id"], result["code"])
         else:
             self.saveFailed.emit(str((result or {}).get("error", "service_unavailable")))
+        self._start_pending_code()
 
     @Slot()
     def shutdown(self) -> None:
@@ -150,6 +192,23 @@ class NouveauDocumentModel(QObject):
             self._logger.exception("Stock document type loading failed")
             return None
 
+    def _load_code(self, document_type: dict[str, Any]) -> dict[str, str] | None:
+        try:
+            return {"code": self._query_code(document_type)}
+        except (SQLAlchemyError, RuntimeError, ValueError):
+            self._logger.exception("Stock document code generation failed")
+            return None
+
+    @with_session()
+    def _query_code(self, document_type: dict[str, Any], *, session: Session) -> str:
+        last_code = session.scalar(
+            select(DDocuments.code_document)
+            .where(DDocuments.type_document_id == document_type["id"])
+            .order_by(DDocuments.id.desc())
+            .limit(1)
+        )
+        return next_code(last_code, prefix=str(document_type["value"]))
+
     @with_session()
     def _query_types(self, *, session: Session) -> list[dict[str, Any]]:
         types = session.scalars(
@@ -159,6 +218,7 @@ class NouveauDocumentModel(QObject):
         )
         return [
             {
+                "id": row.id,
                 "text": row.nom_type_document,
                 "value": row.code_type_document,
                 "movementType": self._movement_type(row),
@@ -325,7 +385,7 @@ class NouveauDocumentModel(QObject):
             delta = movement.quantite if movement.sens_mouvement == "IN" else -movement.quantite
             base[movement.article_id] -= delta
         code = str(draft.get("code") or "").strip()
-        if not code:
+        if draft.get("automaticCode") or not code:
             last_code = session.scalar(
                 select(DDocuments.code_document)
                 .where(DDocuments.type_document_id == document_type.id)

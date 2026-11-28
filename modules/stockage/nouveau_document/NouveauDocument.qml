@@ -10,6 +10,7 @@ NouveauDocumentView {
     property string documentMode: "new"
     property int editingDocumentId: 0
     property int sourceDocumentId: 0
+    property bool documentReady: false
     // qmllint disable unqualified
     readonly property var backend: typeof nouveauDocumentModel !== "undefined" ? nouveauDocumentModel : null
     // qmllint enable unqualified
@@ -110,8 +111,10 @@ NouveauDocumentView {
     function openDocument(action, documentId) {
         documentMode = action === "duplicate" ? "duplicate" : action === "edit" ? "edit" : "new";
         sourceDocumentId = documentId || 0;
+        documentReady = false;
         editingDocumentId = documentMode === "edit" ? documentId : 0;
         codeField.text = "";
+        typeField.currentIndex = -1;
         commentField.text = "";
         rows = [];
         clearLine();
@@ -162,7 +165,8 @@ NouveauDocumentView {
     Connections {
         target: root.backend
         function onLookupsChanged() {
-            if (root.typeField.currentIndex < 0 && root.documentTypes.length > 0)
+            if (root.sourceDocumentId === 0 && root.typeField.currentIndex < 0
+                    && root.documentTypes.length > 0)
                 root.typeField.currentIndex = 0;
             if (root.documentTypes.length === 0)
                 root.formError = qsTr("Aucun type de document de stock actif n’est configuré.");
@@ -172,12 +176,20 @@ NouveauDocumentView {
         function onArticleSearchChanged() { root.articleSuggestions = root.backend.articleSearchResults; }
         function onDocumentLoaded(document) {
             root.editingDocumentId = root.documentMode === "edit" ? document.id : 0;
-            root.codeField.text = document.code;
             root.commentField.text = document.comment;
             root.typeField.currentIndex = root.typeIndex(document.type);
             root.dateField.value = new Date(document.date + "T00:00:00");
             root.dateField.hasValue = true;
             root.sourceRows = document.lines;
+            root.documentReady = true;
+            if (root.documentMode === "duplicate")
+                root.backend.generateDocumentCode(root.typeField.currentValue || "");
+            else
+                root.codeField.text = document.code;
+        }
+        function onDocumentCodeChanged() { root.codeField.text = root.backend.documentCode; }
+        function onCodeGenerationFailed() {
+            root.formError = qsTr("Impossible de générer le prochain code document.");
         }
         function onDocumentSaved(documentId, code) {
             root.editingDocumentId = documentId;
@@ -197,6 +209,14 @@ NouveauDocumentView {
             root.formError = code === "negative_stock" ? qsTr("Cette opération rendrait le stock négatif.")
                            : code === "duplicate_code" ? qsTr("Ce code document existe déjà.")
                            : qsTr("Impossible d’enregistrer le document.");
+        }
+    }
+    Connections {
+        target: root.typeField
+        function onCurrentValueChanged() {
+            if (root.backend && root.documentMode !== "edit"
+                    && (root.sourceDocumentId === 0 || root.documentReady))
+                root.backend.generateDocumentCode(root.typeField.currentValue || "");
         }
     }
 }

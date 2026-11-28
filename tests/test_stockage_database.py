@@ -138,6 +138,14 @@ class StockageDatabaseTests(unittest.TestCase):
             self.assertEqual(movement.sens_mouvement, "IN")
             self.assertEqual(movement.quantite, Decimal("5.0000"))
 
+    def test_code_preview_uses_shared_next_code_service(self) -> None:
+        document_type = next(
+            item for item in self.document_model._query_types() if item["value"] == "EN"
+        )
+        self.assertEqual(self.document_model._query_code(document_type), "EN001")
+        self.document_model._persist(self.draft("EN", "5"))
+        self.assertEqual(self.document_model._query_code(document_type), "EN002")
+
     def test_exit_cannot_make_stock_negative_and_rolls_back(self) -> None:
         with self.assertRaisesRegex(ValueError, "negative_stock"):
             self.document_model._persist(self.draft("SO", "11"))
