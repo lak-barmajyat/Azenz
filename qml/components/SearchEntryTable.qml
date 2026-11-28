@@ -15,6 +15,10 @@ Rectangle {
     property bool searchBusy: false
     property bool readOnly: false
     property bool showActions: !readOnly
+    property bool selectable: false
+    property bool keepEntryVisible: false
+    property var selectedIds: []
+    readonly property int selectionCount: selectedIds.length
     property bool allowEdit: true
     property bool allowRemove: true
     property bool requireSelection: true
@@ -44,6 +48,7 @@ Rectangle {
     readonly property int tableWidth: columns.reduce(function(total, column) {
         return total + (column.width || 140);
     }, (showActions ? actionWidth : 0) +
+       (selectable ? 36 : 0) +
        (showRowNumber ? rowNumberWidth : 0) +
        (showTypeIcon ? typeIconWidth : 0))
     readonly property int horizontalBarHeight: tableWidth > width - 2 ? 8 : 0
@@ -56,6 +61,8 @@ Rectangle {
     signal editRequested(var row)
     signal updateRequested(var row, var values, var suggestion)
     signal removeRequested(var row)
+    signal rowActivated(var row)
+    signal contextMenuRequested(var row, real x, real y)
 
     implicitWidth: 900
     implicitHeight: headerHeight + (rows.length + (readOnly ? 0 : 1)) * rowHeight + 2 + horizontalBarHeight
@@ -63,6 +70,20 @@ Rectangle {
     color: Colors.surface
     border.color: Colors.borderStrong
     clip: true
+
+    onRowsChanged: selectedIds = selectedIds.filter(function(id) {
+        return rows.some(function(row) { return row.id === id; });
+    })
+
+    function toggleSelection(row) {
+        var next = selectedIds.slice();
+        var index = next.indexOf(row.id);
+        if (index < 0)
+            next.push(row.id);
+        else
+            next.splice(index, 1);
+        selectedIds = next;
+    }
 
     function setDraftValue(key, value, fromSearch) {
         var next = Object.assign({}, draft);
@@ -104,6 +125,18 @@ Rectangle {
                 return;
             }
         }
+        for (var j = 0; j < columns.length; ++j) {
+            var input = searchFields[columns[j].key];
+            if (columns[j].editable === true && input) {
+                input.forceActiveFocus();
+                return;
+            }
+        }
+    }
+
+    function focusEntry() {
+        horizontalScroll.contentX = 0;
+        focusFirstSearch();
     }
 
     function registerSearchField(key, field) {
@@ -123,7 +156,7 @@ Rectangle {
     function clearDraft() {
         draft = Object.assign({}, defaultValues);
         selectedSuggestion = null;
-        Qt.callLater(focusFirstSearch);
+        Qt.callLater(keepEntryVisible ? focusEntry : focusFirstSearch);
     }
 
     function addDraft() {
@@ -201,6 +234,15 @@ Rectangle {
                 border.color: Colors.border
                 Row {
                     anchors.fill: parent
+                    DataGridSelectionCell {
+                        visible: root.selectable
+                        width: visible ? 36 : 0
+                        height: root.headerHeight
+                        checkState: root.selectionCount === 0 ? Qt.Unchecked
+                                    : root.selectionCount === root.rows.length ? Qt.Checked : Qt.PartiallyChecked
+                        tristate: true
+                        onToggled: root.selectedIds = checked ? root.rows.map(function(row) { return row.id; }) : []
+                    }
                     Item {
                         visible: root.showRowNumber
                         width: visible ? root.rowNumberWidth : 0
@@ -288,10 +330,31 @@ Rectangle {
                             readonly property bool editing: root.editingRowId === modelData.id
                             width: tableContent.width
                             height: root.rowHeight
-                            color: rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
+                            color: root.selectedIds.indexOf(modelData.id) >= 0 ? Colors.rowSelected
+                                   : rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
                             HoverHandler { id: rowHover }
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: root.selectable
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onClicked: function(mouse) {
+                                    if (mouse.button === Qt.RightButton) {
+                                        var point = existingRow.mapToItem(root, mouse.x, mouse.y);
+                                        root.contextMenuRequested(existingRow.modelData, point.x, point.y);
+                                    } else
+                                        root.toggleSelection(existingRow.modelData);
+                                }
+                                onDoubleClicked: root.rowActivated(existingRow.modelData)
+                            }
                             Row {
                                 anchors.fill: parent
+                                DataGridSelectionCell {
+                                    visible: root.selectable
+                                    width: visible ? 36 : 0
+                                    height: root.rowHeight
+                                    checked: root.selectedIds.indexOf(existingRow.modelData.id) >= 0
+                                    onToggled: root.toggleSelection(existingRow.modelData)
+                                }
                                 Item {
                                     visible: root.showRowNumber
                                     width: visible ? root.rowNumberWidth : 0
@@ -450,6 +513,11 @@ Rectangle {
                 Row {
                     anchors.fill: parent
                     Item {
+                        visible: root.selectable
+                        width: visible ? 36 : 0
+                        height: root.rowHeight
+                    }
+                    Item {
                         visible: root.showRowNumber
                         width: visible ? root.rowNumberWidth : 0
                         height: root.rowHeight
@@ -487,6 +555,8 @@ Rectangle {
                                 anchors.topMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
                                 anchors.bottomMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
                                 sourceComponent: draftCell.modelData.searchable === true ? searchCell
+                                               : draftCell.modelData.inputType === "choice" ? choiceCell
+                                               : draftCell.modelData.inputType === "date" ? dateCell
                                                : draftCell.modelData.editable === true ? inputCell : valueCell
                             }
                             Component {
@@ -522,12 +592,60 @@ Rectangle {
                                 }
                             }
                             Component {
+                                id: choiceCell
+                                AzenzComboBox {
+                                    id: choiceInput
+                                    objectName: "choiceEntry_" + draftCell.modelData.key
+                                    model: draftCell.modelData.options || []
+                                    function syncFromDraft() {
+                                        currentIndex = Math.max(0, model.indexOf(root.draftValue(draftCell.modelData.key, "")));
+                                    }
+                                    Component.onCompleted: syncFromDraft()
+                                    Connections {
+                                        target: root
+                                        function onDraftChanged() { choiceInput.syncFromDraft(); }
+                                    }
+                                    onActivated: root.setDraftValue(draftCell.modelData.key, currentText, false)
+                                }
+                            }
+                            Component {
+                                id: dateCell
+                                DateInput {
+                                    id: dateInput
+                                    objectName: "dateEntry_" + draftCell.modelData.key
+                                    function syncFromDraft() {
+                                        var raw = String(root.draftValue(draftCell.modelData.key, ""));
+                                        if (raw === (hasValue ? Qt.formatDate(value, "dd/MM/yyyy") : ""))
+                                            return;
+                                        var parts = raw.split("/");
+                                        if (parts.length === 3) {
+                                            value = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+                                            hasValue = true;
+                                        } else
+                                            hasValue = false;
+                                    }
+                                    Component.onCompleted: syncFromDraft()
+                                    Connections {
+                                        target: root
+                                        function onDraftChanged() { dateInput.syncFromDraft(); }
+                                    }
+                                    onDateEdited: function(value) {
+                                        root.setDraftValue(draftCell.modelData.key,
+                                                           Qt.formatDate(value, "dd/MM/yyyy"), false);
+                                    }
+                                    onDateCleared: root.setDraftValue(draftCell.modelData.key, "", false)
+                                }
+                            }
+                            Component {
                                 id: inputCell
                                 SearchEntryInlineField {
+                                    Component.onCompleted: root.registerSearchField(draftCell.modelData.key, this)
+                                    Component.onDestruction: root.unregisterSearchField(draftCell.modelData.key, this)
                                     text: String(root.draftValue(draftCell.modelData.key,
                                                  draftCell.modelData.defaultValue ?? ""))
                                     inputType: draftCell.modelData.inputType || "text"
-                                    suffix: draftCell.modelData.suffix || ""
+                                    suffix: draftCell.modelData.inputSuffix !== undefined
+                                            ? draftCell.modelData.inputSuffix : draftCell.modelData.suffix || ""
                                     placeholderText: draftCell.modelData.placeholder || ""
                                     horizontalAlignment: draftCell.modelData.alignment === "right"
                                                          ? TextInput.AlignRight : TextInput.AlignLeft

@@ -14,6 +14,7 @@ Rectangle {
     property string affectedText: "0,00 MAD"
     property string remainingText: "0,00 MAD"
     property string footerText: ""
+    property bool canAddPayment: false
     property alias activeTab: tabs.currentIndex
     property alias filters: filters
     property alias grid: grid
@@ -100,27 +101,52 @@ Rectangle {
             suppliers: tabs.currentIndex === 1
         }
 
-        DataGrid {
+        SearchEntryTable {
             id: grid
             objectName: "reglementsGrid"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumHeight: 180
+            Layout.minimumHeight: root.height < 600 ? 140 : 156
             rows: root.rows
-            density: "compact"
-            footerSummary: root.footerText
-            footerHint: qsTr("Clic droit sur une ligne pour les options contextuelles")
-            footerBackground: "#F8FAFC"
-            footerTopBorder: true
+            selectable: true
+            keepEntryVisible: true
+            showRowNumber: false
+            showTypeIcon: false
+            showActions: true
+            actionWidth: 64
+            allowEdit: false
+            allowRemove: false
+            requireSelection: false
+            addEnabled: root.canAddPayment
+            addActionLabel: qsTr("Ajouter règlement")
+            localeName: "fr_MA"
+            defaultValues: ({mode: qsTr("Virement Bancaire"), status: qsTr("Brouillon"),
+                             date: Qt.formatDate(new Date(), "dd/MM/yyyy")})
             columns: [
-                {key: "code", title: qsTr("CODE RÈGLEMENT"), width: 145, type: "code", sortable: false},
-                {key: "tier", title: tabs.currentIndex === 1 ? qsTr("FOURNISSEUR") : qsTr("CLIENT"), width: 260, sortable: false},
-                {key: "mode", title: qsTr("MODE DE RÈGLEMENT"), width: 160, type: "paymentMethod", sortable: false},
-                {key: "status", title: qsTr("STATUT"), width: 100, type: "status", alignment: "center", sortable: false},
-                {key: "date", title: qsTr("DATE"), width: 105, type: "date", alignment: "center", sortable: false},
-                {key: "amount", title: qsTr("MONTANT (MAD)"), width: 155, type: "currency", suffix: "MAD", alignment: "right", sortable: false},
-                {key: "comment", title: qsTr("COMMENTAIRE"), width: Math.max(260, grid.width - 965), sortable: false}
+                {key: "code", title: qsTr("Code règlement"), width: 135, fill: 1.2, editable: true,
+                 placeholder: qsTr("REG-...")},
+                {key: "tier", title: tabs.currentIndex === 1 ? qsTr("Fournisseur") : qsTr("Client"), width: 220,
+                 fill: 2,
+                 editable: true, placeholder: tabs.currentIndex === 1 ? qsTr("Fournisseur...") : qsTr("Client...")},
+                {key: "mode", title: qsTr("Mode de règlement"), width: 150, fill: 1.7, inputType: "choice",
+                 options: [qsTr("Virement Bancaire"), qsTr("Chèque"), qsTr("Traite"), qsTr("Espèces"), qsTr("Carte Bancaire")]},
+                {key: "status", title: qsTr("Statut"), width: 110, fill: 1.2, inputType: "choice",
+                 options: [qsTr("Brouillon"), qsTr("En attente"), qsTr("Validé")]},
+                {key: "date", title: qsTr("Date"), width: 145, fill: 1.2, inputType: "date", alignment: "center"},
+                {key: "amount", title: qsTr("Montant (MAD)"), width: 130, fill: 1.2, editable: true, inputType: "currency",
+                 decimals: 2, suffix: "MAD", inputSuffix: "", alignment: "right", placeholder: qsTr("0,00")},
+                {key: "comment", title: qsTr("Commentaire"), width: 180, fill: 1,
+                 editable: true, placeholder: qsTr("Commentaire...")}
             ]
+        }
+
+        RowLayout {
+            visible: root.height >= 600
+            Layout.fillWidth: true
+            Layout.preferredHeight: 20
+            Label { text: root.footerText; color: Colors.textSecondary; font.pixelSize: 11 }
+            Item { Layout.fillWidth: true }
+            Label { text: qsTr("Clic droit sur une ligne pour les options contextuelles"); color: Colors.textSecondary; font.pixelSize: 10 }
         }
 
         Rectangle {
@@ -133,28 +159,21 @@ Rectangle {
                 anchors.fill: parent
                 anchors.margins: 8
                 spacing: 10
-                Repeater {
-                    model: [
-                        {label: qsTr("TOTAL RÈGLEMENTS"), value: root.totalText, highlighted: false},
-                        {label: qsTr("MONTANT AFFECTÉ"), value: root.affectedText, highlighted: false},
-                        {label: qsTr("MONTANT RESTANT"), value: root.remainingText, highlighted: true}
-                    ]
-                    Rectangle {
-                        id: totalCard
-                        required property var modelData
-                        Layout.preferredWidth: modelData.highlighted ? 175 : 140
-                        Layout.fillHeight: true
-                        radius: 4
-                        color: modelData.highlighted ? Colors.navy : Colors.canvas
-                        border.color: modelData.highlighted ? Colors.navy : Colors.border
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 6
-                            spacing: 2
-                            Label { text: totalCard.modelData.label; color: totalCard.modelData.highlighted ? "#CBD5E1" : Colors.textSecondary; font.pixelSize: 9 }
-                            Label { text: totalCard.modelData.value; color: totalCard.modelData.highlighted ? "#86EFAC" : Colors.text; font.pixelSize: totalCard.modelData.highlighted ? 15 : 12; font.weight: Font.Bold; tabular: true }
-                        }
-                    }
+                FinancialTotal {
+                    title: qsTr("Total règlements")
+                    amountText: root.totalText
+                    Layout.preferredWidth: root.width < 900 ? 136 : 168
+                }
+                FinancialTotal {
+                    title: qsTr("Montant affecté")
+                    amountText: root.affectedText
+                    Layout.preferredWidth: root.width < 900 ? 136 : 168
+                }
+                FinancialTotal {
+                    title: qsTr("Montant restant")
+                    amountText: root.remainingText
+                    emphasized: true
+                    Layout.preferredWidth: root.width < 900 ? 155 : 170
                 }
                 Item { Layout.fillWidth: true }
                 AzenzButton { id: backButton; text: qsTr("Retour"); iconName: "left"; variant: "secondary"; size: "compact" }
