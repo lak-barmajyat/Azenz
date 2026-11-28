@@ -17,6 +17,7 @@ NouveauDocView {
     // qmllint enable unqualified
 
     signal backRequested
+    signal validationRequested
 
     clients: backend ? backend.clients : []
     documentTypes: backend ? backend.documentTypes : []
@@ -337,6 +338,10 @@ NouveauDocView {
         function onClicked() {
             root.saveDocument();
         }
+    }
+    Connections {
+        target: root.validateButton
+        function onClicked() { root.validationRequested(); }
     }
     AzenzDialog {
         id: saved

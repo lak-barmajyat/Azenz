@@ -10,9 +10,14 @@ ShellView {
     property var stockArticles: []
     property string documentAction: "new"
     property int documentId: 0
+    property string purchaseDocumentAction: "new"
+    property int purchaseDocumentId: 0
     documentPageTitle: documentAction === "edit" ? qsTr("Modifier le document")
                        : documentAction === "duplicate" ? qsTr("Dupliquer le document")
                        : qsTr("Nouveau document")
+    purchaseDocumentPageTitle: purchaseDocumentAction === "edit" ? qsTr("Modifier le document")
+                               : purchaseDocumentAction === "duplicate" ? qsTr("Dupliquer le document")
+                               : qsTr("Nouveau document")
     readonly property var sales: root.currentPage === "sales" && pageLoader.status === Loader.Ready
                                  ? pageLoader.item : null
     readonly property var purchases: root.currentPage === "purchases"
@@ -32,6 +37,8 @@ ShellView {
     signal pageRequested(string page)
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
+    signal salesDocumentValidationRequested
+    signal purchaseDocumentValidationRequested
     signal paymentActionRequested(string action, var records)
     signal stockActionRequested(string action, var records)
     signal stockDocumentRequested(string action, var document)
@@ -64,6 +71,9 @@ ShellView {
             } else if (root.currentPage === "sales/new") {
                 item.previewMode = root.previewMode;
                 root.document.openDocument(root.documentAction, root.documentId);
+            } else if (root.currentPage === "purchases/new") {
+                item.previewMode = root.previewMode;
+                root.purchaseDocument.openDocument(root.purchaseDocumentAction, root.purchaseDocumentId);
             } else if (root.currentPage === "payments") {
                 item.sourceRows = root.paymentRows;
                 item.previewMode = root.previewMode;
@@ -120,11 +130,13 @@ ShellView {
             target: root.document
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("sales"); }
+            function onValidationRequested() { root.salesDocumentValidationRequested(); }
         }
         Connections {
             target: root.purchaseDocument
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("purchases"); }
+            function onValidationRequested() { root.purchaseDocumentValidationRequested(); }
         }
         Connections {
             target: root.payments

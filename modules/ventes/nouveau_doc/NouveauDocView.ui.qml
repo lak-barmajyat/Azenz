@@ -104,6 +104,7 @@ Rectangle {
     property alias paymentsTab: paymentPanel
     property alias backButton: back
     property alias saveButton: save
+    property alias validateButton: validate
 
     color: Colors.canvas
     LayoutMirroring.enabled: Theme.rightToLeft
@@ -129,7 +130,7 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.margins: 8
-                    columns: width < 1020 ? 3 : 5
+                    columns: width < 1170 ? 3 : 6
                     columnSpacing: 9
                     rowSpacing: 8
                     ColumnLayout {
@@ -148,7 +149,7 @@ Rectangle {
                     }
                     ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredWidth: documentFields.columns === 5 ? 340 : 170
+                        Layout.preferredWidth: documentFields.columns === 6 ? 340 : 170
                         Label {
                             text: qsTr("Client")
                             font.pixelSize: 10
@@ -207,6 +208,16 @@ Rectangle {
                             objectName: "nouveauDocDate"
                             Layout.fillWidth: true
                         }
+                    }
+                    AzenzButton {
+                        id: validate
+                        objectName: "nouveauDocValidate"
+                        text: qsTr("Valider")
+                        iconName: "check"
+                        size: "compact"
+                        enabled: !root.busy && !root.codeBusy
+                        Layout.preferredWidth: 100
+                        Layout.alignment: Qt.AlignRight | Qt.AlignBottom
                     }
                 }
             }

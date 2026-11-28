@@ -13,9 +13,11 @@ Rectangle {
     property bool previewMode: false
     property string currentPage: "dashboard"
     property string documentPageTitle: qsTr("Nouveau document")
+    property string purchaseDocumentPageTitle: qsTr("Nouveau document")
     readonly property var pageTitles: ({"dashboard": qsTr("Tableau de bord"),
                                         "sales": qsTr("Ventes"),
                                         "sales/new": qsTr("Nouveau document"),
+                                        "purchases/new": qsTr("Nouveau document"),
                                         "payments": qsTr("Règlements"),
                                         "purchases": qsTr("Achats"),
                                         "stock": qsTr("Stockage"),
@@ -25,8 +27,10 @@ Rectangle {
                                         "articles": qsTr("Articles"),
                                         "families": qsTr("Familles")})
     readonly property string pageTitle: currentPage === "sales/new" ? documentPageTitle
+                                        : currentPage === "purchases/new" ? purchaseDocumentPageTitle
                                         : pageTitles[currentPage] || currentPage
     readonly property string pagePath: currentPage === "sales/new" ? qsTr("Documents  >  Ventes  >  %1").arg(pageTitle)
+                                     : currentPage === "purchases/new" ? qsTr("Documents  >  Achats  >  %1").arg(pageTitle)
                                      : currentPage === "stock/new" ? qsTr("Documents  >  Stockage  >  %1").arg(pageTitle)
                                      : currentPage === "sales" || currentPage === "purchases" || currentPage === "stock"
                                      ? qsTr("Documents  >  ") + pageTitle

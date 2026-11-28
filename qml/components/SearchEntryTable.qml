@@ -21,6 +21,7 @@ Rectangle {
     readonly property int selectionCount: selectedIds.length
     property bool allowEdit: true
     property bool allowRemove: true
+    property bool alwaysShowRowActions: false
     property bool requireSelection: true
     property int minimumSearchLength: 1
     property int rowHeight: 44
@@ -450,7 +451,7 @@ Rectangle {
                                     width: visible ? root.actionWidth : 0
                                     height: root.rowHeight
                                     spacing: 2
-                                    opacity: existingRow.editing || rowHover.hovered ? 1 : 0
+                                    opacity: root.alwaysShowRowActions || existingRow.editing || rowHover.hovered ? 1 : 0
                                     IconButton {
                                         visible: root.allowEdit && !root.readOnly && !existingRow.editing
                                         iconName: "edit"

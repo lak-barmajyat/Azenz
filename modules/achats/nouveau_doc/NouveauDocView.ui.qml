@@ -104,6 +104,7 @@ Rectangle {
     property alias paymentsTab: paymentPanel
     property alias backButton: back
     property alias saveButton: save
+    property alias validateButton: validate
 
     color: Colors.canvas
     LayoutMirroring.enabled: Theme.rightToLeft
@@ -117,28 +118,6 @@ Rectangle {
             anchors.margins: 12
             spacing: 9
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
-                Label {
-                    text: root.pageTitle
-                    color: Colors.navy
-                    font.pixelSize: Typography.section
-                    font.weight: Font.Bold
-                }
-                Label {
-                    text: qsTr("Documents  >  Achats  >  %1").arg(root.pageTitle)
-                    color: Colors.textSecondary
-                    font.pixelSize: Typography.micro
-                    elide: Text.ElideRight
-                    Layout.fillWidth: true
-                }
-                Badge {
-                    text: qsTr("Mode saisie") + "  " + documentType.currentText
-                    variant: "info"
-                }
-            }
-
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: documentFields.implicitHeight + 16
@@ -151,7 +130,7 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.margins: 8
-                    columns: width < 1020 ? 3 : 5
+                    columns: width < 1170 ? 3 : 6
                     columnSpacing: 9
                     rowSpacing: 8
                     ColumnLayout {
@@ -170,7 +149,7 @@ Rectangle {
                     }
                     ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredWidth: documentFields.columns === 5 ? 340 : 170
+                        Layout.preferredWidth: documentFields.columns === 6 ? 340 : 170
                         Label {
                             text: qsTr("Fournisseur")
                             font.pixelSize: 10
@@ -229,6 +208,16 @@ Rectangle {
                             objectName: "nouveauDocAchatDate"
                             Layout.fillWidth: true
                         }
+                    }
+                    AzenzButton {
+                        id: validate
+                        objectName: "nouveauDocAchatValidate"
+                        text: qsTr("Valider")
+                        iconName: "check"
+                        size: "compact"
+                        enabled: !root.busy && !root.codeBusy
+                        Layout.preferredWidth: 100
+                        Layout.alignment: Qt.AlignRight | Qt.AlignBottom
                     }
                 }
             }

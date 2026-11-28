@@ -37,6 +37,8 @@ ApplicationWindow {
     property var normalBounds: Qt.rect(0, 0, 980, 680)
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
+    signal salesDocumentValidationRequested
+    signal purchaseDocumentValidationRequested
     signal paymentActionRequested(string action, var records)
     signal stockActionRequested(string action, var records)
     signal stockDocumentRequested(string action, var document)
@@ -115,6 +117,8 @@ ApplicationWindow {
         onPurchaseActionRequested: function (action, records) {
             app.purchaseActionRequested(action, records);
         }
+        onSalesDocumentValidationRequested: app.salesDocumentValidationRequested()
+        onPurchaseDocumentValidationRequested: app.purchaseDocumentValidationRequested()
         onPaymentActionRequested: function (action, records) {
             app.paymentActionRequested(action, records);
         }

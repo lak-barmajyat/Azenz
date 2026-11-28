@@ -84,6 +84,10 @@ Item {
             notices.show(qsTr("Document stock : %1").arg(action),
                          qsTr("Aperçu local : document non enregistré."), "info");
         }
+        onSalesDocumentValidationRequested: notices.show(
+            qsTr("Validation vente demandée"), qsTr("Aperçu local : aucun document réel n'a été validé."), "info")
+        onPurchaseDocumentValidationRequested: notices.show(
+            qsTr("Validation achat demandée"), qsTr("Aperçu local : aucun document réel n'a été validé."), "info")
     }
     ToastHost {
         id: notices

@@ -50,6 +50,7 @@ Rectangle {
                 spacing: 6
                 AzenzButton {
                     id: create
+                    objectName: "achatsNewButton"
                     text: qsTr("Nouveau")
                     iconName: "add"
                     size: "compact"
@@ -226,6 +227,7 @@ Rectangle {
                 }
                 AzenzButton {
                     id: newDocument
+                    objectName: "achatsEmptyNewButton"
                     text: qsTr("Nouveau document")
                     iconName: "add"
                     size: "compact"
