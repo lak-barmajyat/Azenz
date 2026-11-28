@@ -13,16 +13,14 @@ ApplicationWindow {
     minimumWidth: 980
     minimumHeight: 680
 
-    visible: true
+    visibility: Window.Maximized
     title: "Azenz"
     color: "transparent"
 
     flags: Qt.Window | Qt.FramelessWindowHint
     Component.onCompleted: Qt.callLater(function () {
-        if (app.visibility === Window.Windowed) {
-            app.x = Screen.virtualX + (Screen.width - app.width) / 2;
-            app.y = Screen.virtualY + (Screen.height - app.height) / 2;
-        }
+        app.normalBounds = Qt.rect(Screen.virtualX + (Screen.width - 980) / 2,
+                                   Screen.virtualY + (Screen.height - 680) / 2, 980, 680);
     })
     property bool signedIn: false
     property var salesRecords: []
@@ -36,7 +34,7 @@ ApplicationWindow {
     property bool connected: false
     property string currentPage: "dashboard"
     property int visibilityBeforeFullScreen: Window.Windowed
-    property var normalBounds: Qt.rect(0, 0, width, height)
+    property var normalBounds: Qt.rect(0, 0, 980, 680)
     signal salesActionRequested(string action, var records)
     signal purchaseActionRequested(string action, var records)
     signal paymentActionRequested(string action, var records)

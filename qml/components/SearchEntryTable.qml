@@ -10,10 +10,15 @@ Rectangle {
     property var rows: []
     property var defaultValues: ({})
     property var draftComputed: ({})
+    property var editComputed: ({})
     property var searchResults: ({field: "", query: "", items: []})
     property bool searchBusy: false
     property bool readOnly: false
     property bool showActions: !readOnly
+    property bool selectable: false
+    property bool keepEntryVisible: false
+    property var selectedIds: []
+    readonly property int selectionCount: selectedIds.length
     property bool allowEdit: true
     property bool allowRemove: true
     property bool requireSelection: true
@@ -36,9 +41,14 @@ Rectangle {
     property var selectedSuggestion: null
     property var searchFields: ({})
     property bool addEnabled: !requireSelection || selectedSuggestion !== null
+    property bool editEnabled: true
+    property var editingRowId: null
+    property var editDraft: ({})
+    property var editSuggestion: null
     readonly property int tableWidth: columns.reduce(function(total, column) {
         return total + (column.width || 140);
     }, (showActions ? actionWidth : 0) +
+       (selectable ? 36 : 0) +
        (showRowNumber ? rowNumberWidth : 0) +
        (showTypeIcon ? typeIconWidth : 0))
     readonly property int horizontalBarHeight: tableWidth > width - 2 ? 8 : 0
@@ -49,7 +59,10 @@ Rectangle {
     signal searchRequested(string field, string query)
     signal addRequested(var values, var suggestion)
     signal editRequested(var row)
+    signal updateRequested(var row, var values, var suggestion)
     signal removeRequested(var row)
+    signal rowActivated(var row)
+    signal contextMenuRequested(var row, real x, real y)
 
     implicitWidth: 900
     implicitHeight: headerHeight + (rows.length + (readOnly ? 0 : 1)) * rowHeight + 2 + horizontalBarHeight
@@ -57,6 +70,20 @@ Rectangle {
     color: Colors.surface
     border.color: Colors.borderStrong
     clip: true
+
+    onRowsChanged: selectedIds = selectedIds.filter(function(id) {
+        return rows.some(function(row) { return row.id === id; });
+    })
+
+    function toggleSelection(row) {
+        var next = selectedIds.slice();
+        var index = next.indexOf(row.id);
+        if (index < 0)
+            next.push(row.id);
+        else
+            next.splice(index, 1);
+        selectedIds = next;
+    }
 
     function setDraftValue(key, value, fromSearch) {
         var next = Object.assign({}, draft);
@@ -81,7 +108,7 @@ Rectangle {
     }
 
     function columnWidth(column) {
-        var extra = Math.max(0, scroll.contentWidth - tableWidth);
+        var extra = Math.max(0, horizontalScroll.contentWidth - tableWidth);
         return (column.width || 140) + (totalFill > 0 ? extra * (Number(column.fill) || 0) / totalFill : 0);
     }
 
@@ -98,6 +125,18 @@ Rectangle {
                 return;
             }
         }
+        for (var j = 0; j < columns.length; ++j) {
+            var input = searchFields[columns[j].key];
+            if (columns[j].editable === true && input) {
+                input.forceActiveFocus();
+                return;
+            }
+        }
+    }
+
+    function focusEntry() {
+        horizontalScroll.contentX = 0;
+        focusFirstSearch();
     }
 
     function registerSearchField(key, field) {
@@ -117,7 +156,7 @@ Rectangle {
     function clearDraft() {
         draft = Object.assign({}, defaultValues);
         selectedSuggestion = null;
-        Qt.callLater(focusFirstSearch);
+        Qt.callLater(keepEntryVisible ? focusEntry : focusFirstSearch);
     }
 
     function addDraft() {
@@ -127,36 +166,83 @@ Rectangle {
         clearDraft();
     }
 
+    function beginEdit(row) {
+        editingRowId = row.id;
+        editDraft = Object.assign({}, row);
+        editSuggestion = row;
+    }
+
+    function finishEdit() {
+        editingRowId = null;
+        editDraft = ({});
+        editSuggestion = null;
+    }
+
+    function setEditValue(key, value) {
+        var next = Object.assign({}, editDraft);
+        next[key] = value;
+        editDraft = next;
+    }
+
+    function editValue(key, fallback) {
+        return editComputed[key] !== undefined ? editComputed[key]
+             : editDraft[key] !== undefined ? editDraft[key] : fallback;
+    }
+
+    function selectEditSuggestion(suggestion) {
+        editDraft = Object.assign({}, editDraft, suggestion);
+        editSuggestion = suggestion;
+    }
+
+    function requestUpdate(row) {
+        if (editEnabled && editSuggestion)
+            updateRequested(row, Object.assign({}, editDraft), editSuggestion);
+    }
+
     Flickable {
-        id: scroll
+        id: horizontalScroll
+        objectName: "articleHorizontalScroll"
         anchors.fill: parent
         anchors.margins: 1
         anchors.bottomMargin: 1 + root.horizontalBarHeight
         contentWidth: Math.max(width, root.tableWidth)
-        contentHeight: tableContent.height
-        flickableDirection: Flickable.AutoFlickDirection
+        contentHeight: height
+        flickableDirection: Flickable.HorizontalFlick
         boundsBehavior: Flickable.StopAtBounds
         C.ScrollBar.horizontal: AzenzScrollBar {
             parent: root
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            height: 8
+            anchors.leftMargin: 1
+            anchors.rightMargin: 1
+            anchors.bottomMargin: 1
+            height: root.horizontalBarHeight
         }
-        C.ScrollBar.vertical: AzenzScrollBar {}
 
         Column {
             id: tableContent
-            width: scroll.contentWidth
+            width: horizontalScroll.contentWidth
+            height: horizontalScroll.height
             spacing: 0
 
             Rectangle {
+                objectName: "articleHeader"
                 width: parent.width
                 height: root.headerHeight
                 color: root.headerBackground
                 border.color: Colors.border
                 Row {
                     anchors.fill: parent
+                    DataGridSelectionCell {
+                        visible: root.selectable
+                        width: visible ? 36 : 0
+                        height: root.headerHeight
+                        checkState: root.selectionCount === 0 ? Qt.Unchecked
+                                    : root.selectionCount === root.rows.length ? Qt.Checked : Qt.PartiallyChecked
+                        tristate: true
+                        onToggled: root.selectedIds = checked ? root.rows.map(function(row) { return row.id; }) : []
+                    }
                     Item {
                         visible: root.showRowNumber
                         width: visible ? root.rowNumberWidth : 0
@@ -220,108 +306,217 @@ Rectangle {
                 }
             }
 
-            Repeater {
-                model: root.rows
-                Rectangle {
-                    id: existingRow
-                    required property var modelData
-                    required property int index
-                    width: tableContent.width
-                    height: root.rowHeight
-                    color: rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
-                    HoverHandler { id: rowHover }
-                    Row {
-                        anchors.fill: parent
-                        Item {
-                            visible: root.showRowNumber
-                            width: visible ? root.rowNumberWidth : 0
+            Flickable {
+                id: bodyScroll
+                objectName: "articleBodyScroll"
+                width: parent.width
+                height: Math.max(0, tableContent.height - root.headerHeight - draftRow.height)
+                contentWidth: width
+                contentHeight: bodyRows.height
+                flickableDirection: Flickable.VerticalFlick
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+                C.ScrollBar.vertical: AzenzScrollBar {}
+
+                Column {
+                    id: bodyRows
+                    width: parent.width
+                    Repeater {
+                        model: root.rows
+                        Rectangle {
+                            id: existingRow
+                            required property var modelData
+                            required property int index
+                            readonly property bool editing: root.editingRowId === modelData.id
+                            width: tableContent.width
                             height: root.rowHeight
-                            Label {
-                                anchors.centerIn: parent
-                                text: existingRow.index + 1
-                                color: Colors.textSecondary
-                                font.pixelSize: 12
+                            color: root.selectedIds.indexOf(modelData.id) >= 0 ? Colors.rowSelected
+                                   : rowHover.hovered ? Colors.subtle : index % 2 ? Colors.canvas : Colors.surface
+                            HoverHandler { id: rowHover }
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: root.selectable
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onClicked: function(mouse) {
+                                    if (mouse.button === Qt.RightButton) {
+                                        var point = existingRow.mapToItem(root, mouse.x, mouse.y);
+                                        root.contextMenuRequested(existingRow.modelData, point.x, point.y);
+                                    } else
+                                        root.toggleSelection(existingRow.modelData);
+                                }
+                                onDoubleClicked: root.rowActivated(existingRow.modelData)
                             }
-                        }
-                        Item {
-                            visible: root.showTypeIcon
-                            width: visible ? root.typeIconWidth : 0
-                            height: root.rowHeight
-                            Icon {
-                                anchors.centerIn: parent
-                                width: 18
-                                height: 18
-                                name: root.rowTypeIcon
-                                color: Colors.textSecondary
-                            }
-                        }
-                        Repeater {
-                            model: root.columns
-                            Item {
-                                id: existingCell
-                                required property var modelData
-                                width: root.columnWidth(modelData)
-                                height: root.rowHeight
-                                Label {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 8
-                                    anchors.rightMargin: 8
-                                    text: root.displayValue(existingCell.modelData,
-                                                            existingRow.modelData[existingCell.modelData.key])
-                                    color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
-                                    font.pixelSize: 12
-                                    font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
-                                    verticalAlignment: Text.AlignVCenter
-                                    horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
-                                                       : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
-                                                       : Text.AlignLeft
-                                    elide: Text.ElideRight
+                            Row {
+                                anchors.fill: parent
+                                DataGridSelectionCell {
+                                    visible: root.selectable
+                                    width: visible ? 36 : 0
+                                    height: root.rowHeight
+                                    checked: root.selectedIds.indexOf(existingRow.modelData.id) >= 0
+                                    onToggled: root.toggleSelection(existingRow.modelData)
+                                }
+                                Item {
+                                    visible: root.showRowNumber
+                                    width: visible ? root.rowNumberWidth : 0
+                                    height: root.rowHeight
+                                    Label {
+                                        anchors.centerIn: parent
+                                        text: existingRow.index + 1
+                                        color: Colors.textSecondary
+                                        font.pixelSize: 12
+                                    }
+                                }
+                                Item {
+                                    visible: root.showTypeIcon
+                                    width: visible ? root.typeIconWidth : 0
+                                    height: root.rowHeight
+                                    Icon {
+                                        anchors.centerIn: parent
+                                        width: 18
+                                        height: 18
+                                        name: root.rowTypeIcon
+                                        color: Colors.textSecondary
+                                    }
+                                }
+                                Repeater {
+                                    model: root.columns
+                                    Item {
+                                        id: existingCell
+                                        required property var modelData
+                                        width: root.columnWidth(modelData)
+                                        height: root.rowHeight
+                                        Loader {
+                                            anchors.fill: parent
+                                            anchors.leftMargin: 8
+                                            anchors.rightMargin: 8
+                                            sourceComponent: existingRow.editing && existingCell.modelData.searchable === true
+                                                             ? editSearchCell
+                                                             : existingRow.editing && existingCell.modelData.editable === true
+                                                               ? editInputCell : displayCell
+                                        }
+                                        Component {
+                                            id: displayCell
+                                            Label {
+                                                text: root.displayValue(existingCell.modelData,
+                                                        existingRow.editing
+                                                        ? root.editValue(existingCell.modelData.key, "")
+                                                        : existingRow.modelData[existingCell.modelData.key])
+                                                color: existingCell.modelData.key === "reference" ? Colors.navy : Colors.text
+                                                font.pixelSize: 12
+                                                font.weight: existingCell.modelData.key === "description" ? Font.Medium : Font.Normal
+                                                verticalAlignment: Text.AlignVCenter
+                                                horizontalAlignment: existingCell.modelData.alignment === "right" ? Text.AlignRight
+                                                                   : existingCell.modelData.alignment === "center" ? Text.AlignHCenter
+                                                                   : Text.AlignLeft
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+                                        Component {
+                                            id: editSearchCell
+                                            SearchEntryField {
+                                                searchKey: existingCell.modelData.key
+                                                inlineMode: true
+                                                minimumSearchLength: root.minimumSearchLength
+                                                value: String(root.editDraft[searchKey] ?? "")
+                                                primaryKey: root.suggestionPrimaryKey
+                                                secondaryKey: root.suggestionSecondaryKey
+                                                suggestions: root.searchResults.field === searchKey &&
+                                                             root.searchResults.query === text
+                                                             ? root.searchResults.items || [] : []
+                                                searchBusy: root.searchBusy
+                                                onValueEdited: function(value) { root.setEditValue(searchKey, value); }
+                                                onSearchRequested: function(key, query) { root.searchRequested(key, query); }
+                                                onSuggestionSelected: function(suggestion) { root.selectEditSuggestion(suggestion); }
+                                                onSubmitRequested: root.requestUpdate(existingRow.modelData)
+                                            }
+                                        }
+                                        Component {
+                                            id: editInputCell
+                                            SearchEntryInlineField {
+                                                text: String(root.editDraft[existingCell.modelData.key] ?? "")
+                                                inputType: existingCell.modelData.inputType || "text"
+                                                suffix: existingCell.modelData.suffix || ""
+                                                horizontalAlignment: existingCell.modelData.alignment === "right"
+                                                                     ? TextInput.AlignRight : TextInput.AlignLeft
+                                                onTextEdited: root.setEditValue(existingCell.modelData.key, text)
+                                                onAccepted: root.requestUpdate(existingRow.modelData)
+                                            }
+                                        }
+                                    }
+                                }
+                                Row {
+                                    visible: root.showActions
+                                    width: visible ? root.actionWidth : 0
+                                    height: root.rowHeight
+                                    spacing: 2
+                                    opacity: existingRow.editing || rowHover.hovered ? 1 : 0
+                                    IconButton {
+                                        visible: root.allowEdit && !root.readOnly && !existingRow.editing
+                                        iconName: "edit"
+                                        tooltip: qsTr("Modifier")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: {
+                                            root.beginEdit(existingRow.modelData);
+                                            root.editRequested(existingRow.modelData);
+                                        }
+                                    }
+                                    IconButton {
+                                        visible: existingRow.editing && !root.readOnly
+                                        iconName: "check"
+                                        tooltip: qsTr("Enregistrer la ligne")
+                                        enabled: root.editEnabled
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.requestUpdate(existingRow.modelData)
+                                    }
+                                    IconButton {
+                                        visible: existingRow.editing && !root.readOnly
+                                        iconName: "close"
+                                        tooltip: qsTr("Annuler la modification")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.finishEdit()
+                                    }
+                                    IconButton {
+                                        visible: root.allowRemove && !root.readOnly && !existingRow.editing
+                                        iconName: "delete"
+                                        tooltip: qsTr("Supprimer")
+                                        width: 32
+                                        height: 32
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: root.removeRequested(existingRow.modelData)
+                                    }
                                 }
                             }
-                        }
-                        Row {
-                            visible: root.showActions
-                            width: visible ? root.actionWidth : 0
-                            height: root.rowHeight
-                            spacing: 2
-                            opacity: rowHover.hovered ? 1 : 0
-                            IconButton {
-                                visible: root.allowEdit && !root.readOnly
-                                iconName: "edit"
-                                tooltip: qsTr("Modifier")
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.editRequested(existingRow.modelData)
-                            }
-                            IconButton {
-                                visible: root.allowRemove && !root.readOnly
-                                iconName: "delete"
-                                tooltip: qsTr("Supprimer")
-                                width: 32
-                                height: 32
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: root.removeRequested(existingRow.modelData)
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 1
+                                color: Colors.border
                             }
                         }
-                    }
-                    Rectangle {
-                        anchors.bottom: parent.bottom
-                        width: parent.width
-                        height: 1
-                        color: Colors.border
                     }
                 }
             }
 
             Rectangle {
                 id: draftRow
+                objectName: "articleEntryRow"
                 visible: !root.readOnly
                 width: tableContent.width
                 height: visible ? root.rowHeight : 0
                 color: Colors.canvas
                 Row {
                     anchors.fill: parent
+                    Item {
+                        visible: root.selectable
+                        width: visible ? 36 : 0
+                        height: root.rowHeight
+                    }
                     Item {
                         visible: root.showRowNumber
                         width: visible ? root.rowNumberWidth : 0
@@ -360,6 +555,8 @@ Rectangle {
                                 anchors.topMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
                                 anchors.bottomMargin: draftCell.modelData.searchable === true || draftCell.modelData.editable === true ? 0 : 4
                                 sourceComponent: draftCell.modelData.searchable === true ? searchCell
+                                               : draftCell.modelData.inputType === "choice" ? choiceCell
+                                               : draftCell.modelData.inputType === "date" ? dateCell
                                                : draftCell.modelData.editable === true ? inputCell : valueCell
                             }
                             Component {
@@ -368,6 +565,9 @@ Rectangle {
                                     objectName: "searchEntry_" + searchKey
                                     searchKey: draftCell.modelData.key
                                     inlineMode: true
+                                    preferPopupAbove: bodyScroll.contentHeight > bodyScroll.height
+                                    maxPopupHeight: preferPopupAbove
+                                                    ? Math.max(80, Math.min(240, bodyScroll.height)) : 240
                                     Component.onCompleted: root.registerSearchField(searchKey, this)
                                     Component.onDestruction: root.unregisterSearchField(searchKey, this)
                                     minimumSearchLength: root.minimumSearchLength
@@ -392,12 +592,60 @@ Rectangle {
                                 }
                             }
                             Component {
+                                id: choiceCell
+                                AzenzComboBox {
+                                    id: choiceInput
+                                    objectName: "choiceEntry_" + draftCell.modelData.key
+                                    model: draftCell.modelData.options || []
+                                    function syncFromDraft() {
+                                        currentIndex = Math.max(0, model.indexOf(root.draftValue(draftCell.modelData.key, "")));
+                                    }
+                                    Component.onCompleted: syncFromDraft()
+                                    Connections {
+                                        target: root
+                                        function onDraftChanged() { choiceInput.syncFromDraft(); }
+                                    }
+                                    onActivated: root.setDraftValue(draftCell.modelData.key, currentText, false)
+                                }
+                            }
+                            Component {
+                                id: dateCell
+                                DateInput {
+                                    id: dateInput
+                                    objectName: "dateEntry_" + draftCell.modelData.key
+                                    function syncFromDraft() {
+                                        var raw = String(root.draftValue(draftCell.modelData.key, ""));
+                                        if (raw === (hasValue ? Qt.formatDate(value, "dd/MM/yyyy") : ""))
+                                            return;
+                                        var parts = raw.split("/");
+                                        if (parts.length === 3) {
+                                            value = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+                                            hasValue = true;
+                                        } else
+                                            hasValue = false;
+                                    }
+                                    Component.onCompleted: syncFromDraft()
+                                    Connections {
+                                        target: root
+                                        function onDraftChanged() { dateInput.syncFromDraft(); }
+                                    }
+                                    onDateEdited: function(value) {
+                                        root.setDraftValue(draftCell.modelData.key,
+                                                           Qt.formatDate(value, "dd/MM/yyyy"), false);
+                                    }
+                                    onDateCleared: root.setDraftValue(draftCell.modelData.key, "", false)
+                                }
+                            }
+                            Component {
                                 id: inputCell
                                 SearchEntryInlineField {
+                                    Component.onCompleted: root.registerSearchField(draftCell.modelData.key, this)
+                                    Component.onDestruction: root.unregisterSearchField(draftCell.modelData.key, this)
                                     text: String(root.draftValue(draftCell.modelData.key,
                                                  draftCell.modelData.defaultValue ?? ""))
                                     inputType: draftCell.modelData.inputType || "text"
-                                    suffix: draftCell.modelData.suffix || ""
+                                    suffix: draftCell.modelData.inputSuffix !== undefined
+                                            ? draftCell.modelData.inputSuffix : draftCell.modelData.suffix || ""
                                     placeholderText: draftCell.modelData.placeholder || ""
                                     horizontalAlignment: draftCell.modelData.alignment === "right"
                                                          ? TextInput.AlignRight : TextInput.AlignLeft

@@ -9,17 +9,15 @@ ApplicationWindow {
     height: 1000
     minimumWidth: 1200
     minimumHeight: 700
-    visible: true
+    visibility: Window.Maximized
     title: "AZENZ • Aperçu Connexion & Ventes"
     flags: Qt.Window | Qt.FramelessWindowHint
     Component.onCompleted: Qt.callLater(function () {
-        if (window.visibility === Window.Windowed) {
-            window.x = Screen.virtualX + (Screen.width - window.width) / 2;
-            window.y = Screen.virtualY + (Screen.height - window.height) / 2;
-        }
+        window.normalBounds = Qt.rect(Screen.virtualX + (Screen.width - 1600) / 2,
+                                      Screen.virtualY + (Screen.height - 1000) / 2, 1600, 1000);
     })
     property int visibilityBeforeFullScreen: Window.Windowed
-    property var normalBounds: Qt.rect(0, 0, width, height)
+    property var normalBounds: Qt.rect(0, 0, 1600, 1000)
     function rememberNormalBounds() {
         if (visibility === Window.Windowed)
             normalBounds = Qt.rect(x, y, width, height);

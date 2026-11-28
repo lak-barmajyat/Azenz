@@ -5,7 +5,6 @@ NouveauDocView {
     id: root
     objectName: "nouveauDocScreen"
     property bool previewMode: false
-    property int editingLineId: -1
     property int editingPaymentId: -1
     property string documentMode: "new"
     property int sourceDocumentId: 0
@@ -44,11 +43,12 @@ NouveauDocView {
         });
     }) : []
     computedDraft: backend ? backend.computeLine(linesTable.draft) : ({})
+    computedEdit: backend ? backend.computeLine(linesTable.editDraft) : ({})
     totalHTText: formatMoney(backend ? backend.totals.ht : 0)
     totalVATText: formatMoney(backend ? backend.totals.vat : 0)
     totalTTCText: formatMoney(backend ? backend.totals.ttc : 0)
-    editingLine: editingLineId >= 0
     canAddLine: backend !== null && linesTable.selectedSuggestion !== null && backend.validLine(linesTable.draft)
+    canUpdateLine: backend !== null && backend.validLine(linesTable.editDraft)
 
     Component.onCompleted: Qt.callLater(function () {
         if (!root.opened)
@@ -60,6 +60,7 @@ NouveauDocView {
         documentMode = action === "duplicate" ? "duplicate" : action === "edit" ? "edit" : "new";
         sourceDocumentId = documentId || 0;
         loadedHeader = {};
+        linesTable.finishEdit();
         initializingDocument = true;
         clientCode = "";
         clientPicker.currentIndex = -1;
@@ -130,22 +131,12 @@ NouveauDocView {
         }
     }
 
-    function editLine(line) {
-        editingLineId = line.id;
-        linesTable.draft = Object.assign({}, line);
-        linesTable.selectedSuggestion = line;
-        activeTab = 0;
-        Qt.callLater(linesTable.focusFirstSearch);
-    }
-
     function removeLine(line) {
         if (!backend)
             return;
         backend.removeLine(line.id);
-        if (editingLineId === line.id) {
-            editingLineId = -1;
-            linesTable.clearDraft();
-        }
+        if (linesTable.editingRowId === line.id)
+            linesTable.finishEdit();
     }
 
     function addPayment() {
@@ -301,11 +292,12 @@ NouveauDocView {
                 root.backend.searchArticles(field, query);
         }
         function onAddRequested(values, suggestion) {
-            if (root.backend && root.backend.addLine(values, suggestion || {}, root.editingLineId))
-                root.editingLineId = -1;
+            if (root.backend)
+                root.backend.addLine(values, suggestion || {}, -1);
         }
-        function onEditRequested(line) {
-            root.editLine(line);
+        function onUpdateRequested(row, values, suggestion) {
+            if (root.backend && root.backend.addLine(values, suggestion, row.id))
+                root.linesTable.finishEdit();
         }
         function onRemoveRequested(line) {
             root.removeLine(line);

@@ -7,9 +7,11 @@ ReglementsView {
     objectName: "reglementsScreen"
     property bool previewMode: false
     property var sourceRows: []
+    property var localRows: []
+    property int nextLocalId: -1
     property var appliedFilters: ({})
     readonly property string category: activeTab === 1 ? "fournisseurs" : "clients"
-    readonly property var categoryRows: sourceRows.filter(function(row) { return row.category === root.category; })
+    readonly property var categoryRows: sourceRows.concat(localRows).filter(function(row) { return row.category === root.category; })
     readonly property var filteredRows: categoryRows.filter(function(row) { return root.matches(row); })
     readonly property real totalAmount: categoryRows.reduce(function(sum, row) { return sum + Number(row.amount || 0); }, 0)
     readonly property real affectedAmount: categoryRows.reduce(function(sum, row) { return sum + (row.affected ? Number(row.amount || 0) : 0); }, 0)
@@ -19,8 +21,12 @@ ReglementsView {
     signal filterApplied(var filters)
 
     rows: filteredRows
-    clientCount: sourceRows.filter(function(row) { return row.category === "clients"; }).length
-    supplierCount: sourceRows.filter(function(row) { return row.category === "fournisseurs"; }).length
+    canAddPayment: String(grid.draft.code || "").trim() !== "" &&
+                   String(grid.draft.tier || "").trim() !== "" &&
+                   String(grid.draft.date || "").trim() !== "" &&
+                   Number(String(grid.draft.amount || "").replace(/\s/g, "").replace(",", ".")) > 0
+    clientCount: sourceRows.concat(localRows).filter(function(row) { return row.category === "clients"; }).length
+    supplierCount: sourceRows.concat(localRows).filter(function(row) { return row.category === "fournisseurs"; }).length
     totalText: formatMoney(totalAmount)
     affectedText: formatMoney(affectedAmount)
     remainingText: formatMoney(totalAmount - affectedAmount)
@@ -83,11 +89,33 @@ ReglementsView {
         return filteredRows.filter(function(row) { return grid.selectedIds.indexOf(row.id) >= 0; });
     }
 
+    function addLocalPayment(values) {
+        var amount = Number(String(values.amount || "").replace(/\s/g, "").replace(",", "."));
+        if (!isFinite(amount) || amount <= 0)
+            return;
+        var payment = {
+            id: nextLocalId--,
+            category: category,
+            code: String(values.code || "").trim(),
+            tierCode: "",
+            tier: String(values.tier || "").trim(),
+            mode: values.mode,
+            status: values.status,
+            date: values.date,
+            amount: amount,
+            comment: String(values.comment || "").trim(),
+            affected: false
+        };
+        localRows = localRows.concat([payment]);
+        actionRequested("inline-add", [payment]);
+    }
+
     onActiveTabChanged: {
         if (filters) {
             filters.clearQueries();
             appliedFilters = {};
             grid.selectedIds = [];
+            grid.clearDraft();
         }
     }
     onPreviewModeChanged: if (previewMode) {
@@ -100,7 +128,7 @@ ReglementsView {
     }
 
     Connections { target: root.filters; function onApplyRequested() { root.applyFilters(); } function onResetRequested() { root.resetFilters(); } }
-    Connections { target: root.newButton; function onClicked() { root.actionRequested("new", []); } }
+    Connections { target: root.newButton; function onClicked() { root.grid.focusEntry(); } }
     Connections { target: root.editButton; function onClicked() { root.actionRequested("edit", root.selectedRows()); } }
     Connections { target: root.deleteButton; function onClicked() { root.actionRequested("delete", root.selectedRows()); } }
     Connections { target: root.duplicateButton; function onClicked() { root.actionRequested("duplicate", root.selectedRows()); } }
@@ -109,6 +137,7 @@ ReglementsView {
     Connections { target: root.backButton; function onClicked() { root.backRequested(); } }
     Connections {
         target: root.grid
+        function onAddRequested(values) { root.addLocalPayment(values); }
         function onRowActivated(record) { root.actionRequested("edit", [record]); }
         function onContextMenuRequested(record, x, y) {
             rowMenu.targetRecord = record;
