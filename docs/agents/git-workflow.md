@@ -1,5 +1,13 @@
 # Git Workflow — Azenz
 
+Read this file before changing any file or performing a Git operation.
+
+## Before Editing
+- Check the current branch and working tree.
+- Alert the user before editing if the branch is `main`, belongs to another task, or contains changes that should be isolated.
+- Recommend creating or switching to a task-specific branch when needed, but never switch branches without explicit approval.
+- Point out unrelated uncommitted changes and keep new work separate.
+
 ## Main Branch
 - `main` must always remain stable and working.
 - Never develop directly on `main`.
@@ -13,13 +21,14 @@
 - Keep branches focused; avoid unrelated changes.
 
 ## Commits and Pull Requests
-- Write short, meaningful commit messages.
+- When a coherent unit of work is complete and verified, remind the user that it is a good time to commit.
+- Suggest a concise Conventional Commit message with an appropriate type, such as `feat`, `fix`, `docs`, `style`, `refactor`, `test`, or `chore`.
 - Never commit unrelated changes or sensitive information.
 - Never commit, push, or merge without explicit user approval.
 - Resolve conflicts and failing checks before merging.
 
 ## Existing Work
 - Preserve all existing uncommitted changes.
-- Never discard or overwrite another developer's work.
+- Never discard, overwrite, stash, or commit another developer's work without explicit approval.
 - Never force-push, reset destructively, or rewrite shared Git history without explicit approval.
 - If existing changes conflict with the task, ask before proceeding.
