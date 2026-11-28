@@ -16,6 +16,7 @@ Azenz is a desktop ERP application built with:
 - Run `make check` after any edit.
 - Never modify database schemas without following migration rules.
 - Never commit or push unless explicitly requested.
+- Always use Conventional Commits for commit messages (for example, `feat(ui): add stock entry table`).
 
 ### Git Hygiene Reminders
 - Before making changes, check the current branch and working tree.
