@@ -12,13 +12,23 @@ from sqlalchemy.orm import Session
 from database.models.p_utilisateurs import PUtilisateurs
 from database.session import with_session
 from services.logger import get_logger
+from services.user_session import UserSession
 
 
 class _AuthenticationThread(QThread):
-    def __init__(self, operation: Callable[[], tuple[bool, str, str]], parent: QObject) -> None:
+    def __init__(
+        self,
+        operation: Callable[[], tuple[bool, str, str, int | None]],
+        parent: QObject,
+    ) -> None:
         super().__init__(parent)
-        self._operation: Callable[[], tuple[bool, str, str]] | None = operation
-        self.result = (False, "service_unavailable", "")
+        self._operation: Callable[[], tuple[bool, str, str, int | None]] | None = operation
+        self.result: tuple[bool, str, str, int | None] = (
+            False,
+            "service_unavailable",
+            "",
+            None,
+        )
 
     def run(self) -> None:
         try:
@@ -32,9 +42,12 @@ class LoginModel(QObject):
     authenticationCompleted = Signal(bool, str, str)
     busyChanged = Signal()
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(
+        self, parent: QObject | None = None, *, user_session: UserSession | None = None
+    ) -> None:
         super().__init__(parent)
         self._logger = get_logger(__name__)
+        self._user_session = user_session or UserSession()
         self._worker: _AuthenticationThread | None = None
 
     @Property(bool, notify=busyChanged)
@@ -57,7 +70,12 @@ class LoginModel(QObject):
             return
         self._worker = None
         self.busyChanged.emit()
-        self.authenticationCompleted.emit(*worker.result)
+        success, message, username, user_id = worker.result
+        if success and user_id is not None:
+            self._user_session.authenticate(user_id)
+        else:
+            self._user_session.clear()
+        self.authenticationCompleted.emit(success, message, username)
         worker.deleteLater()
 
     @Slot()
@@ -67,18 +85,21 @@ class LoginModel(QObject):
             self._worker.wait()
             self._complete()
 
-    def _authenticate(self, username: str, password: str) -> tuple[bool, str, str]:
+    def _authenticate(self, username: str, password: str) -> tuple[bool, str, str, int | None]:
         try:
-            name = self._authenticate_user(username.strip(), password)
+            user = self._authenticate_user(username.strip(), password)
         except (SQLAlchemyError, RuntimeError, ValueError):
             self._logger.exception("Authentication query failed")
-            return False, "service_unavailable", ""
-        if name is None:
-            return False, "invalid_credentials", ""
-        return True, "", name
+            return False, "service_unavailable", "", None
+        if user is None:
+            return False, "invalid_credentials", "", None
+        user_id, name = user
+        return True, "", name, user_id
 
     @with_session()
-    def _authenticate_user(self, username: str, password: str, *, session: Session) -> str | None:
+    def _authenticate_user(
+        self, username: str, password: str, *, session: Session
+    ) -> tuple[int, str] | None:
         """The worker creates, commits and closes its own session via the decorator."""
         user = session.scalar(
             select(PUtilisateurs).where(
@@ -97,4 +118,4 @@ class LoginModel(QObject):
         if not matches:
             return None
         user.date_derniere_connexion = datetime.now(timezone.utc).replace(tzinfo=None)
-        return user.nom_utilisateur
+        return user.id, user.nom_utilisateur

@@ -16,6 +16,12 @@ Applies to Python code in feature windows, especially `model.py`.
 - QML handles visual feedback (toasts, dialogs, loading indicators).
 - Never manipulate QML UI elements directly from Python.
 
+## Authenticated User
+- Models that create attributed business records receive the shared
+  `services.user_session.UserSession` from the application bootstrap.
+- Snapshot `user_session.user_id` when saving and store it in the existing attribution
+  fields; do not re-query credentials or duplicate authentication state.
+
 ## Database
 - Write database queries in `model.py` using SQLAlchemy.
 - Use the existing `@with_session()` decorator for database operations, following `database/session.py`.
@@ -39,15 +45,12 @@ Applies to Python code in feature windows, especially `model.py`.
 
 ## Logging
 - Use the existing logger for technical errors and approved operational events.
-- **Ask the project owner before adding logs for new business actions**, such as invoice creation.
+- Application log files are for technical diagnostics, not for recording business actions.
+- Do not add business-action logs, such as invoice or stock-document creation, to application log files.
 - Never log credentials or sensitive data.
 
 ## Reference Implementation
 - No canonical reference implementation exists yet.
 - Existing implementations are not assumed to follow these rules.
 - Once a compliant implementation is approved, document its exact file path here.
-<<<<<<< HEAD
 - Until then, follow this document as the source of truth.
-=======
-- Until then, follow this document as the source of truth.
->>>>>>> main

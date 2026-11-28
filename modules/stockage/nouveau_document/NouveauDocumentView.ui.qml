@@ -10,7 +10,9 @@ Rectangle {
     property var rows: []
     property var columns: []
     property var articleSuggestions: []
+    property var documentTypes: []
     property string formError: ""
+    property bool busy: false
     property alias codeField: code
     property alias typeField: type
     property alias dateField: documentDate
@@ -54,7 +56,7 @@ Rectangle {
                         width: 185
                         spacing: 4
                         Label { text: qsTr("Type document"); font.pixelSize: 12 }
-                        AzenzComboBox { id: type; width: parent.width; model: [qsTr("Entrée de stock"), qsTr("Sortie de stock"), qsTr("Ajustement"), qsTr("Inventaire")]; currentIndex: 0 }
+                        AzenzComboBox { id: type; width: parent.width; model: root.documentTypes; currentIndex: -1 }
                     }
                     Column {
                         width: 125
@@ -68,7 +70,7 @@ Rectangle {
                         width: 100
                         spacing: 4
                         Item { height: 16; width: 1 }
-                        AzenzButton { id: validate; text: qsTr("Valider"); iconName: "check"; width: parent.width }
+                        AzenzButton { id: validate; text: qsTr("Valider"); iconName: "check"; width: parent.width; enabled: !root.busy }
                     }
                 }
             }

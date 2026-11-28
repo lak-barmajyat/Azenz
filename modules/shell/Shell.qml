@@ -10,6 +10,8 @@ ShellView {
     property var stockArticles: []
     property string documentAction: "new"
     property int documentId: 0
+    property string stockDocumentAction: "new"
+    property int stockDocumentId: 0
     documentPageTitle: documentAction === "edit" ? qsTr("Modifier le document")
                        : documentAction === "duplicate" ? qsTr("Dupliquer le document")
                        : qsTr("Nouveau document")
@@ -71,9 +73,12 @@ ShellView {
                 item.sourceRows = root.stockRows;
                 item.previewMode = root.previewMode;
             } else if (root.currentPage === "stock/new") {
-                item.sourceRows = root.stockDocumentLines;
-                item.articles = root.stockArticles;
                 item.previewMode = root.previewMode;
+                if (root.previewMode) {
+                    item.sourceRows = root.stockDocumentLines;
+                    item.articles = root.stockArticles;
+                }
+                item.openDocument(root.stockDocumentAction, root.stockDocumentId);
             }
         }
         Connections {
@@ -137,9 +142,15 @@ ShellView {
             ignoreUnknownSignals: true
             function onBackRequested() { root.showPage("dashboard"); }
             function onActionRequested(action, records) {
-                if (action === "new")
+                if (action === "new") {
+                    root.stockDocumentAction = "new";
+                    root.stockDocumentId = 0;
                     root.showPage("stock/new");
-                else
+                } else if (["edit", "open", "duplicate"].indexOf(action) >= 0 && records.length === 1) {
+                    root.stockDocumentAction = action === "duplicate" ? "duplicate" : "edit";
+                    root.stockDocumentId = records[0].id;
+                    root.showPage("stock/new");
+                } else
                     root.stockActionRequested(action, records);
             }
         }

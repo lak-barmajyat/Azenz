@@ -20,6 +20,7 @@ from database.models.p_types_documents import PTypesDocuments
 from database.session import with_session
 from services.code_generation import next_code
 from services.logger import get_logger
+from services.user_session import UserSession
 
 
 class _LoadThread(QThread):
@@ -55,10 +56,17 @@ class NouveauDocModel(QObject):
     documentUnchanged = Signal()
     saveFailed = Signal(str)
 
-    def __init__(self, parent: QObject | None = None, *, preview: bool = False) -> None:
+    def __init__(
+        self,
+        parent: QObject | None = None,
+        *,
+        preview: bool = False,
+        user_session: UserSession | None = None,
+    ) -> None:
         super().__init__(parent)
         self._logger = get_logger(__name__)
         self._preview = preview
+        self._user_session = user_session
         self._closing = False
         self._code_worker: _LoadThread | None = None
         self._requested_type = ""
@@ -577,6 +585,12 @@ class NouveauDocModel(QObject):
         self._header_draft = dict(header)
         self._refresh_change_flag()
 
+    @Slot("QVariantMap")
+    def captureDraftBaseline(self, header: dict[str, Any]) -> None:
+        self._header_draft = dict(header)
+        self._original_state = self._change_state(self._header_draft)
+        self._set_has_changes(False)
+
     @staticmethod
     def _number(value: Any) -> Decimal:
         text = "".join(str(value).replace("MAD", "").split())
@@ -743,6 +757,7 @@ class NouveauDocModel(QObject):
                 "automaticCode": self._editing_document_id is None
                 and header["code"].strip() == self._document_code,
                 "editingDocumentId": self._editing_document_id,
+                "userId": self._user_session.user_id if self._user_session else None,
             }
         )
         self._header_draft = dict(header)
@@ -857,6 +872,7 @@ class NouveauDocModel(QObject):
             tier_id=client_id,
             status="BROUILLON",
             date_document=datetime.combine(date.fromisoformat(draft["date"]), time()),
+            utilisateur_id=draft["userId"],
         )
         session.add(document)
         session.flush()
@@ -884,6 +900,7 @@ class NouveauDocModel(QObject):
                     code_tva=row["tvaCode"],
                     tva_percentage=vat,
                     impact_stock=int(bool(document_type.impacte_stock and article.suivi_stock)),
+                    cree_par=draft["userId"],
                 )
             )
         session.flush()
@@ -991,6 +1008,7 @@ class NouveauDocModel(QObject):
                     document_id=document.id,
                     numero_ligne=next_line_number,
                     code_tva=row["tvaCode"],
+                    cree_par=draft["userId"],
                 )
                 next_line_number += 1
                 session.add(line)
@@ -1014,6 +1032,7 @@ class NouveauDocModel(QObject):
         document.code_document = code
         document.tier_id = client_id
         document.date_document = datetime.combine(date.fromisoformat(draft["date"]), time())
+        document.utilisateur_id = draft["userId"]
         session.flush()
         ht, vat_total, gross = session.execute(
             select(

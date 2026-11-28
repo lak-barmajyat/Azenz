@@ -11,6 +11,7 @@ Rectangle {
     property var columns: []
     property var documentTypes: []
     property string filterError: ""
+    property bool busy: false
     property alias grid: grid
     property alias codeFilter: codeFilter
     property alias typeFilter: typeFilter
@@ -24,7 +25,6 @@ Rectangle {
     property alias duplicateButton: duplicate
     property alias printButton: printAction
     property alias exportButton: exportAction
-    property alias columnsButton: columnsAction
     property alias refreshButton: refresh
     property alias backButton: back
     property alias footerNewButton: footerNew
@@ -43,14 +43,14 @@ Rectangle {
                 anchors.leftMargin: 12
                 anchors.rightMargin: 12
                 spacing: 6
-                AzenzButton { id: create; text: qsTr("Nouveau"); iconName: "add"; size: "compact" }
+                AzenzButton { id: create; text: qsTr("Nouveau"); iconName: "add"; size: "compact"; enabled: !root.busy }
                 AzenzButton {
                     id: edit
                     text: qsTr("Modifier")
                     iconName: "edit"
                     variant: "secondary"
                     size: "compact"
-                    enabled: grid.selectionCount === 1
+                    enabled: !root.busy && grid.selectionCount === 1
                 }
                 AzenzButton {
                     id: remove
@@ -58,7 +58,7 @@ Rectangle {
                     iconName: "delete"
                     variant: "danger"
                     size: "compact"
-                    enabled: grid.selectionCount > 0
+                    enabled: !root.busy && grid.selectionCount > 0
                 }
                 AzenzButton {
                     id: duplicate
@@ -66,7 +66,7 @@ Rectangle {
                     iconName: "copy"
                     variant: "secondary"
                     size: "compact"
-                    enabled: grid.selectionCount === 1
+                    enabled: !root.busy && grid.selectionCount === 1
                 }
                 AzenzButton {
                     id: printAction
@@ -74,7 +74,7 @@ Rectangle {
                     iconName: "print"
                     variant: "secondary"
                     size: "compact"
-                    enabled: grid.selectionCount > 0
+                    enabled: !root.busy && grid.selectionCount > 0
                 }
                 AzenzButton {
                     id: exportAction
@@ -82,22 +82,16 @@ Rectangle {
                     iconName: "table"
                     variant: "secondary"
                     size: "compact"
-                    enabled: root.rows.length > 0
+                    enabled: !root.busy && root.rows.length > 0
                 }
                 Item { Layout.fillWidth: true }
-                AzenzButton {
-                    id: columnsAction
-                    iconName: "columns"
-                    variant: "icon"
-                    size: "compact"
-                    tooltip: qsTr("Afficher les colonnes")
-                }
                 AzenzButton {
                     id: refresh
                     iconName: "refresh"
                     variant: "icon"
                     size: "compact"
                     tooltip: qsTr("Actualiser")
+                    enabled: !root.busy
                 }
             }
         }
@@ -227,6 +221,7 @@ Rectangle {
                     text: qsTr("Nouveau")
                     iconName: "add"
                     size: "compact"
+                    enabled: !root.busy
                 }
             }
         }
