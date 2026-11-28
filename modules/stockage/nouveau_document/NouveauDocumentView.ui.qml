@@ -12,6 +12,7 @@ Rectangle {
     property var articleSuggestions: []
     property var documentTypes: []
     property string formError: ""
+    property bool busy: false
     property alias codeField: code
     property alias typeField: type
     property alias dateField: documentDate
@@ -69,7 +70,7 @@ Rectangle {
                         width: 100
                         spacing: 4
                         Item { height: 16; width: 1 }
-                        AzenzButton { id: validate; text: qsTr("Valider"); iconName: "check"; width: parent.width }
+                        AzenzButton { id: validate; text: qsTr("Valider"); iconName: "check"; width: parent.width; enabled: !root.busy }
                     }
                 }
             }

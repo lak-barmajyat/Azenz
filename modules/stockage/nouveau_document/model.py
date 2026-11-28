@@ -19,6 +19,7 @@ from database.models.p_types_documents import PTypesDocuments
 from database.session import with_session
 from services.code_generation import next_code
 from services.logger import get_logger
+from services.user_session import UserSession
 
 
 class _Worker(QThread):
@@ -44,10 +45,17 @@ class NouveauDocumentModel(QObject):
     documentLoaded = Signal(dict)
     documentSaved = Signal(int, str)
 
-    def __init__(self, parent: QObject | None = None, *, preview: bool = False) -> None:
+    def __init__(
+        self,
+        parent: QObject | None = None,
+        *,
+        preview: bool = False,
+        user_session: UserSession | None = None,
+    ) -> None:
         super().__init__(parent)
         self._logger = get_logger(__name__)
         self._preview = preview
+        self._user_session = user_session
         self._types: list[dict[str, Any]] = []
         self._document_code = ""
         self._requested_type = ""
@@ -107,6 +115,7 @@ class NouveauDocumentModel(QObject):
         snapshot["automaticCode"] = (
             editing_document_id <= 0 and str(draft.get("code") or "").strip() == self._document_code
         )
+        snapshot["userId"] = self._user_session.user_id if self._user_session else None
         self._start("save", lambda: self._save(snapshot))
 
     @Slot(str)
@@ -432,6 +441,7 @@ class NouveauDocumentModel(QObject):
                 code_document=code,
                 status="VALIDE",
                 date_document=datetime.combine(parsed_date, time()),
+                utilisateur_id=draft["userId"],
             )
             session.add(document)
             session.flush()
@@ -448,6 +458,7 @@ class NouveauDocumentModel(QObject):
             document.type_document_id = document_type.id
             document.code_document = code
             document.date_document = datetime.combine(parsed_date, time())
+            document.utilisateur_id = draft["userId"]
         document.commentaire = str(draft.get("comment") or "").strip() or None
         document.status = "VALIDE"
         document.montant_ht = document.montant_remise = document.montant_net_ht = Decimal(0)
@@ -478,6 +489,7 @@ class NouveauDocumentModel(QObject):
                 prix_unitaire_ht=Decimal(0),
                 impact_stock=1,
                 commentaire=str(row.get("comment") or "").strip() or None,
+                cree_par=draft["userId"],
             )
             session.add(line)
             session.flush()
@@ -493,6 +505,7 @@ class NouveauDocumentModel(QObject):
                         quantite=abs(delta),
                         date_mouvement=document.date_document,
                         description=document.commentaire or f"Document {code}",
+                        cree_par=draft["userId"],
                     )
                 )
         now = datetime.now()

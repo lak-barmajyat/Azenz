@@ -16,6 +16,12 @@ Applies to Python code in feature windows, especially `model.py`.
 - QML handles visual feedback (toasts, dialogs, loading indicators).
 - Never manipulate QML UI elements directly from Python.
 
+## Authenticated User
+- Models that create attributed business records receive the shared
+  `services.user_session.UserSession` from the application bootstrap.
+- Snapshot `user_session.user_id` when saving and store it in the existing attribution
+  fields; do not re-query credentials or duplicate authentication state.
+
 ## Database
 - Write database queries in `model.py` using SQLAlchemy.
 - Use the existing `@with_session()` decorator for database operations, following `database/session.py`.

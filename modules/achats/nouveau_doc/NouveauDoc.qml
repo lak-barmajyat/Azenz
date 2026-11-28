@@ -12,6 +12,7 @@ NouveauDocView {
     property var loadedHeader: ({})
     property bool initializingDocument: false
     property bool opened: false
+    property bool baselinePending: false
     // Installed by the Python launcher before loading the frame.
     // qmllint disable unqualified
     readonly property var backend: typeof nouveauDocAchatsModel !== "undefined" ? nouveauDocAchatsModel : null
@@ -61,6 +62,7 @@ NouveauDocView {
         sourceDocumentId = documentId || 0;
         loadedHeader = {};
         initializingDocument = true;
+        baselinePending = documentMode === "new";
         supplierCode = "";
         supplierPicker.currentIndex = -1;
         documentCode = "";
@@ -208,6 +210,21 @@ NouveauDocView {
         });
     }
 
+    function hasUnsavedChanges() {
+        if (backend && backend.hasChanges)
+            return true;
+        if (documentMode === "duplicate")
+            return true;
+        return false;
+    }
+
+    function requestBack() {
+        if (hasUnsavedChanges())
+            discardChanges.open();
+        else
+            backRequested();
+    }
+
     Connections {
         target: root.backend
         function onLookupsChanged() {
@@ -220,6 +237,7 @@ NouveauDocView {
             }
         }
         function onDocumentLoaded(header) {
+            root.baselinePending = false;
             root.loadedHeader = header;
             root.applyLoadedHeader();
         }
@@ -228,6 +246,10 @@ NouveauDocView {
         }
         function onDocumentCodeChanged() {
             root.documentCode = root.backend.documentCode;
+            if (root.baselinePending && root.backend.documentCode) {
+                root.backend.captureDraftBaseline(root.headerDraft());
+                root.baselinePending = false;
+            }
             if (root.backend.documentCode)
                 root.errorMessage = "";
         }
@@ -337,7 +359,7 @@ NouveauDocView {
     Connections {
         target: root.backButton
         function onClicked() {
-            root.backRequested();
+            root.requestBack();
         }
     }
     Connections {
@@ -345,6 +367,15 @@ NouveauDocView {
         function onClicked() {
             root.saveDocument();
         }
+    }
+    AzenzDialog {
+        id: discardChanges
+        objectName: "nouveauDocAchatsDiscardChanges"
+        dialogType: "warning"
+        title: qsTr("Modifications non enregistrées")
+        message: qsTr("Voulez-vous quitter sans enregistrer vos modifications ?")
+        confirmText: qsTr("Quitter sans enregistrer")
+        onAccepted: root.backRequested()
     }
     AzenzDialog {
         id: saved

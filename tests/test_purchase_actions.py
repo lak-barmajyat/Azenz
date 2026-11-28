@@ -52,6 +52,12 @@ class PurchaseActionTests(unittest.TestCase):
         self.document_model.removeLine(1)
         self.assertTrue(self.document_model.hasChanges)
 
+    def test_new_document_baseline_tracks_later_header_changes(self) -> None:
+        self.document_model.captureDraftBaseline(self.header)
+        self.assertFalse(self.document_model.hasChanges)
+        self.document_model.updateDraftState({**self.header, "code": "BC008"})
+        self.assertTrue(self.document_model.hasChanges)
+
     def test_unchanged_edit_does_not_start_a_database_worker(self) -> None:
         unchanged = []
         self.document_model.documentUnchanged.connect(lambda: unchanged.append(True))

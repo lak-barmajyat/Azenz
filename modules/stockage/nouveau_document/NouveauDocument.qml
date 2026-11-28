@@ -1,4 +1,5 @@
 import QtQuick
+import "../../../qml/components"
 
 NouveauDocumentView {
     id: root
@@ -11,6 +12,8 @@ NouveauDocumentView {
     property int editingDocumentId: 0
     property int sourceDocumentId: 0
     property bool documentReady: false
+    property bool baselinePending: false
+    property string savedDraftState: ""
     // qmllint disable unqualified
     readonly property var backend: typeof nouveauDocumentModel !== "undefined" ? nouveauDocumentModel : null
     // qmllint enable unqualified
@@ -19,6 +22,7 @@ NouveauDocumentView {
     signal articleSearchRequested(string key, string query)
 
     rows: sourceRows
+    busy: backend ? backend.busy : false
     documentTypes: backend ? backend.documentTypes : [
         { text: qsTr("Entrée de stock"), value: "ENTREE" },
         { text: qsTr("Sortie de stock"), value: "SORTIE" },
@@ -40,6 +44,38 @@ NouveauDocumentView {
         return { code: codeField.text, type: typeField.currentValue || "",
             date: dateField.hasValue ? Qt.formatDate(dateField.value, "yyyy-MM-dd") : "",
             status: qsTr("Brouillon"), comment: commentField.text, lines: rows.slice() };
+    }
+    function draftState() {
+        return JSON.stringify(draft());
+    }
+    function captureBaseline() {
+        savedDraftState = draftState();
+        baselinePending = false;
+    }
+    function hasUnsavedChanges() {
+        if (documentMode === "duplicate")
+            return true;
+        if (savedDraftState === "")
+            return rows.length > 0 || commentField.text.trim() !== "";
+        return savedDraftState !== "" && draftState() !== savedDraftState;
+    }
+    function requestBack() {
+        if (hasUnsavedChanges()) {
+            pendingLeaveAction = "back";
+            discardChanges.open();
+        } else {
+            backRequested();
+        }
+    }
+    function requestNew() {
+        if (hasUnsavedChanges()) {
+            pendingLeaveAction = "new";
+            discardChanges.open();
+        } else {
+            openDocument("new", 0);
+            if (!backend)
+                documentRequested("new", draft());
+        }
     }
     function clearLine() {
         refField.text = "";
@@ -112,6 +148,8 @@ NouveauDocumentView {
         documentMode = action === "duplicate" ? "duplicate" : action === "edit" ? "edit" : "new";
         sourceDocumentId = documentId || 0;
         documentReady = false;
+        baselinePending = true;
+        savedDraftState = "";
         editingDocumentId = documentMode === "edit" ? documentId : 0;
         codeField.text = "";
         typeField.currentIndex = -1;
@@ -153,13 +191,11 @@ NouveauDocumentView {
                 root.documentRequested("validate", root.draft());
         }
     }
-    Connections { target: root.backButton; function onClicked() { root.backRequested(); } }
+    Connections { target: root.backButton; function onClicked() { root.requestBack(); } }
     Connections {
         target: root.newButton
         function onClicked() {
-            root.openDocument("new", 0);
-            if (!root.backend)
-                root.documentRequested("new", root.draft());
+            root.requestNew();
         }
     }
     Connections {
@@ -184,10 +220,16 @@ NouveauDocumentView {
             root.documentReady = true;
             if (root.documentMode === "duplicate")
                 root.backend.generateDocumentCode(root.typeField.currentValue || "");
-            else
+            else {
                 root.codeField.text = document.code;
+                Qt.callLater(root.captureBaseline);
+            }
         }
-        function onDocumentCodeChanged() { root.codeField.text = root.backend.documentCode; }
+        function onDocumentCodeChanged() {
+            root.codeField.text = root.backend.documentCode;
+            if (root.baselinePending && root.documentMode === "new" && root.backend.documentCode)
+                Qt.callLater(root.captureBaseline);
+        }
         function onCodeGenerationFailed() {
             root.formError = qsTr("Impossible de générer le prochain code document.");
         }
@@ -218,5 +260,25 @@ NouveauDocumentView {
                     && (root.sourceDocumentId === 0 || root.documentReady))
                 root.backend.generateDocumentCode(root.typeField.currentValue || "");
         }
+    }
+    property string pendingLeaveAction: ""
+    AzenzDialog {
+        id: discardChanges
+        objectName: "stockDocumentDiscardChanges"
+        dialogType: "warning"
+        title: qsTr("Modifications non enregistrées")
+        message: qsTr("Voulez-vous quitter sans enregistrer vos modifications ?")
+        confirmText: qsTr("Quitter sans enregistrer")
+        onAccepted: {
+            if (root.pendingLeaveAction === "new") {
+                root.openDocument("new", 0);
+                if (!root.backend)
+                    root.documentRequested("new", root.draft());
+            } else {
+                root.backRequested();
+            }
+            root.pendingLeaveAction = "";
+        }
+        onRejected: root.pendingLeaveAction = ""
     }
 }

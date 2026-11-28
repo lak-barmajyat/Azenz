@@ -27,6 +27,11 @@
 - Keep JavaScript limited to UI behavior in `.qml`.
 - Keep all ERP business logic in Python.
 - Python emits success/error signals; `.qml` handles visual feedback.
+- Editable document windows must track unsaved changes and ask for confirmation before
+  leaving or replacing a dirty document. Do not prompt after a successful save or when
+  nothing changed; use the shared `AzenzDialog` for consistent confirmation.
+- Disable save/validate actions while their backend operation is busy so one user action
+  cannot submit the same document twice.
 
 ## Figma HTML/CSS → QML
 - Treat HTML/CSS as a visual reference, not an implementation template.

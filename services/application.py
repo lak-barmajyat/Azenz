@@ -13,6 +13,7 @@ from modules.ventes.liste_ventes.model import ListeVentesModel
 from modules.ventes.nouveau_doc import NouveauDocModel
 from services.logger import get_logger
 from services.paths import PROJECT_ROOT, QML_DIR
+from services.user_session import UserSession
 
 
 def run_application(argv: list[str]) -> int:
@@ -20,16 +21,17 @@ def run_application(argv: list[str]) -> int:
     app.setApplicationName("Azenz")
     app.setOrganizationName("LakSoftware")
     engine = QQmlApplicationEngine()
-    document_model = NouveauDocModel(engine)
-    purchase_document_model = NouveauDocAchatsModel(engine)
-    stock_document_model = NouveauDocumentModel(engine)
+    user_session = UserSession()
+    document_model = NouveauDocModel(engine, user_session=user_session)
+    purchase_document_model = NouveauDocAchatsModel(engine, user_session=user_session)
+    stock_document_model = NouveauDocumentModel(engine, user_session=user_session)
     app.aboutToQuit.connect(document_model.shutdown)
     app.aboutToQuit.connect(purchase_document_model.shutdown)
     app.aboutToQuit.connect(stock_document_model.shutdown)
     engine.rootContext().setContextProperty("nouveauDocModel", document_model)
     engine.rootContext().setContextProperty("nouveauDocAchatsModel", purchase_document_model)
     engine.rootContext().setContextProperty("nouveauDocumentModel", stock_document_model)
-    model = LoginModel(engine)
+    model = LoginModel(engine, user_session=user_session)
     sales_model = ListeVentesModel(engine)
     purchase_model = ListeAchatsModel(engine)
     stock_model = ListeStockModel(engine)
