@@ -14,7 +14,7 @@ Use these rules when adding or changing a center frame. The shared shell owns th
 
 - Put **Retour** once, in the page footer beside the final action. Keep it secondary. This applies to Ventes, Nouveau document, and Règlements. Do not repeat it in the top toolbar.
 - Put creation, selection actions, refresh, print, and export in the page toolbar. The main creation or save action is orange; other actions are secondary. Disable actions that require a selection until a valid row is selected.
-- Put **Appliquer** and **Réinitialiser** in the same filter group, immediately after the last filter. Use a small reset icon with a clear tooltip; keep the apply action labelled. Do not separate these controls with totals, unrelated text, or the page toolbar. A document-wide discount has its own Apply action within the discount group.
+- Use the Règlements filter action pattern on every filter panel: a filled orange `AzenzButton` labelled **Appliquer** with the `filter` icon, immediately followed by an icon-only `IconButton` with the `refresh` icon and a **Réinitialiser les filtres** tooltip. Keep both controls together after the last filter, aligned with the inputs; let Appliquer fill its action slot and keep Réinitialiser compact. Do not separate them with totals, unrelated text, or the page toolbar. A document-wide discount has its own Apply action within the discount group.
 - The sidebar is the single module navigation surface. The shell heading reflects the destination. A page-specific Retour action leads to that page's parent; it is not a second sidebar.
 
 ## Sidebar motion and Réduire

@@ -144,17 +144,28 @@ Rectangle {
                     width: 138
                     height: 30
                 }
-                AzenzButton {
-                    id: apply
-                    text: qsTr("Appliquer")
-                    variant: "secondary"
-                    size: "compact"
-                }
-                IconButton {
-                    id: reset
-                    iconName: "close"
-                    size: "compact"
-                    tooltip: qsTr("Réinitialiser les filtres")
+                Row {
+                    width: Math.min(280, filters.width)
+                    height: 30
+                    spacing: 8
+                    AzenzButton {
+                        id: apply
+                        objectName: "achatsApplyFilter"
+                        width: parent.width - reset.width - parent.spacing
+                        height: parent.height
+                        text: qsTr("Appliquer")
+                        iconName: "filter"
+                        size: "compact"
+                    }
+                    IconButton {
+                        id: reset
+                        objectName: "achatsResetFilter"
+                        width: 30
+                        height: parent.height
+                        iconName: "refresh"
+                        size: "compact"
+                        tooltip: qsTr("Réinitialiser les filtres")
+                    }
                 }
             }
         }
