@@ -310,7 +310,8 @@ Rectangle {
                 id: bodyScroll
                 objectName: "articleBodyScroll"
                 width: parent.width
-                height: Math.max(0, tableContent.height - root.headerHeight - draftRow.height)
+                height: Math.min(bodyRows.height,
+                                 Math.max(0, tableContent.height - root.headerHeight - draftRow.height))
                 contentWidth: width
                 contentHeight: bodyRows.height
                 flickableDirection: Flickable.VerticalFlick
