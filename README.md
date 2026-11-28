@@ -46,7 +46,7 @@ Startup errors are short in the terminal, with tracebacks in the rotating log;
 the log path is printed at launch. QML opens only after database readiness checks.
 
 The fixed development database password and database-wide application grants are
-intentional for this version, as recorded in `plan.md`.
+intentional for this version.
 
 ## Checks
 

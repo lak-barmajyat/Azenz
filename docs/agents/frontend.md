@@ -1,5 +1,9 @@
 # Frontend Rules — Azenz
 
+## Additional References
+- Read [qml-component-kit.md](../qml-component-kit.md) before creating, changing, or integrating shared QML controls, components, layouts, or theme APIs.
+- Read [ui-patterns.md](../ui-patterns.md) when adding or changing an ERP center frame, its actions, navigation, tables, totals, or responsive behavior.
+
 ## Priorities
 - Prioritize clean, maintainable, native Qt/QML architecture over pixel-perfect Figma matching.
 - Accept small visual differences when required by existing components or Qt best practices.
